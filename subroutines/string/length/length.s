@@ -1,9 +1,7 @@
 /**
  * length.s
+ * This method counts the number of characters in a String including the white spaces and returns the count.
  */
-
-.data
-    example: .asciz "Example"
 
 .text
 .global length
