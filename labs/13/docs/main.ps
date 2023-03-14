@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 07:00:09 2023
+%%CreationDate: Tue Mar 14 20:31:35 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -757,51 +757,149 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/*) p n
-( * Test driver ) S
-(for) K
-( ") p
-(length) str
-(") p n
-( */) N
+(// I wanted to be different so I used length but it doesn't work properly it onl) p n
+(y prints ") S
+(Cat in) str
+("...) p n
 (.data) N
-() S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
-(This is a string.) str
+(    szX: .asciz ") S
+(Cat         ) str
 (") p n
-() S 8 T (out:) S 16 T (.asciz) S 24 T (") S
-(Length is - ) str
+(    szY: .asciz ") S
+(in the hat.) str
 (") p n
-() S 8 T (result:) S 16 T (.skip) S 24 T (21) N
+(    ptr: .quad 0) N
 (    nl: .asciz ") S
 (\\n) str
 (") p n
+() N
 (.text) N
 (.global main) N
 (    main:) N
-(        //Load and calc string len) N
-(        ldr) S 16 T (x0,) S 24 T (=targ) N
-(        bl) S 16 T (length) N
-(        //Conv to s) N
-(        ldr) S 16 T (x1,) S 24 T (=result) N
-(        bl) S 16 T (int64asc) N
-(        //Print output text) N
-(        ldr) S 16 T (x0,) S 24 T (=out) N
-(        bl) S 16 T (putstring) N
-(        //Print result) N
-(        ldr) S 16 T (x0,) S 24 T (=result) N
-(        bl) S 16 T (putstring) N
-(        //Print newline) N
-(        ldr) S 16 T (x0,) S 24 T (=nl) N
-(        bl) S 16 T (putstring) N
-(        ) N
-(        // Setup the parameters to exit the program and then call Linux to do it) N
-(.) N
-(        mov) S 16 T (x0,) S 24 T () S
-(#0) c 32 T (// Sets return code to 0) N
-(        mov) p 16 T (x8,) S 24 T () S
-(#93) c 32 T (// Service command code 93 terminates) N
-(        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(main.s) (Page 1/1) (Mar 14, 23 7:00) title
+(        // Calculate the length of szX and szY) N
+(        ldr x0, =szX) N
+(        bl length) N
+(        sub x4, x0, ) S
+(#1) c n
+() p n
+(        ldr x0, =szY) N
+(        bl length) N
+(        mov x5, x0) N
+() N
+(        // Calculate the total size needed \(plus one byte ) S
+(for) K
+( null terminator\)) p n
+(        add x0, x4, x5) N
+(        add x0, x0, ) S
+(#1) c n
+(        bl malloc) p n
+(        ldr x1, =ptr) N
+(        str x0, [x1]) N
+() N
+(        // Set destination and source pointers ) S
+(for) K
+( custom_memcpy) p n
+(        ldr x19, =ptr) N
+(        ldr x19, [x19]) N
+(        ldr x20, =szX) N
+(        mov x21, x4) N
+() N
+(        // Copy szX to the allocated memory) N
+(        bl custom_memcpy) N
+() N
+(        // Set destination and source pointers ) S
+(for) K
+( custom_memcpy) p n
+(        ldr x19, =ptr) N
+(        ldr x19, [x19]) N
+(        add x19, x19, x4) N
+(        ldr x20, =szY) N
+(        mov x21, x5) N
+() N
+(        // Copy szY to the allocated memory after szX) N
+(        bl custom_memcpy) N
+() N
+(        // Add null terminator to the end of the combined string) N
+(        mov w3, ) S
+(#0) c n
+(        strb w3, [x19], ) p
+(#1) c n
+() p n
+(        // Print the concatenated string) N
+(        ldr x0, =ptr) N
+(        ldr x0, [x0]) N
+(        bl putstring) N
+() N
+(        // Print a newline character) N
+(        ldr x0, =nl) N
+(        bl putstring) N
+() N
+(        // Free allocated memory) N
+(        ldr x0, =ptr) N
+(        ldr x0, [x0]) N
+(main.s) (Page 1/2) (Mar 14, 23 20:31) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        bl free) p n
+() N
+(        // Exit the program) N
+(        mov x0, 0       // Move 0 to x0 to indicate successful termination) N
+(        mov x8, ) S
+(#93     // Set x8 to 93 to indicate the "exit" system call) c n
+(        svc 0           // Call the ") p
+(exit) str
+(" system call to terminate the program) p n
+() N
+(/**) N
+( * custom_memcpy - copies memory from source to destination) N
+( * @param x19: pointer to the destination) N
+( * @param x20: pointer to the source) N
+( * @param x21: number of bytes to copy) N
+( */) N
+(.global custom_memcpy) N
+(    custom_memcpy:) N
+(        cbz x21, memcpy_done // If x21 is 0, there's nothing to copy; ) S
+(return) K n
+(    memcpy_loop:) p n
+(        ldrb w3, [x20], ) S
+(#1    // Load a byte from source \(x20\) and increment x20) c n
+(        strb w3, [x19], ) p
+(#1    // Store the byte to destination \(x19\) and increme) c n
+(nt x19) N
+(        subs x21, x21, ) p
+(#1     // Decrement the count \(x21\)) c n
+(        b.ne memcpy_loop      // If x21 is not 0, continue copying bytes) p n
+(    memcpy_done:) N
+(        ret) N
+() N
+(/**) N
+( * length - calculates the length of a null-terminated string) N
+( * @param x0: pointer to the beginning of the string) N
+( * @) S
+(return) K
+(: the length of the string \(excluding the null terminator\)) p n
+( */) N
+(.global length) N
+(length:) N
+(    mov x1, x0          // Copy pointer to x1) N
+(    length_loop:) N
+(        ldrb w2, [x0], ) S
+(#1    // Load a byte from the string \(x0\) and increment x) c n
+(0) N
+(        cbz w2, length_done  // If the byte is null, ) p
+(return) K n
+(        b length_loop        // Otherwise, continue looping) p n
+(    length_done:) N
+(        sub x0, x0, x1      // Subtract the starting pointer from the current po) N
+(inter) N
+(        sub x0, x0, ) S
+(#1       // Subtract 1 from the result to exclude the null t) c n
+(erminator) N
+(        ret) p
+(main.s) (Page 2/2) (Mar 14, 23 20:31) title
 border
 grestore
 (Printed by Ubuntu) rhead

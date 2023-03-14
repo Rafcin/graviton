@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: main.s
+%%Title: concat.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 07:00:09 2023
+%%CreationDate: Tue Mar 14 19:18:07 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,55 +757,111 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/*) p n
-( * Test driver ) S
+(/**) p n
+( * concat - concatenates two strings) N
+( * @param x0: pointer to the first string) N
+( * @param x1: pointer to the second string) N
+( * @) S
+(return) K
+( x0: pointer to the concatenated string \(allocated using malloc\)) p n
+( *) N
+( * This ) S
+(function) K
+( concatenates the second string at the end of the first string) p n
+( * and returns the combined string. The ) S
+(function) K
+( allocates memory ) p
 (for) K
-( ") p
-(length) str
-(") p n
+( the new) p n
+( * concatenated string using malloc,  which needs to be freed by the caller.) N
+( *) N
+( * Registers used: x0,  x1,  x2,  x3,  w3) N
+( * Registers saved: x19-x30,  lr) N
 ( */) N
-(.data) N
-() S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
-(This is a string.) str
-(") p n
-() S 8 T (out:) S 16 T (.asciz) S 24 T (") S
-(Length is - ) str
-(") p n
-() S 8 T (result:) S 16 T (.skip) S 24 T (21) N
-(    nl: .asciz ") S
-(\\n) str
-(") p n
+() N
 (.text) N
-(.global main) N
-(    main:) N
-(        //Load and calc string len) N
-(        ldr) S 16 T (x0,) S 24 T (=targ) N
-(        bl) S 16 T (length) N
-(        //Conv to s) N
-(        ldr) S 16 T (x1,) S 24 T (=result) N
-(        bl) S 16 T (int64asc) N
-(        //Print output text) N
-(        ldr) S 16 T (x0,) S 24 T (=out) N
-(        bl) S 16 T (putstring) N
-(        //Print result) N
-(        ldr) S 16 T (x0,) S 24 T (=result) N
-(        bl) S 16 T (putstring) N
-(        //Print newline) N
-(        ldr) S 16 T (x0,) S 24 T (=nl) N
-(        bl) S 16 T (putstring) N
-(        ) N
-(        // Setup the parameters to exit the program and then call Linux to do it) N
-(.) N
-(        mov) S 16 T (x0,) S 24 T () S
-(#0) c 32 T (// Sets return code to 0) N
-(        mov) p 16 T (x8,) S 24 T () S
-(#93) c 32 T (// Service command code 93 terminates) N
-(        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(main.s) (Page 1/1) (Mar 14, 23 7:00) title
+(.global concat) N
+(    concat:) N
+(        // allocate memory ) S
+(for) K
+( new string) p n
+(        stp lr, x0, [sp, ) S
+(#-16]!    // PUSH return address and str0 ) c n
+(        str x1, [sp, ) p
+(#-16]!       // PUSH str1) c n
+(        bl  length           // get length of str0 ) p
+(in) K
+( x0) p n
+(        mov x1, x0               // move str0.length to x1) N
+(        ldr x0, [sp], ) S
+(#16         // POP str1 ) c n
+(        ldp x0, x1, [sp, ) p
+(#-16]!    // PUSH str1 and str0.length to stack) c n
+(        bl  length           // get length of str1 ) p
+(in) K
+( x0) p n
+(        ldp x1, x2, [sp], ) S
+(#16      // POP str1 and str0.length from stack) c n
+(        add x0, x0, x2            // add string lengths together) p n
+(        add x0, x0, ) S
+(#1            // add 1 for null terminator) c n
+(        str x1, [sp, ) p
+(#-16]!       // PUSH str1 ) c n
+(        bl  malloc              // allocate memory ) p
+(for) K
+( new string) p n
+(        ldr x2, [sp], ) S
+(#16         // POP str1) c n
+(        ldp lr, x1, [sp], ) p
+(#16      // POP return address and str0) c n
+(        stp lr, x0, [sp, ) p
+(#-16]!    // PUSH new string for return) c n
+(    // write str0 to new string) p n
+(    str0_concat:   ) N
+(        ldrb W3, [x1], ) S
+(#1         // load character of str0 and inc ptr) c n
+(        cmp  W3, ) p
+(#0              // if current char == null terminator) c n
+(        b.eq str1_concat        // start writing str1,  we are done with str0) p n
+(        // ) S
+(else) K
+(,  ) p
+(if) K
+( we are not at end of str0) p n
+(        strb W3, [x0], ) S
+(#1         // store character of str0 to new string and i) c n
+(nc ptr) N
+(        b    str0_concat        // continue loop) p n
+(    // write str1 to new string) N
+(    str1_concat:) N
+(        ldrb W3, [x2], ) S
+(#1         // load character of str1 and inc ptr) c n
+(        cmp  W3, ) p
+(#0              // if current char == null terminator) c n
+(        b.eq end_concat         // end ) p
+(function) K
+(,  we have added both) p n
+(        // ) S
+(else) K
+(,  ) p
+(if) K
+( we are not at end of str1) p n
+(        strb W3, [x0], ) S
+(#1         // store character of str1 to new string and i) c n
+(nc ptr) N
+(        b    str1_concat        // continue loop) p n
+(    end_concat:) N
+(        ldp lr, x0, [sp], ) S
+(#16      // POP new string address) c n
+(        ret                     // ) p
+(return) K
+( to calling ) p
+(function) K n
+(concat.s) (Page 1/1) (Mar 14, 23 19:17) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Tuesday March 14, 2023) footer
+(concat.s) (1/1) (Tuesday March 14, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

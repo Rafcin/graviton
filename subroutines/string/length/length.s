@@ -67,4 +67,3 @@
         // Move the character count into x0 (the return value)
         mov x0, x2
         ret
-

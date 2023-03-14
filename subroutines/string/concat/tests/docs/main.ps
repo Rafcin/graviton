@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 07:00:09 2023
+%%CreationDate: Tue Mar 14 19:18:32 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,51 +757,77 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/*) p n
-( * Test driver ) S
-(for) K
-( ") p
-(length) str
+(.data) p n
+(    str1: .asciz ") S
+(Hello, ) str
 (") p n
-( */) N
-(.data) N
-() S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
-(This is a string.) str
+(    str2: .asciz ") S
+(world!) str
 (") p n
-() S 8 T (out:) S 16 T (.asciz) S 24 T (") S
-(Length is - ) str
+(    out: .asciz ") S
+(Concatenated string - ) str
 (") p n
-() S 8 T (result:) S 16 T (.skip) S 24 T (21) N
 (    nl: .asciz ") S
 (\\n) str
 (") p n
+() N
 (.text) N
 (.global main) N
 (    main:) N
-(        //Load and calc string len) N
-(        ldr) S 16 T (x0,) S 24 T (=targ) N
-(        bl) S 16 T (length) N
-(        //Conv to s) N
-(        ldr) S 16 T (x1,) S 24 T (=result) N
-(        bl) S 16 T (int64asc) N
-(        //Print output text) N
-(        ldr) S 16 T (x0,) S 24 T (=out) N
-(        bl) S 16 T (putstring) N
-(        //Print result) N
-(        ldr) S 16 T (x0,) S 24 T (=result) N
-(        bl) S 16 T (putstring) N
-(        //Print newline) N
-(        ldr) S 16 T (x0,) S 24 T (=nl) N
-(        bl) S 16 T (putstring) N
+(        // Concatenate str1 and str2) N
+(        ldr x0, =str1) N
+(        mov x1, ) S
+(#0xffffffffffffffff // Maximum number of characters to count) c n
+(        bl  length) p n
+(        ldr x2, =str2) N
+(        mov x3, ) S
+(#0xffffffffffffffff // Maximum number of characters to count) c n
+(        bl  length) p n
+(        bl  concat) N
 (        ) N
-(        // Setup the parameters to exit the program and then call Linux to do it) N
-(.) N
-(        mov) S 16 T (x0,) S 24 T () S
-(#0) c 32 T (// Sets return code to 0) N
-(        mov) p 16 T (x8,) S 24 T () S
-(#93) c 32 T (// Service command code 93 terminates) N
-(        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(main.s) (Page 1/1) (Mar 14, 23 7:00) title
+(        // Check ) S
+(for) K
+( allocation failure) p n
+(        cbz x0, exit_failure) N
+() N
+(        // Save the pointer to the concatenated string) N
+(        mov x19, x0) N
+() N
+(        // Print output text) N
+(        ldr x0, =out) N
+(        bl  putstring) N
+() N
+(        // Print concatenated string) N
+(        mov x0, x19) N
+(        bl  putstring) N
+() N
+(        // Print newline) N
+(        ldr x0, =nl) N
+(        bl  putstring) N
+() N
+(        // Free the memory allocated by concat) N
+(        mov x0, x19) N
+(        mov x8, ) S
+(#215 // Service command code 215 for munmap) c n
+(        mov x1, ) p
+(#0 // PROT_READ | PROT_WRITE) c n
+(        mov x2, ) p
+(#34 // MAP_ANONYMOUS | MAP_PRIVATE) c n
+(        mov x3, ) p
+(#-1 // fd = -1) c n
+(        mov x4, ) p
+(#0 // offset = 0) c n
+(        svc 0) p n
+(        ) N
+(    exit_failure:) N
+(            // Setup the parameters to exit the program and then call Linux to d) N
+(o it.) N
+(            mov x0, ) S
+(#0  // Sets return code to 0) c n
+(            mov x8, ) p
+(#93 // Service command code 93 terminates) c n
+(            svc 0       // Call linux to terminate the program) p
+(main.s) (Page 1/1) (Mar 14, 23 19:07) title
 border
 grestore
 (Printed by Ubuntu) rhead

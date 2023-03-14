@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 04:26:46 2023
+%%CreationDate: Tue Mar 14 06:57:44 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,7 +757,14 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(.data) p n
+(/*) p n
+( * Test driver ) S
+(for) K
+( ") p
+(length) str
+(" ) p n
+( */) N
+(.data) N
 () S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
 (This is a string.) str
 (") p n
@@ -794,7 +801,7 @@ x0 y0 moveto
 (        mov) p 16 T (x8,) S 24 T () S
 (#93) c 32 T (// Service command code 93 terminates) N
 (        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(main.s) (Page 1/1) (Mar 13, 23 1:12) title
+(main.s) (Page 1/1) (Mar 14, 23 6:57) title
 border
 grestore
 (Printed by Ubuntu) rhead

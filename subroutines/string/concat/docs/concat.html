@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>concat.s</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl com">/**</span>
+<span class="hl com"> * concat - concatenates two strings</span>
+<span class="hl com"> * &#64;param x0: pointer to the first string</span>
+<span class="hl com"> * &#64;param x1: pointer to the second string</span>
+<span class="hl com"> * &#64;return x0: pointer to the concatenated string (allocated using malloc)</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * This function concatenates the second string at the end of the first string</span>
+<span class="hl com"> * and returns the combined string. The function allocates memory for the new</span>
+<span class="hl com"> * concatenated string using malloc,  which needs to be freed by the caller.</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0,  x1,  x2,  x3,  w3</span>
+<span class="hl com"> * Registers saved: x19-x30,  lr</span>
+<span class="hl com"> */</span>
+
+<span class="hl ppc">.text</span>
+<span class="hl ppc">.global concat</span>
+    concat<span class="hl opt">:</span>
+        <span class="hl opt">//</span> allocate memory for new string
+        stp <span class="hl kwb">lr</span><span class="hl opt">,</span> x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!    // PUSH return address and str0 </span>
+        str x1<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!       // PUSH str1</span>
+        <span class="hl kwa">bl</span>  length           <span class="hl opt">//</span> get length of str0 in x0
+        mov x1<span class="hl opt">,</span> x0               <span class="hl opt">//</span> move str0.length to x1
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16         // POP str1 </span>
+        ldp x0<span class="hl opt">,</span> x1<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!    // PUSH str1 and str0.length to stack</span>
+        <span class="hl kwa">bl</span>  length           <span class="hl opt">//</span> get length of str1 in x0
+        ldp x1<span class="hl opt">,</span> x2<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16      // POP str1 and str0.length from stack</span>
+        <span class="hl kwa">add</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> x2            <span class="hl opt">//</span> <span class="hl kwa">add</span> string lengths together
+        <span class="hl kwa">add</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> <span class="hl slc">#1            // add 1 for null terminator</span>
+        str x1<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!       // PUSH str1 </span>
+        <span class="hl kwa">bl</span>  malloc              <span class="hl opt">//</span> allocate memory for new string
+        ldr x2<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16         // POP str1</span>
+        ldp <span class="hl kwb">lr</span><span class="hl opt">,</span> x1<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16      // POP return address and str0</span>
+        stp <span class="hl kwb">lr</span><span class="hl opt">,</span> x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!    // PUSH new string for return</span>
+    <span class="hl opt">//</span> write str0 to new string
+    str0_concat<span class="hl opt">:</span>   
+        ldrb W3<span class="hl opt">, [</span>x1<span class="hl opt">],</span> <span class="hl slc">#1         // load character of str0 and inc ptr</span>
+        <span class="hl kwa">cmp</span>  W3<span class="hl opt">,</span> <span class="hl slc">#0              // if current char == null terminator</span>
+        b.eq str1_concat        <span class="hl opt">//</span> start writing str1<span class="hl opt">,</span>  we are done with str0
+        <span class="hl opt">//</span> else<span class="hl opt">,</span>  if we are <span class="hl kwa">not</span> at end of str0
+        strb W3<span class="hl opt">, [</span>x0<span class="hl opt">],</span> <span class="hl slc">#1         // store character of str0 to new string and inc ptr</span>
+        <span class="hl kwa">b</span>    str0_concat        <span class="hl opt">//</span> continue loop
+    <span class="hl opt">//</span> write str1 to new string
+    str1_concat<span class="hl opt">:</span>
+        ldrb W3<span class="hl opt">, [</span>x2<span class="hl opt">],</span> <span class="hl slc">#1         // load character of str1 and inc ptr</span>
+        <span class="hl kwa">cmp</span>  W3<span class="hl opt">,</span> <span class="hl slc">#0              // if current char == null terminator</span>
+        b.eq end_concat         <span class="hl opt">//</span> end function<span class="hl opt">,</span>  we have added both
+        <span class="hl opt">//</span> else<span class="hl opt">,</span>  if we are <span class="hl kwa">not</span> at end of str1
+        strb W3<span class="hl opt">, [</span>x0<span class="hl opt">],</span> <span class="hl slc">#1         // store character of str1 to new string and inc ptr</span>
+        <span class="hl kwa">b</span>    str1_concat        <span class="hl opt">//</span> continue loop
+    end_concat<span class="hl opt">:</span>
+        ldp <span class="hl kwb">lr</span><span class="hl opt">,</span> x0<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16      // POP new string address</span>
+        ret                     <span class="hl opt">//</span> return to calling function
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.41, http://www.andre-simon.de/-->

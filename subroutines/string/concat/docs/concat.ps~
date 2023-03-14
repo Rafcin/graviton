@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: main.s
+%%Title: concat.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 07:00:09 2023
+%%CreationDate: Tue Mar 14 19:13:16 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,55 +757,95 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/*) p n
-( * Test driver ) S
-(for) K
-( ") p
-(length) str
-(") p n
-( */) N
-(.data) N
-() S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
-(This is a string.) str
-(") p n
-() S 8 T (out:) S 16 T (.asciz) S 24 T (") S
-(Length is - ) str
-(") p n
-() S 8 T (result:) S 16 T (.skip) S 24 T (21) N
-(    nl: .asciz ") S
-(\\n) str
-(") p n
-(.text) N
-(.global main) N
-(    main:) N
-(        //Load and calc string len) N
-(        ldr) S 16 T (x0,) S 24 T (=targ) N
-(        bl) S 16 T (length) N
-(        //Conv to s) N
-(        ldr) S 16 T (x1,) S 24 T (=result) N
-(        bl) S 16 T (int64asc) N
-(        //Print output text) N
-(        ldr) S 16 T (x0,) S 24 T (=out) N
-(        bl) S 16 T (putstring) N
-(        //Print result) N
-(        ldr) S 16 T (x0,) S 24 T (=result) N
-(        bl) S 16 T (putstring) N
-(        //Print newline) N
-(        ldr) S 16 T (x0,) S 24 T (=nl) N
-(        bl) S 16 T (putstring) N
+(.text) p n
+(.global concat) N
+(    concat:) N
+(        // Save registers x19 to x20, and the link register lr on the stack) N
+(        stp x19, x20, [sp, -16]!) N
+(        stp x29, lr, [sp, -16]!) N
 (        ) N
-(        // Setup the parameters to exit the program and then call Linux to do it) N
-(.) N
-(        mov) S 16 T (x0,) S 24 T () S
-(#0) c 32 T (// Sets return code to 0) N
-(        mov) p 16 T (x8,) S 24 T () S
-(#93) c 32 T (// Service command code 93 terminates) N
-(        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(main.s) (Page 1/1) (Mar 14, 23 7:00) title
+(        // Set up the stack frame ) S
+(for) K
+( this ) p
+(function) K n
+(        mov x29, sp) p n
+() N
+(        // Calculate the length of both input strings \(including the null termin) N
+(ator\)) N
+(        mov x19, x0) N
+(        mov x1, ) S
+(#0xffffffffffffffff // Maximum number of characters to count) c n
+(        bl length) p n
+(        add x3, x0, ) S
+(#1 // Include null terminator) c n
+(        mov x19, x1) p n
+(        mov x1, ) S
+(#0xffffffffffffffff // Maximum number of characters to count) c n
+(        bl length) p n
+(        add x3, x3, x0 // Total length of the concatenated string \(including nul) N
+(l terminator\)) N
+() N
+(        // Allocate memory ) S
+(for) K
+( the concatenated string) p n
+(        mov x0, x3) N
+(        mov x8, ) S
+(#214 // Service command code 214 for mmap) c n
+(        mov x1, ) p
+(#0 // PROT_READ | PROT_WRITE) c n
+(        mov x2, ) p
+(#34 // MAP_ANONYMOUS | MAP_PRIVATE) c n
+(        mov x3, ) p
+(#-1 // fd = -1) c n
+(        mov x4, ) p
+(#0 // offset = 0) c n
+(        svc 0) p n
+() N
+(        // Check ) S
+(for) K
+( allocation failure) p n
+(        cmp x0, ) S
+(#-1) c n
+(        b.eq concat_done) p n
+() N
+(        // Save the pointer to the allocated memory) N
+(        mov x19, x0) N
+() N
+(        // Copy the first string to the allocated memory) N
+(        mov x0, x19) N
+(        ldr x1, [x29, ) S
+(#-16] // Load the address of the first string) c n
+(        mov x2, ) p
+(#0xffffffffffffffff // Maximum number of characters to) c n
+(        // Copy the second string to the allocated memory \(excluding the null te) p n
+(rminator of the first string\)) N
+(        add x0, x19, x3, lsl ) S
+(#1) c n
+(        sub x0, x0, ) p
+(#1) c n
+(        ldr x1, [x29, ) p
+(#-8] // Load the address of the second string) c n
+(        mov x2, ) p
+(#0xffffffffffffffff // Maximum number of characters to count) c n
+(        bl memcpy) p n
+() N
+(        // Set the ) S
+(return) K
+( value to the pointer of the concatenated string) p n
+(        mov x0, x19) N
+() N
+(    concat_done:) N
+(        // Restore the saved registers x19 to x20, and the link register lr from) N
+( the stack) N
+(        ldp x19, x20, [sp], 16) N
+(        ldp x29, lr, [sp], 16) N
+(        ) N
+(        ret) N
+(concat.s) (Page 1/1) (Mar 14, 23 19:12) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Tuesday March 14, 2023) footer
+(concat.s) (1/1) (Tuesday March 14, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

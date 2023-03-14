@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 07:00:09 2023
+%%CreationDate: Tue Mar 14 04:39:15 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -761,38 +761,44 @@ x0 y0 moveto
 ( * Test driver ) S
 (for) K
 ( ") p
-(length) str
+(chrat) str
 (") p n
 ( */) N
 (.data) N
-() S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
+(    targ:   .asciz  ") S
 (This is a string.) str
 (") p n
-() S 8 T (out:) S 16 T (.asciz) S 24 T (") S
-(Length is - ) str
+(    out:    .asciz  ") S
+(Character at position 3 is - ) str
 (") p n
-() S 8 T (result:) S 16 T (.skip) S 24 T (21) N
-(    nl: .asciz ") S
+(    result: .skip   4) N
+(    nl:     .asciz  ") S
 (\\n) str
 (") p n
 (.text) N
 (.global main) N
 (    main:) N
-(        //Load and calc string len) N
-(        ldr) S 16 T (x0,) S 24 T (=targ) N
-(        bl) S 16 T (length) N
-(        //Conv to s) N
-(        ldr) S 16 T (x1,) S 24 T (=result) N
-(        bl) S 16 T (int64asc) N
-(        //Print output text) N
-(        ldr) S 16 T (x0,) S 24 T (=out) N
-(        bl) S 16 T (putstring) N
-(        //Print result) N
-(        ldr) S 16 T (x0,) S 24 T (=result) N
-(        bl) S 16 T (putstring) N
-(        //Print newline) N
-(        ldr) S 16 T (x0,) S 24 T (=nl) N
-(        bl) S 16 T (putstring) N
+(        // Get the character at position 3) N
+(        ldr x0, =targ) N
+(        mov x1, ) S
+(#2) c n
+(        bl  chrat) p n
+(        ) N
+(        // Convert the character to a string) N
+(        ldr x1, =result) N
+(        bl  int64asc) N
+(        ) N
+(        // Print the output text) N
+(        ldr x0, =out) N
+(        bl  putstring) N
+(        ) N
+(        // Print the result) N
+(        ldr x0, =result) N
+(        bl  putstring) N
+(        ) N
+(        // Print newline) N
+(        ldr x0, =nl) N
+(        bl  putstring) N
 (        ) N
 (        // Setup the parameters to exit the program and then call Linux to do it) N
 (.) N
@@ -801,7 +807,7 @@ x0 y0 moveto
 (        mov) p 16 T (x8,) S 24 T () S
 (#93) c 32 T (// Service command code 93 terminates) N
 (        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(main.s) (Page 1/1) (Mar 14, 23 7:00) title
+(main.s) (Page 1/1) (Mar 14, 23 4:39) title
 border
 grestore
 (Printed by Ubuntu) rhead

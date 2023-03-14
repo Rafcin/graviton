@@ -1,5 +1,5 @@
 # Define the lab name
-NAME = concat
+NAME = main
 
 # Define the target file
 TARGET = $(NAME)
@@ -11,7 +11,7 @@ SRC = $(NAME).s
 OBJ = output/$(SRC:.s=.o)
 
 # Define the external object directories as a list
-EXTERNAL_DIRS = ../../../external ../length/output
+EXTERNAL_DIRS = ../../external
 
 # Define the flags for debugging
 DEBUG_FLAGS = -g
