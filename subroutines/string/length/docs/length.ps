@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: test.s
+%%Title: length.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Mar 13 01:13:07 2023
+%%CreationDate: Tue Mar 14 04:29:00 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -757,48 +757,117 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(.data) p n
-() S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
-(This is a string.) str
-(") p n
-() S 8 T (out:) S 16 T (.asciz) S 24 T (") S
-(Length is - ) str
-(") p n
-() S 8 T (result:) S 16 T (.skip) S 24 T (21) N
-(    nl: .asciz ") S
-(\\n) str
-(") p n
+( /**) p n
+( * length - counts the number of characters ) S
+(in) K
+( a string) p n
+( * @param x0: pointer to the string to count) N
+( * @param x1: maximum number of characters to count) N
+( * @) S
+(return) K
+( x0: number of characters counted, including null terminator) p n
+( *) N
+( * This ) S
+(function) K
+( counts the number of characters ) p
+(in) K
+( a string pointed to by x0, u) p n
+(p) N
+( * to a maximum of x1 characters. The count includes the null terminator. If the) N
+( * string is longer than x1 characters, the ) S
+(function) K
+( stops counting at x1) p n
+( * characters.) N
+( *) N
+( * Registers used: x0, x1, x2, x3, w3) N
+( * Registers saved: x19-x30, lr) N
+( */) N
+() N
 (.text) N
-(.global main) N
-(    main:) N
-(        //Load and calc string len) N
-(        ldr) S 16 T (x0,) S 24 T (=targ) N
-(        bl) S 16 T (length) N
-(        //Conv to s) N
-(        ldr) S 16 T (x1,) S 24 T (=result) N
-(        bl) S 16 T (int64asc) N
-(        //Print output text) N
-(        ldr) S 16 T (x0,) S 24 T (=out) N
-(        bl) S 16 T (putstring) N
-(        //Print result) N
-(        ldr) S 16 T (x0,) S 24 T (=result) N
-(        bl) S 16 T (putstring) N
-(        //Print newline) N
-(        ldr) S 16 T (x0,) S 24 T (=nl) N
-(        bl) S 16 T (putstring) N
+(.global length) N
+(    length:) N
+(        // Save registers x19 to x30) N
+(        //stp x29, x30, [sp, -16]!) N
+(        // Setup the stack frame ) S
+(for) K
+( strnlen) p n
+(        //mov x29, sp) N
+() N
+(        // Save registers x19 to x29, and the link register lr on the stack) N
+(        stp x29, x30, [sp, -16]!) N
+(        stp x19, x20, [sp, -16]!) N
+(        stp x21, x22, [sp, -16]!) N
+(        stp x23, x24, [sp, -16]!) N
+(        stp x25, x26, [sp, -16]!) N
+(        stp x27, x28, [sp, -16]!) N
+(        stp x29, lr, [sp, -16]!) N
 (        ) N
-(        // Setup the parameters to exit the program and then call Linux to do it) N
-(.) N
-(        mov) S 16 T (x0,) S 24 T () S
-(#0) c 32 T (// Sets return code to 0) N
-(        mov) p 16 T (x8,) S 24 T () S
-(#93) c 32 T (// Service command code 93 terminates) N
-(        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(test.s) (Page 1/1) (Mar 13, 23 1:12) title
+(        // Set up the stack frame ) S
+(for) K
+( this ) p
+(function) K n
+(        mov x29, sp) p n
+() N
+(        // Move the maximum number of characters to count into x1) N
+(        mov x1, x2) N
+(        ) N
+(        // Initialize the character count to zero) N
+(        mov x2, ) S
+(#0) c n
+(    loop:) p n
+(        // Load a byte from the memory location pointed to by x0 with an offset ) N
+(of x2 and store it ) S
+(in) K
+( w3) p n
+(        ldrb w3, [x0, x2]) N
+(        // Check ) S
+(if) K
+( the byte we just loaded is zero \(the null terminator\)) p n
+(        cbz w3, done) N
+(        // If the byte is not zero, increment the character count) N
+(        add x2, x2, ) S
+(#1) c n
+(        // Check ) p
+(if) K
+( we have counted the maximum number of characters) p n
+(        cmp x2, x1) N
+(        // If we have, we are done counting characters, so jump to the end of th) N
+(e ) S
+(function) K n
+(        b.eq done) p n
+(        // Otherwise, continue counting characters) N
+(        b loop) N
+(        ) N
+(    done:) N
+(        // Restore the saved registers x19 to x30 from the stack) N
+(        //ldp x29, x30, [sp], 16) N
+(        // Restore the saved registers x19 to x29, and the link register lr from) N
+( the stack) N
+(length.s) (Page 1/2) (Mar 14, 23 4:28) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ldp x29, lr, [sp], 16) p n
+(        ldp x27, x28, [sp], 16) N
+(        ldp x25, x26, [sp], 16) N
+(        ldp x23, x24, [sp], 16) N
+(        ldp x21, x22, [sp], 16) N
+(        ldp x19, x20, [sp], 16) N
+(        ldp x29, x30, [sp], 16) N
+(        ) N
+(        // Move the character count into x0 \(the ) S
+(return) K
+( value\)) p n
+(        mov x0, x2) N
+(        ret) N
+() N
+(length.s) (Page 2/2) (Mar 14, 23 4:28) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(test.s) (1/1) (Monday March 13, 2023) footer
+(length.s) (1/1) (Tuesday March 14, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

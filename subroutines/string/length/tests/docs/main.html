@@ -2,11 +2,14 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>test.s</title>
+<title>main.s</title>
 <link rel="stylesheet" type="text/css" href="highlight.css">
 </head>
 <body class="hl">
-<pre class="hl"><span class="hl ppc">.data</span>
+<pre class="hl"><span class="hl com">/*</span>
+<span class="hl com"> * Test driver for &quot;length&quot;</span>
+<span class="hl com"> */</span>
+<span class="hl ppc">.data</span>
 	targ<span class="hl opt">:</span>	<span class="hl ppc">.asciz</span>	<span class="hl pps">&quot;This is a string.&quot;</span><span class="hl ppc"></span>
 	out<span class="hl opt">:</span>	<span class="hl ppc">.asciz</span>	<span class="hl pps">&quot;Length is - &quot;</span><span class="hl ppc"></span>
 	result<span class="hl opt">:</span>	<span class="hl ppc">.skip	21</span>

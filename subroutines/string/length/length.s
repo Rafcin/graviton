@@ -1,6 +1,16 @@
-/**
- * length.s
- * This method counts the number of characters in a String including the white spaces and returns the count.
+ /**
+ * length - counts the number of characters in a string
+ * @param x0: pointer to the string to count
+ * @param x1: maximum number of characters to count
+ * @return x0: number of characters counted, including null terminator
+ *
+ * This function counts the number of characters in a string pointed to by x0, up
+ * to a maximum of x1 characters. The count includes the null terminator. If the
+ * string is longer than x1 characters, the function stops counting at x1
+ * characters.
+ *
+ * Registers used: x0, x1, x2, x3, w3
+ * Registers saved: x19-x30, lr
  */
 
 .text

@@ -1,3 +1,6 @@
+/*
+ * Test driver for "length"
+ */
 .data
 	targ:	.asciz	"This is a string."
 	out:	.asciz	"Length is - "

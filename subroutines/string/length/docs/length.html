@@ -6,9 +6,19 @@
 <link rel="stylesheet" type="text/css" href="highlight.css">
 </head>
 <body class="hl">
-<pre class="hl"><span class="hl com">/**</span>
-<span class="hl com"> * length.s</span>
-<span class="hl com"> * This method counts the number of characters in a String including the white spaces and returns the count.</span>
+<pre class="hl"> <span class="hl com">/**</span>
+<span class="hl com"> * length - counts the number of characters in a string</span>
+<span class="hl com"> * &#64;param x0: pointer to the string to count</span>
+<span class="hl com"> * &#64;param x1: maximum number of characters to count</span>
+<span class="hl com"> * &#64;return x0: number of characters counted, including null terminator</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * This function counts the number of characters in a string pointed to by x0, up</span>
+<span class="hl com"> * to a maximum of x1 characters. The count includes the null terminator. If the</span>
+<span class="hl com"> * string is longer than x1 characters, the function stops counting at x1</span>
+<span class="hl com"> * characters.</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, x1, x2, x3, w3</span>
+<span class="hl com"> * Registers saved: x19-x30, lr</span>
 <span class="hl com"> */</span>
 
 <span class="hl ppc">.text</span>

@@ -8,7 +8,7 @@ TARGET = $(NAME)
 SRC = $(NAME).s
 
 # Define the object file
-OBJ = $(SRC:.s=.o)
+OBJ = output/$(SRC:.s=.o)
 
 # Define the external object directories as a list
 EXTERNAL_DIRS = ../../../external
@@ -20,29 +20,36 @@ DEBUG_FLAGS = -g
 CC = as $(DEBUG_FLAGS)
 
 # Define the linking command
-LINK = ld -lc -lm -e length
+LINK = ld -lc -lm -e $(NAME)
+
+# Define the output directories
+DOCS_DIR = docs
+OUTPUT_DIR = output
+
+# Create output directory if it does not exist
+$(shell mkdir -p $(DOCS_DIR) $(OUTPUT_DIR))
 
 # Define the build rules
-all: $(TARGET) $(NAME).pdf $(NAME).html
+all: $(OUTPUT_DIR)/$(TARGET) $(DOCS_DIR)/$(NAME).pdf $(DOCS_DIR)/$(NAME).html
 
-$(TARGET): $(OBJ)
-	$(LINK) -o $(TARGET) $(OBJ) $(foreach DIR,$(EXTERNAL_DIRS),$(wildcard $(DIR)/*.o))
+$(OUTPUT_DIR)/$(TARGET): $(OBJ)
+	$(LINK) -o $@ $(OBJ) $(foreach DIR,$(EXTERNAL_DIRS),$(wildcard $(DIR)/*.o))
 
-%.o: %.s
+$(OBJ): $(SRC)
 	$(CC) -o $@ $<
 
-$(NAME).ps: $(NAME).s
+$(DOCS_DIR)/$(NAME).ps: $(NAME).s
 	which a2ps || sudo apt-get -y install a2ps
-	a2ps -o $(NAME).ps $(NAME).s
+	a2ps -o $@ $<
 
-$(NAME).pdf: $(NAME).ps
+$(DOCS_DIR)/$(NAME).pdf: $(DOCS_DIR)/$(NAME).ps
 	which ps2pdf || sudo apt-get -y install ghostscript
-	ps2pdf $(NAME).ps
+	ps2pdf $<
 
-$(NAME).html: $(NAME).s
+$(DOCS_DIR)/$(NAME).html: $(NAME).s
 	which highlight || sudo apt-get -y install highlight
-	highlight -O html -o $(NAME).html $(NAME).s
+	highlight -O html -o $@ $<
 
 # Define the clean rule
 clean:
-	rm -f $(TARGET) $(OBJ) $(NAME).ps $(NAME).pdf $(NAME).html
+	rm -rf $(OUTPUT_DIR) $(DOCS_DIR)
