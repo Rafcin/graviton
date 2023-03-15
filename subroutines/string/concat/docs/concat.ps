@@ -2,7 +2,7 @@
 %%Title: concat.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 19:18:07 2023
+%%CreationDate: Wed Mar 15 20:00:32 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -759,11 +759,11 @@ llx lly 12 add translate
 x0 y0 moveto
 (/**) p n
 ( * concat - concatenates two strings) N
-( * @param x0: pointer to the first string) N
-( * @param x1: pointer to the second string) N
+( * @param x0: address of the target string) N
+( * @param x1: address of the string to add) N
 ( * @) S
 (return) K
-( x0: pointer to the concatenated string \(allocated using malloc\)) p n
+( x0: address of the new concatenated string) p n
 ( *) N
 ( * This ) S
 (function) K
@@ -774,94 +774,144 @@ x0 y0 moveto
 (for) K
 ( the new) p n
 ( * concatenated string using malloc,  which needs to be freed by the caller.) N
-( *) N
-( * Registers used: x0,  x1,  x2,  x3,  w3) N
-( * Registers saved: x19-x30,  lr) N
 ( */) N
 () N
 (.text) N
 (.global concat) N
-(    concat:) N
-(        // allocate memory ) S
-(for) K
-( new string) p n
-(        stp lr, x0, [sp, ) S
-(#-16]!    // PUSH return address and str0 ) c n
-(        str x1, [sp, ) p
-(#-16]!       // PUSH str1) c n
-(        bl  length           // get length of str0 ) p
-(in) K
-( x0) p n
-(        mov x1, x0               // move str0.length to x1) N
-(        ldr x0, [sp], ) S
-(#16         // POP str1 ) c n
-(        ldp x0, x1, [sp, ) p
-(#-16]!    // PUSH str1 and str0.length to stack) c n
-(        bl  length           // get length of str1 ) p
-(in) K
-( x0) p n
-(        ldp x1, x2, [sp], ) S
-(#16      // POP str1 and str0.length from stack) c n
-(        add x0, x0, x2            // add string lengths together) p n
-(        add x0, x0, ) S
-(#1            // add 1 for null terminator) c n
-(        str x1, [sp, ) p
-(#-16]!       // PUSH str1 ) c n
-(        bl  malloc              // allocate memory ) p
-(for) K
-( new string) p n
-(        ldr x2, [sp], ) S
-(#16         // POP str1) c n
-(        ldp lr, x1, [sp], ) p
-(#16      // POP return address and str0) c n
-(        stp lr, x0, [sp, ) p
-(#-16]!    // PUSH new string for return) c n
-(    // write str0 to new string) p n
-(    str0_concat:   ) N
-(        ldrb W3, [x1], ) S
-(#1         // load character of str0 and inc ptr) c n
-(        cmp  W3, ) p
-(#0              // if current char == null terminator) c n
-(        b.eq str1_concat        // start writing str1,  we are done with str0) p n
-(        // ) S
-(else) K
-(,  ) p
-(if) K
-( we are not at end of str0) p n
-(        strb W3, [x0], ) S
-(#1         // store character of str0 to new string and i) c n
-(nc ptr) N
-(        b    str0_concat        // continue loop) p n
-(    // write str1 to new string) N
-(    str1_concat:) N
-(        ldrb W3, [x2], ) S
-(#1         // load character of str1 and inc ptr) c n
-(        cmp  W3, ) p
-(#0              // if current char == null terminator) c n
-(        b.eq end_concat         // end ) p
-(function) K
-(,  we have added both) p n
-(        // ) S
-(else) K
-(,  ) p
-(if) K
-( we are not at end of str1) p n
-(        strb W3, [x0], ) S
-(#1         // store character of str1 to new string and i) c n
-(nc ptr) N
-(        b    str1_concat        // continue loop) p n
-(    end_concat:) N
-(        ldp lr, x0, [sp], ) S
-(#16      // POP new string address) c n
-(        ret                     // ) p
+() N
+(// Save the ) S
 (return) K
-( to calling ) p
-(function) K n
-(concat.s) (Page 1/1) (Mar 14, 23 19:17) title
+( address and the target string pointer on the stack) p n
+(// before updating the stack pointer.) N
+(concat:) N
+(    stp lr,x0,[sp,) S
+(#-16]!) c n
+() p n
+(    // Store the string to add on the stack) N
+(    str x1,[sp,) S
+(#-16]!) c n
+() p n
+(    // Call the `length` subroutine to determine the length of the target string) N
+(    bl  length) N
+() N
+(    // Store the length of the target string ) S
+(in) K
+( x1) p n
+(    mov x1,x0) N
+() N
+(    // Restore the target string and the string to add from the stack) N
+(    ldr x0,[sp],) S
+(#16) c n
+(    ldp x0,x1,[sp,) p
+(#-16]!) c n
+() p n
+(    // Call the `length` subroutine to determine the length of the string to add) N
+(    bl  length) N
+() N
+(    // Restore the string to add and the target string length from the stack) N
+(    ldp x1,x2,[sp],) S
+(#16) c n
+() p n
+(    // Add the length of the string to add to the length of the target string,) N
+(    // plus one ) S
+(for) K
+( the terminating null byte.) p n
+(    add x0,x0,x2) N
+(    add x0,x0,) S
+(#1) c n
+() p n
+(    // Store the string to add on the stack) N
+(    str x1,[sp,) S
+(#-16]!) c n
+() p n
+(    // Call the `malloc` subroutine to allocate memory ) S
+(for) K
+( the new concatenated ) p n
+(string) N
+(    bl  malloc) N
+() N
+(    // Restore the ) S
+(return) K
+( address and the target string pointer from the stack) p n
+(    ldr x2,[sp],) S
+(#16) c n
+(    ldp lr,x1,[sp],) p
+(#16) c n
+() p n
+(    // Save the ) S
+(return) K
+( address and the new concatenated string pointer on the st) p n
+(ack) N
+(    stp lr,x0,[sp,) S
+(#-16]!) c n
+() p n
+(first:) N
+(    // Load the ) S
+(next) K
+( byte of the target string) p n
+(    ldrb w3,[x1],) S
+(#1) c n
+() p n
+(concat.s) (Page 1/2) (Mar 15, 23 20:00) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(    // Check ) p
+(if) K
+( the byte is the terminating null byte) p n
+(    cmp  w3,) S
+(#0) c n
+(    b.eq second) p n
+() N
+(    // Store the byte ) S
+(in) K
+( the new concatenated string) p n
+(    strb w3,[x0],) S
+(#1) c n
+() p n
+(    // Jump back to the beginning of the loop) N
+(    b    first) N
+() N
+(second:) N
+(    // Load the ) S
+(next) K
+( byte of the string to add) p n
+(    ldrb w3,[x2],) S
+(#1) c n
+() p n
+(    // Check ) S
+(if) K
+( the byte is the terminating null byte) p n
+(    cmp  w3,) S
+(#0) c n
+(    b.eq end) p n
+() N
+(    // Store the byte ) S
+(in) K
+( the new concatenated string) p n
+(    strb w3,[x0],) S
+(#1) c n
+() p n
+(    // Jump back to the beginning of the loop) N
+(    b    second) N
+() N
+(end:) N
+(    // Restore the ) S
+(return) K
+( address and the new concatenated string pointer from t) p n
+(he stack) N
+(    ldp lr,x0,[sp],) S
+(#16) c n
+() p n
+(    // Return the new concatenated string pointer) N
+(    ret) N
+(concat.s) (Page 2/2) (Mar 15, 23 20:00) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(concat.s) (1/1) (Tuesday March 14, 2023) footer
+(concat.s) (1/1) (Wednesday March 15, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage
