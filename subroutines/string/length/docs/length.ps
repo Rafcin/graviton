@@ -2,7 +2,7 @@
 %%Title: length.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 07:00:01 2023
+%%CreationDate: Wed Mar 15 20:01:49 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,7 +757,7 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-( /**) p n
+(/**) p n
 ( * length - counts the number of characters ) S
 (in) K
 ( a string) p n
@@ -785,88 +785,134 @@ x0 y0 moveto
 () N
 (.text) N
 (.global length) N
-(    length:) N
-(        // Save registers x19 to x30) N
-(        //stp x29, x30, [sp, -16]!) N
-(        // Setup the stack frame ) S
-(for) K
-( strnlen) p n
-(        //mov x29, sp) N
 () N
-(        // Save registers x19 to x29, and the link register lr on the stack) N
-(        stp x29, x30, [sp, -16]!) N
-(        stp x19, x20, [sp, -16]!) N
-(        stp x21, x22, [sp, -16]!) N
-(        stp x23, x24, [sp, -16]!) N
-(        stp x25, x26, [sp, -16]!) N
-(        stp x27, x28, [sp, -16]!) N
-(        stp x29, lr, [sp, -16]!) N
-(        ) N
-(        // Set up the stack frame ) S
+(// Entry point ) S
 (for) K
-( this ) p
-(function) K n
-(        mov x29, sp) p n
+( the `length` subroutine) p n
+(length:) N
+(    // Point to the first byte of the string to count) N
+(    mov x7, x0) N
 () N
-(        // Move the maximum number of characters to count into x1) N
-(        mov x1, x2) N
-(        ) N
-(        // Initialize the character count to zero) N
-(        mov x2, ) S
+(    // Initialize the counter to zero) N
+(    mov x2, ) S
 (#0) c n
-(    loop:) p n
-(        // Load a byte from the memory location pointed to by x0 with an offset ) N
-(of x2 and store it ) S
-(in) K
-( w3) p n
-(        ldrb w3, [x0, x2]) N
-(        // Check ) S
-(if) K
-( the byte we just loaded is zero \(the null terminator\)) p n
-(        cbz w3, done) N
-(        // If the byte is not zero, increment the character count) N
-(        add x2, x2, ) S
+() p n
+(// Top of the loop to count characters) N
+(top:) N
+(    // Load the ) S
+(next) K
+( byte of the string and update the pointer) p n
+(    ldrb w1, [x7], ) S
 (#1) c n
-(        // Check ) p
+() p n
+(    // Check ) S
 (if) K
-( we have counted the maximum number of characters) p n
-(        cmp x2, x1) N
-(        // If we have, we are done counting characters, so jump to the end of th) N
-(e ) S
-(function) K n
-(        b.eq done) p n
-(        // Otherwise, continue counting characters) N
-(        b loop) N
-(        ) N
-(    done:) N
-(        // Restore the saved registers x19 to x30 from the stack) N
-(        //ldp x29, x30, [sp], 16) N
-(        // Restore the saved registers x19 to x29, and the link register lr from) N
-( the stack) N
-(length.s) (Page 1/2) (Mar 14, 23 6:59) title
+( the byte is the null terminator) p n
+(    cmp w1, ) S
+(#0) c n
+() p n
+(    // If the byte is the null terminator, jump to the bottom of the loop) N
+(    b.eq bottom) N
+() N
+(    // Increment the counter by one) N
+(    add x2, x2, ) S
+(#1) c n
+() p n
+(    // Jump back to the top of the loop) N
+(    b top) N
+() N
+(// Bottom of the loop to ) S
+(return) K
+( the length) p n
+(bottom:) N
+(    // Return the length of the string, including the null terminator) N
+(    mov x0, x2) N
+(    ret lr) N
+() N
+(// Entry point ) S
+(for) K
+( the `substring` subroutine) p n
+(sbstr:) N
+(    // Save the necessary registers on the stack) N
+(    stp x0, x1, [sp, ) S
+(#-16]!) c n
+() p n
+(    // Compute the length of the substring) N
+(    sub x0, x2, x1) N
+() N
+(    // Save the length and the original string pointer on the stack) N
+(    stp x2, x0, [sp, ) S
+(#-16]!) c n
+() p n
+(    // Call `malloc` to allocate memory ) S
+(for) K
+( the substring) p n
+(length.s) (Page 1/2) (Mar 15, 23 20:01) title
 border
 /v 1 store
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(        ldp x29, lr, [sp], 16) p n
-(        ldp x27, x28, [sp], 16) N
-(        ldp x25, x26, [sp], 16) N
-(        ldp x23, x24, [sp], 16) N
-(        ldp x21, x22, [sp], 16) N
-(        ldp x19, x20, [sp], 16) N
-(        ldp x29, x30, [sp], 16) N
-(        ) N
-(        // Move the character count into x0 \(the ) S
+(    bl malloc) p n
+() N
+(    // Restore the length and the original string pointer from the stack) N
+(    ldp x2, x5, [sp],) S
+(#16) c n
+() p n
+(    // Restore the ) S
 (return) K
-( value\)) p n
-(        mov x0, x2) N
-(        ret) N
-(length.s) (Page 2/2) (Mar 14, 23 6:59) title
+( address and the start index of the substring from the ) p n
+(stack) N
+(    ldp x4, x1, [sp],) S
+(#16) c n
+() p n
+(    // Save the pointer to the substring on the stack) N
+(    str x0, [sp, ) S
+(#-16]!) c n
+() p n
+(// End of the loop to copy characters from the original string to the substring) N
+(end:) N
+(    // Check ) S
+(if) K
+( we've copied the desired number of characters) p n
+(    cmp x5, ) S
+(#0) c n
+() p n
+(    // If we've copied all the characters, ) S
+(return) K
+( from the subroutine) p n
+(    b.eq ) S
+(return) K n
+() p n
+(    // Load the ) S
+(next) K
+( byte from the original string and store it ) p
+(in) K
+( the substring) p n
+(    ldrb w6, [x4], ) S
+(#1) c n
+(    strb w6, [x0], ) p
+(#1) c n
+() p n
+(    // Decrement the counter and jump back to the top of the loop) N
+(    sub x5, x5, ) S
+(#1) c n
+(    b end) p n
+() N
+(// Return from the `substring` subroutine) N
+(return) K
+(:) p n
+(    // Restore the pointer to the substring from the stack) N
+(    ldr x0, [sp], ) S
+(#16) c n
+() p n
+(    // Return the pointer to the substring) N
+(    ret lr) N
+(length.s) (Page 2/2) (Mar 15, 23 20:01) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(length.s) (1/1) (Tuesday March 14, 2023) footer
+(length.s) (1/1) (Wednesday March 15, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

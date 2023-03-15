@@ -6,7 +6,10 @@
 <link rel="stylesheet" type="text/css" href="highlight.css">
 </head>
 <body class="hl">
-<pre class="hl"><span class="hl ppc">.data</span>
+<pre class="hl"><span class="hl com">/*</span>
+<span class="hl com"> * Test driver for &quot;concat&quot;</span>
+<span class="hl com"> */</span>
+<span class="hl ppc">.data</span>
     str1<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;Hello, &quot;</span><span class="hl ppc"></span>
     str2<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;world!&quot;</span><span class="hl ppc"></span>
     out<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;Concatenated string - &quot;</span><span class="hl ppc"></span>
@@ -15,47 +18,28 @@
 <span class="hl ppc">.text</span>
 <span class="hl ppc">.global main</span>
     main<span class="hl opt">:</span>
-        <span class="hl opt">//</span> Concatenate str1 <span class="hl kwa">and</span> str2
-        ldr x0<span class="hl opt">, =</span>str1
-        mov x1<span class="hl opt">,</span> <span class="hl slc">#0xffffffffffffffff // Maximum number of characters to count</span>
-        <span class="hl kwa">bl</span>  length
-        ldr x2<span class="hl opt">, =</span>str2
-        mov x3<span class="hl opt">,</span> <span class="hl slc">#0xffffffffffffffff // Maximum number of characters to count</span>
-        <span class="hl kwa">bl</span>  length
-        <span class="hl kwa">bl</span>  concat
+        <span class="hl opt">//</span>Load str <span class="hl num">1</span>
+        ldr x0<span class="hl opt">, =</span>str1      
+        <span class="hl opt">//</span>Load str <span class="hl num">2</span>   
+        ldr x1<span class="hl opt">, =</span>str2
+        <span class="hl opt">//</span>Concatenate <span class="hl num">2</span> strings 
+        <span class="hl kwa">bl</span>  concat    
+        <span class="hl opt">//</span>Str adr   
+        str x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!       </span>
+        <span class="hl opt">//</span>Print
+        <span class="hl kwa">bl</span> putstring     
+        <span class="hl opt">//</span>Load adr       
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16</span>
+        <span class="hl opt">//</span>Free
+        <span class="hl kwa">bl</span>  free
+        <span class="hl opt">//</span>Print newline
+        ldr	x0<span class="hl opt">,	=</span>nl
+        <span class="hl kwa">bl</span>	putstring
         
-        <span class="hl opt">//</span> Check for allocation failure
-        cbz x0<span class="hl opt">,</span> exit_failure
-
-        <span class="hl opt">//</span> Save the pointer to the concatenated string
-        mov x19<span class="hl opt">,</span> x0
-
-        <span class="hl opt">//</span> Print output text
-        ldr x0<span class="hl opt">, =</span>out
-        <span class="hl kwa">bl</span>  putstring
-
-        <span class="hl opt">//</span> Print concatenated string
-        mov x0<span class="hl opt">,</span> x19
-        <span class="hl kwa">bl</span>  putstring
-
-        <span class="hl opt">//</span> Print newline
-        ldr x0<span class="hl opt">, =</span>nl
-        <span class="hl kwa">bl</span>  putstring
-
-        <span class="hl opt">//</span> Free the memory allocated by concat
-        mov x0<span class="hl opt">,</span> x19
-        mov x8<span class="hl opt">,</span> <span class="hl slc">#215 // Service command code 215 for munmap</span>
-        mov x1<span class="hl opt">,</span> <span class="hl slc">#0 // PROT_READ | PROT_WRITE</span>
-        mov x2<span class="hl opt">,</span> <span class="hl slc">#34 // MAP_ANONYMOUS | MAP_PRIVATE</span>
-        mov x3<span class="hl opt">,</span> <span class="hl slc">#-1 // fd = -1</span>
-        mov x4<span class="hl opt">,</span> <span class="hl slc">#0 // offset = 0</span>
-        <span class="hl kwa">svc</span> <span class="hl num">0</span>
-        
-    exit_failure<span class="hl opt">:</span>
-            <span class="hl opt">//</span> Setup the parameters to exit the program <span class="hl kwa">and</span> then call Linux to do it.
-            mov x0<span class="hl opt">,</span> <span class="hl slc">#0  // Sets return code to 0</span>
-            mov x8<span class="hl opt">,</span> <span class="hl slc">#93 // Service command code 93 terminates</span>
-            <span class="hl kwa">svc</span> <span class="hl num">0</span>       <span class="hl opt">//</span> Call linux to terminate the program
+        <span class="hl opt">//</span> Setup the parameters to exit the program <span class="hl kwa">and</span> then call Linux to do it.
+        mov	x0<span class="hl opt">,</span>	<span class="hl slc">#0	// Sets return code to 0</span>
+        mov	x8<span class="hl opt">,</span>	<span class="hl slc">#93	// Service command code 93 terminates</span>
+        <span class="hl kwa">svc</span>	<span class="hl num">0</span>	<span class="hl opt">//</span> Call linux to terminate the program
 </pre>
 </body>
 </html>

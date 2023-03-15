@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="highlight.css">
 </head>
 <body class="hl">
-<pre class="hl"> <span class="hl com">/**</span>
+<pre class="hl"><span class="hl com">/**</span>
 <span class="hl com"> * length - counts the number of characters in a string</span>
 <span class="hl com"> * &#64;param x0: pointer to the string to count</span>
 <span class="hl com"> * &#64;param x1: maximum number of characters to count</span>
@@ -23,58 +23,84 @@
 
 <span class="hl ppc">.text</span>
 <span class="hl ppc">.global length</span>
-    length<span class="hl opt">:</span>
-        <span class="hl opt">//</span> Save registers x19 to x30
-        <span class="hl opt">//</span>stp x29<span class="hl opt">,</span> x30<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
-        <span class="hl opt">//</span> Setup the stack frame for strnlen
-        <span class="hl opt">//</span>mov x29<span class="hl opt">,</span> sp
 
-        <span class="hl opt">//</span> Save registers x19 to x29<span class="hl opt">,</span> <span class="hl kwa">and</span> the link register <span class="hl kwb">lr</span> on the stack
-        stp x29<span class="hl opt">,</span> x30<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
-        stp x19<span class="hl opt">,</span> x20<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
-        stp x21<span class="hl opt">,</span> x22<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
-        stp x23<span class="hl opt">,</span> x24<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
-        stp x25<span class="hl opt">,</span> x26<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
-        stp x27<span class="hl opt">,</span> x28<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
-        stp x29<span class="hl opt">,</span> <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
-        
-        <span class="hl opt">//</span> Set up the stack frame for this function
-        mov x29<span class="hl opt">,</span> sp
+<span class="hl opt">//</span> Entry point for the `length` subroutine
+length<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Point to the first byte of the string to count
+    mov x7<span class="hl opt">,</span> x0
 
-        <span class="hl opt">//</span> Move the maximum number of characters to count into x1
-        mov x1<span class="hl opt">,</span> x2
-        
-        <span class="hl opt">//</span> Initialize the character count to zero
-        mov x2<span class="hl opt">,</span> <span class="hl slc">#0</span>
-    loop<span class="hl opt">:</span>
-        <span class="hl opt">//</span> Load <span class="hl kwa">a</span> byte from the memory location pointed to by x0 with an offset of x2 <span class="hl kwa">and</span> store it in w3
-        ldrb w3<span class="hl opt">, [</span>x0<span class="hl opt">,</span> x2<span class="hl opt">]</span>
-        <span class="hl opt">//</span> Check if the byte we just loaded is zero <span class="hl opt">(</span>the null terminator<span class="hl opt">)</span>
-        cbz w3<span class="hl opt">,</span> done
-        <span class="hl opt">//</span> If the byte is <span class="hl kwa">not</span> zero<span class="hl opt">,</span> increment the character count
-        <span class="hl kwa">add</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> <span class="hl slc">#1</span>
-        <span class="hl opt">//</span> Check if we have counted the maximum number of characters
-        <span class="hl kwa">cmp</span> x2<span class="hl opt">,</span> x1
-        <span class="hl opt">//</span> If we have<span class="hl opt">,</span> we are done counting characters<span class="hl opt">,</span> so jump to the end of the function
-        b.eq done
-        <span class="hl opt">//</span> Otherwise<span class="hl opt">,</span> continue counting characters
-        <span class="hl kwa">b</span> loop
-        
-    done<span class="hl opt">:</span>
-        <span class="hl opt">//</span> Restore the saved registers x19 to x30 from the stack
-        <span class="hl opt">//</span>ldp x29<span class="hl opt">,</span> x30<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
-        <span class="hl opt">//</span> Restore the saved registers x19 to x29<span class="hl opt">,</span> <span class="hl kwa">and</span> the link register <span class="hl kwb">lr</span> from the stack
-        ldp x29<span class="hl opt">,</span> <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
-        ldp x27<span class="hl opt">,</span> x28<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
-        ldp x25<span class="hl opt">,</span> x26<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
-        ldp x23<span class="hl opt">,</span> x24<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
-        ldp x21<span class="hl opt">,</span> x22<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
-        ldp x19<span class="hl opt">,</span> x20<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
-        ldp x29<span class="hl opt">,</span> x30<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
-        
-        <span class="hl opt">//</span> Move the character count into x0 <span class="hl opt">(</span>the return value<span class="hl opt">)</span>
-        mov x0<span class="hl opt">,</span> x2
-        ret
+    <span class="hl opt">//</span> Initialize the counter to zero
+    mov x2<span class="hl opt">,</span> <span class="hl slc">#0</span>
+
+<span class="hl opt">//</span> Top of the loop to count characters
+top<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Load the next byte of the string <span class="hl kwa">and</span> update the pointer
+    ldrb w1<span class="hl opt">, [</span>x7<span class="hl opt">],</span> <span class="hl slc">#1</span>
+
+    <span class="hl opt">//</span> Check if the byte is the null terminator
+    <span class="hl kwa">cmp</span> w1<span class="hl opt">,</span> <span class="hl slc">#0</span>
+
+    <span class="hl opt">//</span> If the byte is the null terminator<span class="hl opt">,</span> jump to the bottom of the loop
+    b.eq bottom
+
+    <span class="hl opt">//</span> Increment the counter by one
+    <span class="hl kwa">add</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> <span class="hl slc">#1</span>
+
+    <span class="hl opt">//</span> Jump back to the top of the loop
+    <span class="hl kwa">b</span> top
+
+<span class="hl opt">//</span> Bottom of the loop to return the length
+bottom<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Return the length of the string<span class="hl opt">,</span> including the null terminator
+    mov x0<span class="hl opt">,</span> x2
+    ret <span class="hl kwb">lr</span>
+
+<span class="hl opt">//</span> Entry point for the `substring` subroutine
+sbstr<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Save the necessary registers on the stack
+    stp x0<span class="hl opt">,</span> x1<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
+
+    <span class="hl opt">//</span> Compute the length of the substring
+    <span class="hl kwa">sub</span> x0<span class="hl opt">,</span> x2<span class="hl opt">,</span> x1
+
+    <span class="hl opt">//</span> Save the length <span class="hl kwa">and</span> the original string pointer on the stack
+    stp x2<span class="hl opt">,</span> x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
+
+    <span class="hl opt">//</span> Call `malloc` to allocate memory for the substring
+    <span class="hl kwa">bl</span> malloc
+
+    <span class="hl opt">//</span> Restore the length <span class="hl kwa">and</span> the original string pointer from the stack
+    ldp x2<span class="hl opt">,</span> x5<span class="hl opt">, [</span>sp<span class="hl opt">],</span><span class="hl slc">#16</span>
+
+    <span class="hl opt">//</span> Restore the return address <span class="hl kwa">and</span> the start index of the substring from the stack
+    ldp x4<span class="hl opt">,</span> x1<span class="hl opt">, [</span>sp<span class="hl opt">],</span><span class="hl slc">#16</span>
+
+    <span class="hl opt">//</span> Save the pointer to the substring on the stack
+    str x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
+
+<span class="hl opt">//</span> End of the loop to copy characters from the original string to the substring
+end<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Check if we<span class="hl str">&apos;ve copied the desired number of characters</span>
+<span class="hl str">    cmp x5, #0</span>
+<span class="hl str"></span>
+<span class="hl str">    // If we&apos;</span>ve copied all the characters<span class="hl opt">,</span> return from the subroutine
+    b.eq return
+
+    <span class="hl opt">//</span> Load the next byte from the original string <span class="hl kwa">and</span> store it in the substring
+    ldrb w6<span class="hl opt">, [</span>x4<span class="hl opt">],</span> <span class="hl slc">#1</span>
+    strb w6<span class="hl opt">, [</span>x0<span class="hl opt">],</span> <span class="hl slc">#1</span>
+
+    <span class="hl opt">//</span> Decrement the counter <span class="hl kwa">and</span> jump back to the top of the loop
+    <span class="hl kwa">sub</span> x5<span class="hl opt">,</span> x5<span class="hl opt">,</span> <span class="hl slc">#1</span>
+    <span class="hl kwa">b</span> end
+
+<span class="hl opt">//</span> Return from the `substring` subroutine
+return<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Restore the pointer to the substring from the stack
+    ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16</span>
+
+    <span class="hl opt">//</span> Return the pointer to the substring
+    ret <span class="hl kwb">lr</span>
 </pre>
 </body>
 </html>
