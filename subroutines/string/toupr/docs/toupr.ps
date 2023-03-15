@@ -2,7 +2,7 @@
 %%Title: toupr.s
 %%For: root
 %%Creator: a2ps version 4.14
-%%CreationDate: Wed Mar 15 11:51:22 2023
+%%CreationDate: Wed Mar 15 12:37:00 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -797,7 +797,7 @@ x0 y0 moveto
 ( to toUprLoop) p n
 (        cmp  w20, ) S
 (#'z'          // else, if w20 is less than 'z') c n
-(        b.lt toUprConvert       // you're lowercase, so go to the convert label) p n
+(        b.le toUprConvert       // you're lowercase, so go to the convert label) p n
 (        b    toUprLoop          // you're one of the few weird chars, go back to) N
 ( upr :\)) N
 (    toUprEnd:) N
@@ -805,7 +805,7 @@ x0 y0 moveto
 (        ret lr                  // ) S
 (return) K
 ( to caller) p n
-(toupr.s) (Page 1/1) (Mar 15, 23 11:51) title
+(toupr.s) (Page 1/1) (Mar 15, 23 11:54) title
 border
 grestore
 (Printed by root) rhead
