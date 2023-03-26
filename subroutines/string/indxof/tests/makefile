@@ -1,5 +1,5 @@
 # Define the lab name
-NAME = indxoffrm
+NAME = main
 
 # Define the target file
 TARGET = $(NAME)
@@ -11,7 +11,7 @@ SRC = $(NAME).s
 OBJ = output/$(SRC:.s=.o)
 
 # Define the external object directories as a list
-EXTERNAL_DIRS = ../../../external
+EXTERNAL_DIRS = ../../../../external ../output ../../indxoffrm/output
 
 # Define the flags for debugging
 DEBUG_FLAGS = -g
