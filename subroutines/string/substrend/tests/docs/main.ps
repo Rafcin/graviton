@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: strcpy.s
+%%Title: main.s
 %%For: root
 %%Creator: a2ps version 4.14
-%%CreationDate: Fri Mar 24 14:43:41 2023
+%%CreationDate: Sun Mar 26 12:02:30 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,76 +757,57 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/**) p n
-( * strcpy.s) N
-( * PARAMETERS: X0 \(STRING TO BE COPIED\)) N
-( * OUTPUT    : X0 \(POINTER TO COPIED STRING\)) N
-( * The purpose of this ) S
-(function) K
-( is to copy a string dynamically using malloc.) p n
-( * It is up to the user to free the memory when done.) N
-( * ALL REGISTERS PRESERVED EXCEPT X0) N
-( */) N
+(.data) p n
+(    str1:   .asciz ") S
+(cat in the hat.) str
+(") p n
+(    szsub: .quad  0) N
+(    nl:     .asciz ") S
+(\\n) str
+(") p n
 () N
-(    .text) N
-(    .global strcpy) N
+(.text) N
+(.global main) N
+(    main:) N
+(        // generate sbstring from str1, at index 3 to 7 \(begin inclusive, end ex) N
+(clusive\)) N
+(        ldr x0, =str1) N
+(        mov x1, 4) N
+(        bl  substrend ) N
 () N
-(strcpy:) N
-(        // storing X0-X19 registers, as malloc will not preserve most of these) N
-(        str X1,     [sp, -16]!) N
-(        stp X2, X3, [sp, -16]!) N
-(        stp X4, X5, [sp, -16]!) N
-(        stp X6, X7, [sp, -16]!) N
-(        stp X8, X9, [sp, -16]!) N
-(        stp X10, X11, [sp, -16]!) N
-(        stp X12, X13, [sp, -16]!) N
-(        stp X14, X15, [sp, -16]!) N
-(        stp X16, X17, [sp, -16]!) N
-(        stp X18, X19, [sp, -16]!) N
-(        stp X20, X21, [sp, -16]!) N
-(        str lr, [sp, -16]!) N
-(        mov x1, ) S
-(#10000  // setting a theoretical max string value, can be adjust) c n
-(ed accordingly) N
-(        mov x19, x0     // storing a copy of x0 into x19) p n
-(        bl  length      // calling length to fulfill malloc's parameter of reque) N
-(sted bytes) N
-(        mov x21, x0     // move length into x21) N
-(        bl  malloc      // call malloc) N
-(        mov x20, ) S
-(#0     // setting variable to 0 for loop count) c n
-(strcpyLoop:) p n
-(        ldrb w17, [x19, x20]    // loading byte of given string into w17) N
-(        strb w17, [x0, x20]     // storing w17 into new string ) N
-(        add x20, x20, ) S
-(#1        // incrementing) c n
-(        cmp x20, x21            // comparing x19 to x20) p n
-(        b.ge end                // ) S
-(if) K
-( it's greater than the length, goto end) p n
-(        b strcpyLoop) N
-(end:) N
-(         // popping registers back from stack ) N
-(        ldr lr, [sp], 16) N
-(        ldp X20, X21, [sp], 16) N
-(        ldp X18, X19, [sp], 16) N
-(        ldp X16, X17, [sp], 16) N
-(        ldp X14, X15, [sp], 16) N
-(        ldp X12, X13, [sp], 16) N
-(        ldp X10, X11, [sp], 16) N
-(        ldp X8, X9, [sp], 16) N
-(        ldp X6, X7, [sp], 16) N
-(        ldp X4, X5, [sp], 16) N
-(        ldp X2, X3, [sp], 16) N
-(        ldr X1,     [sp], 16) N
-(        ret lr) N
-(        ) N
-(        ) N
-(strcpy.s) (Page 1/1) (Mar 24, 23 14:43) title
+(        ldr x1,=szsub) N
+(        str x0,[x1]     // storing pointer to string ) S
+(in) K
+( sbstr. needed to free me) p n
+(mory later.) N
+() N
+(        // Print output text) N
+(        ldr x0,=szsub) N
+(        ldr x0,[x0]) N
+(        bl  putstring) N
+() N
+(        // Print newline) N
+(        ldr x0, =nl) N
+(        bl  putstring) N
+() N
+(        // freeing memory) N
+(        ldr x0,=szsub) N
+(        ldr x0,[x0]) N
+(        bl free) N
+() N
+(    exit:) N
+(        // Setup the parameters to exit the program and then call Linux to do it) N
+(.) N
+(        mov x0, ) S
+(#0  // Sets return code to 0) c n
+(        mov x8, ) p
+(#93 // Service command code 93 terminates) c n
+(        svc 0       // Call linux to terminate the program) p n
+(main.s) (Page 1/1) (Mar 26, 23 12:01) title
 border
 grestore
 (Printed by root) rhead
-(strcpy.s) (1/1) (Friday March 24, 2023) footer
+(main.s) (1/1) (Sunday March 26, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: strcpy.s
+%%Title: substrend.s
 %%For: root
 %%Creator: a2ps version 4.14
-%%CreationDate: Fri Mar 24 14:43:41 2023
+%%CreationDate: Sun Mar 26 12:02:21 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -758,20 +758,25 @@ llx lly 12 add translate
 /y0 y v get bfs th add sub store
 x0 y0 moveto
 (/**) p n
-( * strcpy.s) N
-( * PARAMETERS: X0 \(STRING TO BE COPIED\)) N
-( * OUTPUT    : X0 \(POINTER TO COPIED STRING\)) N
-( * The purpose of this ) S
-(function) K
-( is to copy a string dynamically using malloc.) p n
-( * It is up to the user to free the memory when done.) N
+( * substr.s) N
+( * PARAMETERS: X0 \(STRING\)) N
+( *             X1 \(RANGE BEGIN\)) N
+( * OUTPUT    : X0 \(POINTER TO SUBSTRING\)) N
+( * This routine goes from the begin index ) S
+(in) K
+( X1 to the end of a given string ) p
+(in) K
+( ) p n
+(X0,) N
+( * and returns the resulting substring ) S
+(in) K
+( X0.) p n
 ( * ALL REGISTERS PRESERVED EXCEPT X0) N
 ( */) N
 () N
 (    .text) N
-(    .global strcpy) N
-() N
-(strcpy:) N
+(    .global substrend) N
+(substrend:) N
 (        // storing X0-X19 registers, as malloc will not preserve most of these) N
 (        str X1,     [sp, -16]!) N
 (        stp X2, X3, [sp, -16]!) N
@@ -784,28 +789,41 @@ x0 y0 moveto
 (        stp X16, X17, [sp, -16]!) N
 (        stp X18, X19, [sp, -16]!) N
 (        stp X20, X21, [sp, -16]!) N
-(        str lr, [sp, -16]!) N
+(        str lr, [sp, -16]! ) N
+(        mov x20, x1     // copying begin ) S
+(in) K
+( x20) p n
+(        mov x19, x0     // copying string ) S
+(in) K
+( x19) p n
 (        mov x1, ) S
-(#10000  // setting a theoretical max string value, can be adjust) c n
-(ed accordingly) N
-(        mov x19, x0     // storing a copy of x0 into x19) p n
-(        bl  length      // calling length to fulfill malloc's parameter of reque) N
-(sted bytes) N
-(        mov x21, x0     // move length into x21) N
-(        bl  malloc      // call malloc) N
-(        mov x20, ) S
-(#0     // setting variable to 0 for loop count) c n
-(strcpyLoop:) p n
+(#10000  // our string maximum for length routine) c n
+(        bl length       // need length of string ) p
+(for) K
+( malloc) p n
+(        add x0, x0, ) S
+(#1  // accounting for null terminator) c n
+(        sub x0, x0, x20) p n
+(        ) N
+(substrPreLoop:) N
+(        bl malloc       // calling malloc with requests bytes) N
+(        mov x21, ) S
+(#0) c n
+(substrLoop:) p n
 (        ldrb w17, [x19, x20]    // loading byte of given string into w17) N
-(        strb w17, [x0, x20]     // storing w17 into new string ) N
-(        add x20, x20, ) S
+(        strb w17, [x0, x21]     // storing w17 into new string ) N
+(        add x1, x1, ) S
+(#1          // incrementing) c n
+(        add x20, x20, ) p
 (#1        // incrementing) c n
-(        cmp x20, x21            // comparing x19 to x20) p n
-(        b.ge end                // ) S
+(        cmp w17, ) p
+(#0) c n
+(        b.ne substrLoop         // ) p
 (if) K
-( it's greater than the length, goto end) p n
-(        b strcpyLoop) N
-(end:) N
+( increment ) p
+(\263) sy
+( end, goto end label) p n
+(substrEnd:) N
 (         // popping registers back from stack ) N
 (        ldr lr, [sp], 16) N
 (        ldp X20, X21, [sp], 16) N
@@ -822,11 +840,11 @@ x0 y0 moveto
 (        ret lr) N
 (        ) N
 (        ) N
-(strcpy.s) (Page 1/1) (Mar 24, 23 14:43) title
+(substrend.s) (Page 1/1) (Mar 26, 23 12:02) title
 border
 grestore
 (Printed by root) rhead
-(strcpy.s) (1/1) (Friday March 24, 2023) footer
+(substrend.s) (1/1) (Sunday March 26, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

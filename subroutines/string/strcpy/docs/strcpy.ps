@@ -2,7 +2,7 @@
 %%Title: strcpy.s
 %%For: root
 %%Creator: a2ps version 4.14
-%%CreationDate: Fri Mar 24 14:43:41 2023
+%%CreationDate: Sun Mar 26 12:07:21 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -791,7 +791,9 @@ x0 y0 moveto
 (        mov x19, x0     // storing a copy of x0 into x19) p n
 (        bl  length      // calling length to fulfill malloc's parameter of reque) N
 (sted bytes) N
-(        mov x21, x0     // move length into x21) N
+(        add x0, x0, ) S
+(#1) c n
+(        mov x21, x0     // move length into x21) p n
 (        bl  malloc      // call malloc) N
 (        mov x20, ) S
 (#0     // setting variable to 0 for loop count) c n
@@ -822,11 +824,11 @@ x0 y0 moveto
 (        ret lr) N
 (        ) N
 (        ) N
-(strcpy.s) (Page 1/1) (Mar 24, 23 14:43) title
+(strcpy.s) (Page 1/1) (Mar 26, 23 12:07) title
 border
 grestore
 (Printed by root) rhead
-(strcpy.s) (1/1) (Friday March 24, 2023) footer
+(strcpy.s) (1/1) (Sunday March 26, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage
