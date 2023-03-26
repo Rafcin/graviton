@@ -32,7 +32,7 @@
         <span class="hl kwa">cmp</span>  w20<span class="hl opt">,</span> <span class="hl slc">#&apos;a&apos;          // if char is less than &apos;a&apos;...</span>
         b.lt toUprLoop          <span class="hl opt">//</span> then return to toUprLoop
         <span class="hl kwa">cmp</span>  w20<span class="hl opt">,</span> <span class="hl slc">#&apos;z&apos;          // else, if w20 is less than &apos;z&apos;</span>
-        b.lt toUprConvert       <span class="hl opt">//</span> you<span class="hl str">&apos;re lowercase, so go to the convert label</span>
+        b.le toUprConvert       <span class="hl opt">//</span> you<span class="hl str">&apos;re lowercase, so go to the convert label</span>
 <span class="hl str">        b    toUprLoop          // you&apos;</span>re one of the few weird chars<span class="hl opt">,</span> go back to upr <span class="hl opt">:)</span>
     toUprEnd<span class="hl opt">:</span>
         ldp x19<span class="hl opt">,</span> x20<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>  <span class="hl opt">//</span> popping x19 <span class="hl kwa">and</span> x20 from stack

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>substrend.s</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl com">/**</span>
+<span class="hl com"> * substr.s</span>
+<span class="hl com"> * PARAMETERS: X0 (STRING)</span>
+<span class="hl com"> *             X1 (RANGE BEGIN)</span>
+<span class="hl com"> * OUTPUT    : X0 (POINTER TO SUBSTRING)</span>
+<span class="hl com"> * This routine goes from the begin index in X1 to the end of a given string in X0,</span>
+<span class="hl com"> * and returns the resulting substring in X0.</span>
+<span class="hl com"> * ALL REGISTERS PRESERVED EXCEPT X0</span>
+<span class="hl com"> */</span>
+
+    <span class="hl ppc">.text</span>
+    <span class="hl ppc">.global substrend</span>
+substrend<span class="hl opt">:</span>
+        <span class="hl opt">//</span> storing X0-X19 registers<span class="hl opt">,</span> as malloc will <span class="hl kwa">not</span> preserve most of these
+        str X1<span class="hl opt">,     [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X2<span class="hl opt">,</span> X3<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X4<span class="hl opt">,</span> X5<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X6<span class="hl opt">,</span> X7<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X8<span class="hl opt">,</span> X9<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X10<span class="hl opt">,</span> X11<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X12<span class="hl opt">,</span> X13<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X14<span class="hl opt">,</span> X15<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X16<span class="hl opt">,</span> X17<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X18<span class="hl opt">,</span> X19<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X20<span class="hl opt">,</span> X21<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        str <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span> 
+        mov x20<span class="hl opt">,</span> x1     <span class="hl opt">//</span> copying begin in x20
+        mov x19<span class="hl opt">,</span> x0     <span class="hl opt">//</span> copying string in x19
+        mov x1<span class="hl opt">,</span> <span class="hl slc">#10000  // our string maximum for length routine</span>
+        <span class="hl kwa">bl</span> length       <span class="hl opt">//</span> need length of string for malloc
+        <span class="hl kwa">add</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> <span class="hl slc">#1  // accounting for null terminator</span>
+        <span class="hl kwa">sub</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> x20
+        
+substrPreLoop<span class="hl opt">:</span>
+        <span class="hl kwa">bl</span> malloc       <span class="hl opt">//</span> calling malloc with requests bytes
+        mov x21<span class="hl opt">,</span> <span class="hl slc">#0</span>
+substrLoop<span class="hl opt">:</span>
+        ldrb w17<span class="hl opt">, [</span>x19<span class="hl opt">,</span> x20<span class="hl opt">]    //</span> loading byte of given string into w17
+        strb w17<span class="hl opt">, [</span>x0<span class="hl opt">,</span> x21<span class="hl opt">]     //</span> storing w17 into new string 
+        <span class="hl kwa">add</span> x21<span class="hl opt">,</span> x21<span class="hl opt">,</span> <span class="hl slc">#1          // incrementing</span>
+        <span class="hl kwa">add</span> x20<span class="hl opt">,</span> x20<span class="hl opt">,</span> <span class="hl slc">#1        // incrementing</span>
+        <span class="hl kwa">cmp</span> w17<span class="hl opt">,</span> <span class="hl slc">#0</span>
+        b.ne substrLoop         <span class="hl opt">//</span> if increment <span class="hl opt">&gt;=</span> end<span class="hl opt">,</span> goto end label
+substrEnd<span class="hl opt">:</span>
+         <span class="hl opt">//</span> popping registers back from stack 
+        ldr <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X20<span class="hl opt">,</span> X21<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X18<span class="hl opt">,</span> X19<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X16<span class="hl opt">,</span> X17<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X14<span class="hl opt">,</span> X15<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X12<span class="hl opt">,</span> X13<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X10<span class="hl opt">,</span> X11<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X8<span class="hl opt">,</span> X9<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X6<span class="hl opt">,</span> X7<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X4<span class="hl opt">,</span> X5<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X2<span class="hl opt">,</span> X3<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldr X1<span class="hl opt">,     [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ret <span class="hl kwb">lr</span>
+        
+        
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.41, http://www.andre-simon.de/-->

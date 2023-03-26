@@ -2,7 +2,7 @@
 %%Title: toupr.s
 %%For: root
 %%Creator: a2ps version 4.14
-%%CreationDate: Wed Mar 15 11:45:50 2023
+%%CreationDate: Wed Mar 15 11:51:22 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -778,27 +778,34 @@ x0 y0 moveto
 (    toUprConvert:) N
 (        sub w20, w20, ) S
 (#32       // converts the char from lowercase to uppercase) c n
-(        strb w20, [x0, x19]) p n
+(        strb w20, [x0, x19]     // storing byte ) p
+(in) K
+( w0 string) p n
 (    toUprLoop:) N
 (        add  x19, x19, ) S
-(#1) c n
-(        ldrb w20, [x0, x19]    // load byte from str and post increment) p n
+(#1       // x19++) c n
+(        ldrb w20, [x0, x19]     // load byte from str and post increment) p n
 (        cmp  w20, ) S
 (#0            // compare loaded byte and null) c n
 (        b.eq toUprEnd           // ) p
 (if) K
 ( null, goto 'toUprEnd') p n
-(        b    toUprConvert       // ) S
-(if) K
-( w20 < 'z' and you're still here, you're lo) p n
-(wercase) N
-(        b    toUprLoop) N
+(        cmp  w20, ) S
+(#'a'          // if char is less than 'a'...) c n
+(        b.lt toUprLoop          // then ) p
+(return) K
+( to toUprLoop) p n
+(        cmp  w20, ) S
+(#'z'          // else, if w20 is less than 'z') c n
+(        b.lt toUprConvert       // you're lowercase, so go to the convert label) p n
+(        b    toUprLoop          // you're one of the few weird chars, go back to) N
+( upr :\)) N
 (    toUprEnd:) N
 (        ldp x19, x20, [sp], 16  // popping x19 and x20 from stack) N
 (        ret lr                  // ) S
 (return) K
 ( to caller) p n
-(toupr.s) (Page 1/1) (Mar 15, 23 11:45) title
+(toupr.s) (Page 1/1) (Mar 15, 23 11:51) title
 border
 grestore
 (Printed by root) rhead

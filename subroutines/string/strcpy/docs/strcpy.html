@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>strcpy.s</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl com">/**</span>
+<span class="hl com"> * strcpy.s</span>
+<span class="hl com"> * PARAMETERS: X0 (STRING TO BE COPIED)</span>
+<span class="hl com"> * OUTPUT    : X0 (POINTER TO COPIED STRING)</span>
+<span class="hl com"> * The purpose of this function is to copy a string dynamically using malloc.</span>
+<span class="hl com"> * It is up to the user to free the memory when done.</span>
+<span class="hl com"> * ALL REGISTERS PRESERVED EXCEPT X0</span>
+<span class="hl com"> */</span>
+
+    <span class="hl ppc">.text</span>
+    <span class="hl ppc">.global strcpy</span>
+
+strcpy<span class="hl opt">:</span>
+        <span class="hl opt">//</span> storing X0-X19 registers<span class="hl opt">,</span> as malloc will <span class="hl kwa">not</span> preserve most of these
+        str X1<span class="hl opt">,     [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X2<span class="hl opt">,</span> X3<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X4<span class="hl opt">,</span> X5<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X6<span class="hl opt">,</span> X7<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X8<span class="hl opt">,</span> X9<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X10<span class="hl opt">,</span> X11<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X12<span class="hl opt">,</span> X13<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X14<span class="hl opt">,</span> X15<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X16<span class="hl opt">,</span> X17<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X18<span class="hl opt">,</span> X19<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        stp X20<span class="hl opt">,</span> X21<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        str <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+        mov x1<span class="hl opt">,</span> <span class="hl slc">#10000  // setting a theoretical max string value, can be adjusted accordingly</span>
+        mov x19<span class="hl opt">,</span> x0     <span class="hl opt">//</span> storing <span class="hl kwa">a</span> copy of x0 into x19
+        <span class="hl kwa">bl</span>  length      <span class="hl opt">//</span> calling length to fulfill malloc<span class="hl str">&apos;s parameter of requested bytes</span>
+<span class="hl str">        add x0, x0, #1</span>
+<span class="hl str">        mov x21, x0     // move length into x21</span>
+<span class="hl str">        bl  malloc      // call malloc</span>
+<span class="hl str">        mov x20, #0     // setting variable to 0 for loop count</span>
+<span class="hl str">strcpyLoop:</span>
+<span class="hl str">        ldrb w17, [x19, x20]    // loading byte of given string into w17</span>
+<span class="hl str">        strb w17, [x0, x20]     // storing w17 into new string </span>
+<span class="hl str">        add x20, x20, #1        // incrementing</span>
+<span class="hl str">        cmp x20, x21            // comparing x19 to x20</span>
+<span class="hl str">        b.ge end                // if it&apos;</span>s greater than the length<span class="hl opt">,</span> goto end
+        <span class="hl kwa">b</span> strcpyLoop
+end<span class="hl opt">:</span>
+         <span class="hl opt">//</span> popping registers back from stack 
+        ldr <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X20<span class="hl opt">,</span> X21<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X18<span class="hl opt">,</span> X19<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X16<span class="hl opt">,</span> X17<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X14<span class="hl opt">,</span> X15<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X12<span class="hl opt">,</span> X13<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X10<span class="hl opt">,</span> X11<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X8<span class="hl opt">,</span> X9<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X6<span class="hl opt">,</span> X7<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X4<span class="hl opt">,</span> X5<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldp X2<span class="hl opt">,</span> X3<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ldr X1<span class="hl opt">,     [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+        ret <span class="hl kwb">lr</span>
+        
+        
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.41, http://www.andre-simon.de/-->
