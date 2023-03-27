@@ -1,7 +1,7 @@
 .data
-    str: .asciz "This is a test string."
-    find: .asciz "test"
-    out: .asciz "Index of 'test' - "
+    str: .asciz "This is a BeginnersBook tutorial"
+    find: .asciz "Beginners"
+    out: .asciz "Last occurrence of str2 - "
     result: .skip 21
     nl:  .asciz "\n"
     
@@ -14,8 +14,8 @@
         // Load the string to find address
         ldr x1, =find
         
-        // Call the `indxofstr` subroutine
-        bl  indxofstr
+        // Call the `lstindxofstr` subroutine
+        bl  lstindxofstr
         
         // Convert the result to a string
         ldr x1, =result

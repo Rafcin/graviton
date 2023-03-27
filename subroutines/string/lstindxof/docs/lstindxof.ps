@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: main.s
+%%Title: lstindxof.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Sun Mar 26 22:44:46 2023
+%%CreationDate: Mon Mar 27 22:58:57 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,55 +757,98 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/*) p n
-( * Test driver ) S
+(/**) p n
+( * lstindxof - Returns the last index of a given substring ) S
+(in) K
+( a target string.) p n
+( *) N
+( * This ) S
+(function) K
+( finds the last occurrence of the given substring ) p
+(in) K
+( the target ) p n
+(string) N
+( * using the lstindxoffrm ) S
+(function) K
+(, which searches ) p
 (for) K
-( ") p
-(length) str
-(") p n
+( the last occurrence of a ) p n
+(single) N
+( * character ) S
+(in) K
+( the target string. The ) p
+(function) K
+( then returns the index of the la) p n
+(st ) N
+( * occurrence of the substring ) S
+(in) K
+( the target string, or -1 ) p
+(if) K
+( the substring is n) p n
+(ot found.) N
+( *) N
+( * @param x0: Address of the target string to search.) N
+( * @param x1: Address of the substring to find ) S
+(in) K
+( the target string.) p n
+( * @) S
+(return) K
+( x0: Integer index of the last occurrence of the substring ) p
+(in) K
+( the targ) p n
+(et string, ) N
+( *             or -1 ) S
+(if) K
+( the substring is not found.) p n
+( *) N
+( * Registers used: x0, x1, x2, lr) N
+( * Registers saved: none) N
 ( */) N
-(.data) N
-() S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
-(Life, the universe and everything. Answer-) str
-(") p n
-() S 8 T (out:) S 16 T (.asciz) S 24 T (") S
-(Length is - ) str
-(") p n
-() S 8 T (result:) S 16 T (.skip) S 24 T (21) N
-(    nl: .asciz ") S
-(\\n) str
-(") p n
+() N
 (.text) N
-(.global main) N
-(    main:) N
-(        //Load and calc string len) N
-(        ldr) S 16 T (x0,) S 24 T (=targ) N
-(        bl) S 16 T (length) N
-(        //Conv to s) N
-(        ldr) S 16 T (x1,) S 24 T (=result) N
-(        bl) S 16 T (int64asc) N
-(        //Print output text) N
-(        ldr) S 16 T (x0,) S 24 T (=out) N
-(        bl) S 16 T (putstring) N
-(        //Print result) N
-(        ldr) S 16 T (x0,) S 24 T (=result) N
-(        bl) S 16 T (putstring) N
-(        //Print newline) N
-(        ldr) S 16 T (x0,) S 24 T (=nl) N
-(        bl) S 16 T (putstring) N
-(        ) N
-(        // Setup the parameters to exit the program and then call Linux to do it) N
-(.) N
-(        mov) S 16 T (x0,) S 24 T () S
-(#0) c 32 T (// Sets return code to 0) N
-(        mov) p 16 T (x8,) S 24 T () S
-(#93) c 32 T (// Service command code 93 terminates) N
-(        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(main.s) (Page 1/1) (Mar 26, 23 22:44) title
+(.global lstindxof) N
+(    lstindxof:) N
+(        // Save the ) S
+(return) K
+( address on the stack) p n
+(        str lr, [sp, ) S
+(#-16]!) c n
+(        // Save the parameters on the stack) p n
+(        stp x0, x1, [sp, ) S
+(#-16]!) c n
+(        // Call the length ) p
+(function) K
+( to get the length of the target string) p n
+(        bl length) N
+(        // Save the length of the target string ) S
+(in) K
+( x2) p n
+(        mov x2, x0) N
+(        // Restore the parameters from the stack) N
+(        ldp x0, x1, [sp], ) S
+(#16) c n
+(        // Call the lstindxoffrm ) p
+(function) K
+( to find the last occurrence of the sub) p n
+(string ) S
+(in) K
+( the target string) p n
+(        bl lstindxoffrm) N
+(        // Restore the ) S
+(return) K
+( address from the stack) p n
+(        ldr lr, [sp], ) S
+(#16) c n
+(        // Return the index of the last occurrence of the substring ) p
+(in) K
+( the targe) p n
+(t string) N
+(        ret) N
+(lstindxof.s) (Page 1/1) (Mar 27, 23 22:58) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Sunday March 26, 2023) footer
+(lstindxof.s) (1/1) (Monday March 27, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

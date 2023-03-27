@@ -2,7 +2,7 @@
  * Test driver for "length"
  */
 .data
-	targ:	.asciz	"This is a string."
+	targ:	.asciz	"Life, the universe and everything. Answer-"
 	out:	.asciz	"Length is - "
 	result:	.skip	21
     nl: .asciz "\n"

@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Sun Mar 26 22:44:46 2023
+%%CreationDate: Mon Mar 27 22:52:04 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,55 +757,66 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/*) p n
-( * Test driver ) S
-(for) K
-( ") p
-(length) str
+(.data) p n
+(    str: .asciz ") S
+(This is a BeginnersBook tutorial) str
 (") p n
-( */) N
-(.data) N
-() S 8 T (targ:) S 16 T (.asciz) S 24 T (") S
-(Life, the universe and everything. Answer-) str
+(    out: .asciz ") S
+(Last 'B' in str1 whose index<=15 - ) str
 (") p n
-() S 8 T (out:) S 16 T (.asciz) S 24 T (") S
-(Length is - ) str
-(") p n
-() S 8 T (result:) S 16 T (.skip) S 24 T (21) N
-(    nl: .asciz ") S
+(    result: .skip 21) N
+(    nl:  .asciz ") S
 (\\n) str
 (") p n
+(    ) N
 (.text) N
 (.global main) N
+(    // Last 'B' ) S
+(in) K
+( str1: 19) p n
 (    main:) N
-(        //Load and calc string len) N
-(        ldr) S 16 T (x0,) S 24 T (=targ) N
-(        bl) S 16 T (length) N
-(        //Conv to s) N
-(        ldr) S 16 T (x1,) S 24 T (=result) N
-(        bl) S 16 T (int64asc) N
-(        //Print output text) N
-(        ldr) S 16 T (x0,) S 24 T (=out) N
-(        bl) S 16 T (putstring) N
-(        //Print result) N
-(        ldr) S 16 T (x0,) S 24 T (=result) N
-(        bl) S 16 T (putstring) N
-(        //Print newline) N
-(        ldr) S 16 T (x0,) S 24 T (=nl) N
-(        bl) S 16 T (putstring) N
+(        // Load the target string address) N
+(        ldr x0, =str) N
+(        ) N
+(        // Set the search character to 'B') N
+(        mov w1, ) S
+(#'B') c n
+(        ) p n
+(        // Set the search starting index to 15) N
+(        mov x2, ) S
+(#15) c n
+(        ) p n
+(        // Call the `lstindxoffrm` subroutine) N
+(        bl  lstindxoffrm) N
+(        ) N
+(        // Convert the result to a string) N
+(        ldr x1, =result) N
+(        bl  int64asc) N
+(        ) N
+(        // Print the output text) N
+(        ldr x0, =out) N
+(        bl  putstring) N
+(        ) N
+(        // Print the result) N
+(        ldr x0, =result) N
+(        bl  putstring) N
+(        ) N
+(        // Print newline) N
+(        ldr x0, =nl) N
+(        bl  putstring) N
 (        ) N
 (        // Setup the parameters to exit the program and then call Linux to do it) N
 (.) N
-(        mov) S 16 T (x0,) S 24 T () S
-(#0) c 32 T (// Sets return code to 0) N
-(        mov) p 16 T (x8,) S 24 T () S
-(#93) c 32 T (// Service command code 93 terminates) N
-(        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) N
-(main.s) (Page 1/1) (Mar 26, 23 22:44) title
+(        mov x0, ) S
+(#0  // Sets return code to 0) c n
+(        mov x8, ) p
+(#93 // Service command code 93 terminates) c n
+(        svc 0       // Call linux to terminate the program) p n
+(main.s) (Page 1/1) (Mar 27, 23 22:52) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Sunday March 26, 2023) footer
+(main.s) (1/1) (Monday March 27, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

@@ -1,7 +1,6 @@
-.data
-    str: .asciz "This is a test string."
-    find: .asciz "test"
-    out: .asciz "Index of 'test' - "
+.data 
+    str: .asciz "This is a BeginnersBook tutorial"
+    out: .asciz "Last 'B' in str1 - "
     result: .skip 21
     nl:  .asciz "\n"
     
@@ -11,11 +10,11 @@
         // Load the target string address
         ldr x0, =str
         
-        // Load the string to find address
-        ldr x1, =find
+        // Set the search character to 'B'
+        mov w1, #'B'
         
-        // Call the `indxofstr` subroutine
-        bl  indxofstr
+        // Call the `lstindxof` subroutine
+        bl  lstindxof
         
         // Convert the result to a string
         ldr x1, =result

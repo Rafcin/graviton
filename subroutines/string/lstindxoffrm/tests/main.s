@@ -1,21 +1,24 @@
 .data
-    str: .asciz "This is a test string."
-    find: .asciz "test"
-    out: .asciz "Index of 'test' - "
+    str: .asciz "This is a BeginnersBook tutorial"
+    out: .asciz "Last 'B' in str1 whose index<=15 - "
     result: .skip 21
     nl:  .asciz "\n"
     
 .text
 .global main
+    // Last 'B' in str1 whose index<=15:10
     main:
         // Load the target string address
         ldr x0, =str
         
-        // Load the string to find address
-        ldr x1, =find
+        // Set the search character to 'B'
+        mov w1, #'B'
         
-        // Call the `indxofstr` subroutine
-        bl  indxofstr
+        // Set the search starting index to 15
+        mov x2, #15
+        
+        // Call the `lstindxoffrm` subroutine
+        bl  lstindxoffrm
         
         // Convert the result to a string
         ldr x1, =result
