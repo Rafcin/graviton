@@ -15,10 +15,12 @@ for subdir in $subdirs; do
         if [ -d "$subdir/tests" ]; then
             # Run the tests in the tests directory
             echo "Running tests in $subdir"
+            echo "[------ Start of $subdir ------]"
             echo -e "\n\n"
             cd $subdir/tests
             ./output/main
             echo -e "\n\n"
+            echo "[------ End of $subdir ------]"
             cd ../../
         fi
     fi
