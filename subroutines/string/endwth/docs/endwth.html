@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>endwth.s</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl com">/**</span>
+<span class="hl com"> * endwth.s</span>
+<span class="hl com"> * PARAMETERS: X0 (STRING)</span>
+<span class="hl com"> *             X1 (STRING TO CHECK)</span>
+<span class="hl com"> * OUTPUT    : X0 (BOOLEAN VALUE)</span>
+<span class="hl com"> * This routine checks whether the string in X0 ends with the suffix string in X1.</span>
+<span class="hl com"> * If the suffix is found at the end of the string, it returns true, otherwise it returns false.</span>
+<span class="hl com"> * ALL REGISTERS PRESERVED EXCEPT X0</span>
+<span class="hl com"> */</span>
+
+<span class="hl ppc">.text</span>
+<span class="hl ppc">.global endwth</span>
+endwth<span class="hl opt">:</span>
+    <span class="hl opt">//</span> storing X0-X19 registers<span class="hl opt">,</span> as malloc will <span class="hl kwa">not</span> preserve most of these
+    str X1<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X2<span class="hl opt">,</span> X3<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X4<span class="hl opt">,</span> X5<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X6<span class="hl opt">,</span> X7<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X8<span class="hl opt">,</span> X9<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X10<span class="hl opt">,</span> X11<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X12<span class="hl opt">,</span> X13<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X14<span class="hl opt">,</span> X15<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X16<span class="hl opt">,</span> X17<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    stp X18<span class="hl opt">,</span> X19<span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    str <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">, -</span><span class="hl num">16</span><span class="hl opt">]!</span>
+    
+    <span class="hl opt">//</span> finding length of the suffix
+    mov x2<span class="hl opt">,</span> <span class="hl slc">#0</span>
+suffixLoop<span class="hl opt">:</span>
+    ldrb w3<span class="hl opt">, [</span>x1<span class="hl opt">,</span> x2<span class="hl opt">]</span>
+    <span class="hl kwa">cmp</span> w3<span class="hl opt">,</span> <span class="hl slc">#0</span>
+    b.eq stringEnd
+    <span class="hl kwa">add</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> <span class="hl slc">#1</span>
+    <span class="hl kwa">b</span> suffixLoop
+stringEnd<span class="hl opt">:</span>
+    mov x3<span class="hl opt">,</span> x0
+    <span class="hl kwa">add</span> x4<span class="hl opt">,</span> x0<span class="hl opt">,</span> x2
+
+    <span class="hl opt">//</span> finding length of the string
+    mov x2<span class="hl opt">,</span> <span class="hl slc">#0</span>
+stringLoop<span class="hl opt">:</span>
+    ldrb w3<span class="hl opt">, [</span>x0<span class="hl opt">,</span> x2<span class="hl opt">]</span>
+    <span class="hl kwa">cmp</span> w3<span class="hl opt">,</span> <span class="hl slc">#0</span>
+    b.eq checkSuffix
+    <span class="hl kwa">add</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> <span class="hl slc">#1</span>
+    <span class="hl kwa">b</span> stringLoop
+checkSuffix<span class="hl opt">:</span>
+    <span class="hl kwa">sub</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> x4
+    <span class="hl kwa">cmp</span> x2<span class="hl opt">,</span> <span class="hl slc">#0</span>
+    b.lt false
+    <span class="hl kwa">add</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> x2
+    
+    <span class="hl opt">//</span> checking if suffix matches
+suffixCheckLoop<span class="hl opt">:</span>
+    ldrb w2<span class="hl opt">, [</span>x0<span class="hl opt">],</span> <span class="hl slc">#1</span>
+    ldrb w3<span class="hl opt">, [</span>x1<span class="hl opt">],</span> <span class="hl slc">#1</span>
+    <span class="hl kwa">cmp</span> w2<span class="hl opt">,</span> w3
+    b.ne false
+    <span class="hl kwa">cmp</span> w3<span class="hl opt">,</span> <span class="hl slc">#0</span>
+    b.ne suffixCheckLoop
+    
+    true<span class="hl opt">:</span>
+        mov x0<span class="hl opt">,</span> <span class="hl slc">#1</span>
+        <span class="hl kwa">b</span> end
+    false<span class="hl opt">:</span>
+        mov x0<span class="hl opt">,</span> <span class="hl slc">#0</span>
+end<span class="hl opt">:</span>
+    <span class="hl opt">//</span> popping registers back from stack
+    ldr <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X18<span class="hl opt">,</span> X19<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X16<span class="hl opt">,</span> X17<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X14<span class="hl opt">,</span> X15<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X12<span class="hl opt">,</span> X13<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X10<span class="hl opt">,</span> X11<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X8<span class="hl opt">,</span> X9<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X6<span class="hl opt">,</span> X7<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X4<span class="hl opt">,</span> X5<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldp X2<span class="hl opt">,</span> X3<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ldr X1<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl num">16</span>
+    ret <span class="hl kwb">lr</span>
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.41, http://www.andre-simon.de/-->
