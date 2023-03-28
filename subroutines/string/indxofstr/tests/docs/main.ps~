@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Sun Mar 26 20:36:32 2023
+%%CreationDate: Tue Mar 28 10:15:12 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -774,43 +774,44 @@ x0 y0 moveto
 (    ) N
 (.text) N
 (.global main) N
-(main:) N
-(    // Load the target string address) N
-(    ldr x0, =str) N
-(    ) N
-(    // Load the string to find address) N
-(    ldr x1, =find) N
-(    ) N
-(    // Call the `indxofstr` subroutine) N
-(    bl  indxofstr) N
-(    ) N
-(    // Convert the result to a string) N
-(    ldr x1, =result) N
-(    bl  int64asc) N
-(    ) N
-(    // Print the output text) N
-(    ldr x0, =out) N
-(    bl  putstring) N
-(    ) N
-(    // Print the result) N
-(    ldr x0, =result) N
-(    bl  putstring) N
-(    ) N
-(    // Print newline) N
-(    ldr x0, =nl) N
-(    bl  putstring) N
-(    ) N
-(    // Setup the parameters to exit the program and then call Linux to do it.) N
-(    mov x0, ) S
+(    main:) N
+(        // Load the target string address) N
+(        ldr x0, =str) N
+(        ) N
+(        // Load the string to find address) N
+(        ldr x1, =find) N
+(        ) N
+(        // Call the `indxofstr` subroutine) N
+(        bl  indxofstr) N
+(        ) N
+(        // Convert the result to a string) N
+(        ldr x1, =result) N
+(        bl  int64asc) N
+(        ) N
+(        // Print the output text) N
+(        ldr x0, =out) N
+(        bl  putstring) N
+(        ) N
+(        // Print the result) N
+(        ldr x0, =result) N
+(        bl  putstring) N
+(        ) N
+(        // Print newline) N
+(        ldr x0, =nl) N
+(        bl  putstring) N
+(        ) N
+(        // Setup the parameters to exit the program and then call Linux to do it) N
+(.) N
+(        mov x0, ) S
 (#0  // Sets return code to 0) c n
-(    mov x8, ) p
+(        mov x8, ) p
 (#93 // Service command code 93 terminates) c n
-(    svc 0       // Call linux to terminate the program) p n
-(main.s) (Page 1/1) (Mar 26, 23 20:31) title
+(        svc 0       // Call linux to terminate the program) p n
+(main.s) (Page 1/1) (Mar 27, 23 21:08) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Sunday March 26, 2023) footer
+(main.s) (1/1) (Tuesday March 28, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

@@ -2,7 +2,7 @@
 %%Title: indxoffrm.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Sun Mar 26 20:06:40 2023
+%%CreationDate: Sun Mar 26 20:14:17 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -758,59 +758,138 @@ llx lly 12 add translate
 /y0 y v get bfs th add sub store
 x0 y0 moveto
 (/**) p n
-( * indxoffrm - Returns the index of first occurrence of character ch ) S
+( * indxoffrm - Returns the index of the first occurrence of character ch ) S
 (in) K
-( the give) p n
-(n string after the specified index \342M-^@M-^\\fromIndex\342M-^@M-^]. ) N
-( * For example, ) S
-(if) K
-( the indexOf\(\) method is called like this str.indexOf\(\342M-^@) p n
-(M-^XA\342M-^@M-^Y, 20\) then it would start looking ) S
-(for) K
-( the character \342M-^@M-^XA\342) p n
-(M-^@M-^Y ) N
-( * ) S
+( the ) p n
+(given string ) N
+( *             after the specified index ") S
+(fromIndex) str
+(".) p n
+( * ) N
+( * @param x0: Address of the target string to search.) N
+( * @param x1: Character to find ) S
 (in) K
-( string str after the index 20.) p n
-( * @param x0: address of the target string) N
-( * @param x1: character to find) N
-( * @param x2: index to start the search) N
+( the target string.) p n
+( * @param x2: Index to start the search ) S
+(in) K
+( the target string.) p n
+( * ) N
 ( * @) S
 (return) K
-( x0: integer index) p n
+( x0: Integer index of the first occurrence of character ch ) p
+(in) K
+( the targ) p n
+(et string ) N
+( *             after the specified index ") S
+(fromIndex) str
+(". If the character is not fou) p n
+(nd, ) N
+( *             returns -1.) N
+( *) N
+( * This ) S
+(function) K
+( searches ) p
+(for) K
+( the first occurrence of the specified character ch) p n
+( ) S
+(in) K
+( the ) p n
+( * target string starting from the specified index ") S
+(fromIndex) str
+(" onwards. The ) p
+(funct) K n
+(ion) S
+( returns ) p n
+( * the index of the first occurrence of the character ch ) S
+(in) K
+( the target string af) p n
+(ter the ) N
+( * specified index ") S
+(fromIndex) str
+(". The search starts from the index x2+1 ) p
+(in) K
+( the targ) p n
+(et string, ) N
+( * where x2 is the specified index ") S
+(fromIndex) str
+(". The ) p
+(function) K
+( returns -1 ) p
+(if) K
+( the ch) p n
+(aracter ch ) N
+( * is not found ) S
+(in) K
+( the target string.) p n
+( *) N
+( * Registers used: x0, x1, x2, w2) N
+( * Registers saved: none) N
 ( */) N
 () N
 (.text) N
 (.global indxoffrm) N
 (    indxoffrm:) N
+(        // Save the target string pointer on the stack) N
 (        str x0, [sp, ) S
 (#-16]!) c n
-(        add x0, x0, x2) p n
+(        ) p n
+(        // Calculate the starting index ) S
+(for) K
+( the search) p n
+(        add x0, x0, x2) N
 (        add x0, x0, ) S
 (#1) c n
-(    loop:) p n
+(        ) p n
+(    loop:) N
+(        // Load a byte from the target string) N
 (        ldrb w2, [x0], ) S
 (#1) c n
-(        cmp w2, ) p
+(        ) p n
+(        // Check ) S
+(if) K
+( the byte is the terminating null byte) p n
+(        cmp w2, ) S
 (#0) c n
 (        b.eq error) p n
+(        ) N
+(        // Check ) S
+(if) K
+( the byte is the character to find) p n
 (        cmp w2, w1) N
 (        b.eq found) N
+(        ) N
+(        // Jump back to the beginning of the loop) N
 (        b loop) N
+(    ) N
 (    found:) N
+(        // Restore the target string pointer from the stack) N
 (        ldr x1, [sp], ) S
 (#16) c n
-(        sub x0, x0, x1) p n
-(        sub x0, x0, ) S
+(        ) p n
+(        // Calculate and ) S
+(return) K
+( the index of the found character) p n
+(        sub x0, x0, x1) N
+(indxoffrm.s) (Page 1/2) (Mar 26, 23 20:14) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        sub x0, x0, ) p
 (#1) c n
 (        ret) p n
+(    ) N
 (    error:) N
+(        // Remove the saved target string pointer from the stack) N
 (        add sp, sp, ) S
 (#16) c n
-(        mov x0, ) p
+(        ) p n
+(        // Return -1 to indicate that the character was not found) N
+(        mov x0, ) S
 (#-1) c n
-(        ret) p
-(indxoffrm.s) (Page 1/1) (Mar 26, 23 20:06) title
+(        ret) p n
+(indxoffrm.s) (Page 2/2) (Mar 26, 23 20:14) title
 border
 grestore
 (Printed by Ubuntu) rhead

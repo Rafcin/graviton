@@ -2,7 +2,7 @@
 %%Title: replace.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 28 09:55:13 2023
+%%CreationDate: Tue Mar 28 10:06:25 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -758,93 +758,111 @@ llx lly 12 add translate
 /y0 y v get bfs th add sub store
 x0 y0 moveto
 (/**) p n
-( * replace - Replaces all occurrences of a character with another character ) S
+( * replace - Replaces all occurrences of character 'old' ) S
 (in) K
-( a) p n
-( given string.) N
+( the given string wit) p n
+(h character 'new'.) N
 ( *) N
 ( * This ) S
 (function) K
-( searches through the input string and replaces all occurrences ) p n
-(of the character) N
-( * specified by x1 with the character specified by x2. The ) S
-(function) K
-( allocates a ) p n
-(new string to hold) N
-( * the modified result and returns the address of the new string.) N
-( *) N
-( * @param x0: Address of the input string to modify.) N
-( * @param x1: The character to search ) S
-(for) K
-( ) p
+( creates a new string ) p
 (in) K
-( the input string.) p n
-( * @param x2: The character to replace all occurrences of x1 with.) N
+( memory, with all occurrences of the cha) p n
+(racter 'old' ) S
+(in) K
+( the input) p n
+( * string replaced with the character 'new'. The input string remains unchanged.) N
+( The new string is created) N
+( * dynamically ) S
+(in) K
+( memory using the malloc\(\) function. The ) p
+(function) K
+( returns a poi) p n
+(nter to the new string.) N
+( *) N
+( * @param x0: Address of the input string to be modified.) N
+( * @param x1: Character to be replaced.) N
+( * @param x2: Character to replace 'old' with.) N
 ( * @) S
 (return) K
-( x0: Address of the new string with all occurrences of x1 replaced wit) p n
-(h x2.) N
+( x0: Pointer to the newly created string.) p n
 ( *) N
-( * Registers used: x0, x1, x2, x3, w4, w3) N
+( * Registers used: x0, x1, x2, x3, w4) N
 ( * Registers saved: lr) N
 ( */) N
 ( ) N
-(.text) N
-(.global replace) N
-(replace:) N
-(    STP LR,X0,[SP,) S
-(#-16]!    // PUSH return address and modify string) c n
-(    STP X1,X2,[SP,) p
-(#-16]!    // PUSH old and new character) c n
-(    BL  length           // find length of input string) p n
-(    ADD X0,X0,) S
-(#1            // add 1 to length to account for null terminator) c n
-(    BL  malloc              // allocate memory ) p
+( .global replace) N
+(    replace:) N
+(        // Save the link register and the input string pointer on the stack) N
+(        stp lr, x0, [sp, ) S
+(#-16]!     ) c n
+(        ) p n
+(        // Save the 'old' and 'new' characters on the stack) N
+(        stp x1, x2, [sp, ) S
+(#-16]!     ) c n
+(        ) p n
+(        // Get the length of the input string) N
+(        bl  length              ) N
+(        ) N
+(        // Increment the length by 1 to make space ) S
 (for) K
-( new string) p n
-(    LDP X2,X3,[SP],) S
-(#16      // POP old and new character) c n
-(    LDP LR,X1,[SP],) p
-(#16      // POP return address and modify string) c n
-(    STP LR,X0,[SP,) p
-(#-16]!    // PUSH address of new replaced string) c n
-(loop_replace:) p n
-(    LDRB W4,[X1],) S
-(#1         // load current character and increment string ptr) c n
-(    CMP  W4,) p
-(#0              // if current char == null terminator) c n
-(    B.EQ end_replace        // we are at end of string, end ) p
-(function) K n
-(    CMP  W4,W2              // ) p
-(if) K
-( current char ) p
-(\272) sy
-( char to replace) p n
-(    B.EQ swap_replace       // swap old char ) S
+( the null terminator) p n
+(        add x0, x0, ) S
+(#1             ) c n
+(        ) p n
+(        // Allocate memory ) S
 (for) K
-( new char) p n
-(    // ) S
-(else) K
-(, ) p
-(if) K
-( current char is not the char we're looking ) p
-(for) K n
-(    STRB W4,[X0],) p
-(#1         // store current char to new string and inc ptr) c n
-(    B loop_replace          // continue loop) p n
-(swap_replace:) N
-(    STRB W3,[X0],) S
-(#1         // store new char to string and inc ptr) c n
-(    B loop_replace          // continue loop) p n
-(end_replace:) N
-(    LDP LR,X0,[SP],) S
-(#16      // POP return address and return string address) c n
-(    RET                     // ) p
-(return) K
-( to calling ) p
-(function) K n
+( the new string using malloc) p n
+(        bl  malloc               ) N
+(        ) N
+(        // Restore the 'old' and 'new' characters from the stack) N
+(        ldp x2, x3, [sp], ) S
+(#16       ) c n
+(        ldp lr, x1, [sp], ) p
+(#16       ) c n
+(        stp lr, x0, [sp, ) p
+(#-16]!     ) c n
 () p n
-(replace.s) (Page 1/1) (Mar 28, 23 9:55) title
+(    loop:) N
+(        // Load the ) S
+(next) K
+( character from the input string) p n
+(        ldrb w4, [x1], ) S
+(#1          ) c n
+(        ) p n
+(        // If the character is null, we have reached the end of the string) N
+(        cmp  w4, ) S
+(#0               ) c n
+(        b.eq end                 ) p n
+(        ) N
+(        // If the character is the 'old' character, replace it with the 'new' ch) N
+(aracter) N
+(        cmp  w4, w2               ) N
+(        b.eq swap                ) N
+(        ) N
+(        // Otherwise, copy the character to the new string) N
+(        strb w4, [x0], ) S
+(#1          ) c n
+(        b loop                  ) p n
+() N
+(    swap:) N
+(        // Copy the 'new' character to the new string) N
+(        strb w3, [x0], ) S
+(#1         ) c n
+(replace.s) (Page 1/2) (Mar 28, 23 10:06) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        b loop                   ) p n
+() N
+(    end:) N
+(        // Restore the input string pointer and the link register from the stack) N
+(        ldp lr, x0, [sp], ) S
+(#16       ) c n
+(        ret                     ) p n
+(replace.s) (Page 2/2) (Mar 28, 23 10:06) title
 border
 grestore
 (Printed by Ubuntu) rhead
