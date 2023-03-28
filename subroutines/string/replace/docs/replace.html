@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>replace.s</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl com">/**</span>
+<span class="hl com"> * replace - Replaces all occurrences of character &apos;old&apos; in the given string with character &apos;new&apos;.</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * This function creates a new string in memory, with all occurrences of the character &apos;old&apos; in the input</span>
+<span class="hl com"> * string replaced with the character &apos;new&apos;. The input string remains unchanged. The new string is created</span>
+<span class="hl com"> * dynamically in memory using the malloc() function. The function returns a pointer to the new string.</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * &#64;param x0: Address of the input string to be modified.</span>
+<span class="hl com"> * &#64;param x1: Character to be replaced.</span>
+<span class="hl com"> * &#64;param x2: Character to replace &apos;old&apos; with.</span>
+<span class="hl com"> * &#64;return x0: Pointer to the newly created string.</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, x1, x2, x3, w4</span>
+<span class="hl com"> * Registers saved: lr</span>
+<span class="hl com"> */</span>
+ 
+ <span class="hl ppc">.global replace</span>
+    replace<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Save the link register <span class="hl kwa">and</span> the input string pointer on the stack
+        stp <span class="hl kwb">lr</span><span class="hl opt">,</span> x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!     </span>
+        
+        <span class="hl opt">//</span> Save the <span class="hl str">&apos;old&apos;</span> <span class="hl kwa">and</span> <span class="hl str">&apos;new&apos;</span> characters on the stack
+        stp x1<span class="hl opt">,</span> x2<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!     </span>
+        
+        <span class="hl opt">//</span> Get the length of the input string
+        <span class="hl kwa">bl</span>  length              
+        
+        <span class="hl opt">//</span> Increment the length by <span class="hl num">1</span> to make space for the null terminator
+        <span class="hl kwa">add</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> <span class="hl slc">#1             </span>
+        
+        <span class="hl opt">//</span> Allocate memory for the new string using malloc
+        <span class="hl kwa">bl</span>  malloc               
+        
+        <span class="hl opt">//</span> Restore the <span class="hl str">&apos;old&apos;</span> <span class="hl kwa">and</span> <span class="hl str">&apos;new&apos;</span> characters from the stack
+        ldp x2<span class="hl opt">,</span> x3<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16       </span>
+        ldp <span class="hl kwb">lr</span><span class="hl opt">,</span> x1<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16       </span>
+        stp <span class="hl kwb">lr</span><span class="hl opt">,</span> x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!     </span>
+
+    loop<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Load the next character from the input string
+        ldrb w4<span class="hl opt">, [</span>x1<span class="hl opt">],</span> <span class="hl slc">#1          </span>
+        
+        <span class="hl opt">//</span> If the character is null<span class="hl opt">,</span> we have reached the end of the string
+        <span class="hl kwa">cmp</span>  w4<span class="hl opt">,</span> <span class="hl slc">#0               </span>
+        b.eq end                 
+        
+        <span class="hl opt">//</span> If the character is the <span class="hl str">&apos;old&apos;</span> character<span class="hl opt">,</span> replace it with the <span class="hl str">&apos;new&apos;</span> character
+        <span class="hl kwa">cmp</span>  w4<span class="hl opt">,</span> w2               
+        b.eq swap                
+        
+        <span class="hl opt">//</span> Otherwise<span class="hl opt">,</span> copy the character to the new string
+        strb w4<span class="hl opt">, [</span>x0<span class="hl opt">],</span> <span class="hl slc">#1          </span>
+        <span class="hl kwa">b</span> loop                  
+
+    swap<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Copy the <span class="hl str">&apos;new&apos;</span> character to the new string
+        strb w3<span class="hl opt">, [</span>x0<span class="hl opt">],</span> <span class="hl slc">#1         </span>
+        <span class="hl kwa">b</span> loop                   
+
+    end<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Restore the input string pointer <span class="hl kwa">and</span> the link register from the stack
+        ldp <span class="hl kwb">lr</span><span class="hl opt">,</span> x0<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16       </span>
+        ret                     
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.41, http://www.andre-simon.de/-->
