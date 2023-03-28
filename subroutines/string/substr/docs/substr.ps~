@@ -2,7 +2,7 @@
 %%Title: substr.s
 %%For: root
 %%Creator: a2ps version 4.14
-%%CreationDate: Sat Mar 25 16:36:26 2023
+%%CreationDate: Sat Mar 25 16:40:16 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -792,6 +792,8 @@ x0 y0 moveto
 (        mov x21, x2     // copying end ) S
 (in) K
 ( x21) p n
+(        mov x0, x21) N
+(        sub x0, x0, x20) N
 (        sub x0, x2, x1  // using difference ) S
 (for) K
 ( malloc) p n
@@ -836,19 +838,19 @@ x0 y0 moveto
 (        ldp X10, X11, [sp], 16) N
 (        ldp X8, X9, [sp], 16) N
 (        ldp X6, X7, [sp], 16) N
-(        ldp X4, X5, [sp], 16) N
-(        ldp X2, X3, [sp], 16) N
-(substr.s) (Page 1/2) (Mar 25, 23 16:36) title
+(substr.s) (Page 1/2) (Mar 25, 23 16:40) title
 border
 /v 1 store
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(        ldr X1,     [sp], 16) p n
+(        ldp X4, X5, [sp], 16) p n
+(        ldp X2, X3, [sp], 16) N
+(        ldr X1,     [sp], 16) N
 (        ret lr) N
 (        ) N
 (        ) N
-(substr.s) (Page 2/2) (Mar 25, 23 16:36) title
+(substr.s) (Page 2/2) (Mar 25, 23 16:40) title
 border
 grestore
 (Printed by root) rhead

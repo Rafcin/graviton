@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>indxofstr.s</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl com">/**</span>
+<span class="hl com"> * indxofstr - Returns the index of string str in a particular String.</span>
+<span class="hl com"> * </span>
+<span class="hl com"> * This function searches for the first occurrence of the specified string str in the target </span>
+<span class="hl com"> * string and returns the index of the first occurrence of the string str in the target string. </span>
+<span class="hl com"> * The search starts from the beginning of the target string. If the string str is not found </span>
+<span class="hl com"> * in the target string, the function returns -1. </span>
+<span class="hl com"> *</span>
+<span class="hl com"> * &#64;param x0: Address of the target string to search.</span>
+<span class="hl com"> * &#64;param x1: String to find in the target string.</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, x1, x2, x3, x4</span>
+<span class="hl com"> * Registers saved: x0, x1</span>
+<span class="hl com"> */</span>
+ 
+<span class="hl ppc">.text</span>
+<span class="hl ppc">.global indxofstr</span>
+    indxofstr<span class="hl opt">:</span>
+        str x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!    // Save the address of the target string on the stack</span>
+        ldrb w3<span class="hl opt">, [</span>x1<span class="hl opt">],</span> <span class="hl slc">#1      // Load the first character of the string to search and move the pointer</span>
+        
+    loop<span class="hl opt">:</span>
+        ldrb w2<span class="hl opt">, [</span>x0<span class="hl opt">],</span> <span class="hl slc">#1      // Load the next character of the target string and move the pointer</span>
+        <span class="hl kwa">cmp</span> w2<span class="hl opt">,</span> <span class="hl slc">#0             // Check if the end of the target string has been reached</span>
+        b.eq cherror           <span class="hl opt">//</span> If so<span class="hl opt">,</span> the character to search was <span class="hl kwa">not</span> found in the target string<span class="hl opt">,</span> so return <span class="hl opt">-</span><span class="hl num">1</span>
+        <span class="hl kwa">cmp</span> w2<span class="hl opt">,</span> w3             <span class="hl opt">//</span> Compare the current character of the target string with the first character of the string to search
+        b.eq chfound           <span class="hl opt">//</span> If they match<span class="hl opt">,</span> start searching for the rest of the string to search
+        
+        <span class="hl kwa">b</span> loop                 <span class="hl opt">//</span> If they don<span class="hl str">&apos;t match, keep searching for the character to search in the target string</span>
+<span class="hl str">    </span>
+<span class="hl str">    chfound:</span>
+<span class="hl str">        stp x0, x1, [sp, #-16]! // Save the current target string and string to search pointers on the stack</span>
+<span class="hl str">        </span>
+<span class="hl str">    sloop:</span>
+<span class="hl str">        ldrb w2, [x0], #1      // Load the next character of the target string and move the pointer</span>
+<span class="hl str">        ldrb w4, [x1], #1      // Load the next character of the string to search and move the pointer</span>
+<span class="hl str">        cmp w4, #0             // Check if the end of the string to search has been reached</span>
+<span class="hl str">        b.eq strfound          // If so, the entire string to search was found in the target string, so return the index</span>
+<span class="hl str">        cmp w2, #0             // Check if the end of the target string has been reached</span>
+<span class="hl str">        b.eq strerror          // If so, the string to search was not found in the target string, so return -1</span>
+<span class="hl str">        cmp w2, w4             // Compare the current character of the target string with the current character of the string to search</span>
+<span class="hl str">        b.eq sloop             // If they match, continue searching for the rest of the string to search</span>
+<span class="hl str">        </span>
+<span class="hl str">        ldp x0, x1, [sp], #16  // If they don&apos;</span><span class="hl kwa">t</span> match<span class="hl opt">,</span> pop the saved target string <span class="hl kwa">and</span> string to search pointers off the stack
+        <span class="hl kwa">b</span> loop                 <span class="hl opt">//</span> <span class="hl kwa">and</span> continue searching for the character to search in the target string
+
+    strfound<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Pop the stack frame to restore the saved registers
+        ldp x0<span class="hl opt">,</span> x1<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16</span>
+        <span class="hl opt">//</span> Calculate the index of the found string in the target string
+        ldr x1<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16</span>
+        <span class="hl kwa">sub</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> x1
+        <span class="hl kwa">sub</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> <span class="hl slc">#1</span>
+        <span class="hl opt">//</span> Return the index
+        ret
+
+    cherror<span class="hl opt">:</span>
+        <span class="hl opt">//</span> No string match found<span class="hl opt">,</span> so pop the stack frame to restore the saved registers
+        <span class="hl kwa">add</span> sp<span class="hl opt">,</span> sp<span class="hl opt">,</span> <span class="hl slc">#16</span>
+        <span class="hl opt">//</span> Return <span class="hl opt">-</span><span class="hl num">1</span>
+        mov x0<span class="hl opt">,</span> <span class="hl slc">#-1</span>
+        ret
+
+    strerror<span class="hl opt">:</span>
+        <span class="hl opt">//</span> No string match found<span class="hl opt">,</span> so pop the stack frame to restore the saved registers
+        <span class="hl kwa">add</span> sp<span class="hl opt">,</span> sp<span class="hl opt">,</span> <span class="hl slc">#16</span>
+        <span class="hl opt">//</span> Return <span class="hl opt">-</span><span class="hl num">1</span>
+        mov x0<span class="hl opt">,</span> <span class="hl slc">#-1</span>
+        ret
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.41, http://www.andre-simon.de/-->
