@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Mar 27 22:51:02 2023
+%%CreationDate: Mon Mar 27 22:52:04 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -762,7 +762,7 @@ x0 y0 moveto
 (This is a BeginnersBook tutorial) str
 (") p n
 (    out: .asciz ") S
-(Last 'B' in str1 - ) str
+(Last 'B' in str1 whose index<=15 - ) str
 (") p n
 (    result: .skip 21) N
 (    nl:  .asciz ") S
@@ -782,9 +782,9 @@ x0 y0 moveto
 (        mov w1, ) S
 (#'B') c n
 (        ) p n
-(        // Set the search starting index to 10) N
+(        // Set the search starting index to 15) N
 (        mov x2, ) S
-(#19) c n
+(#15) c n
 (        ) p n
 (        // Call the `lstindxoffrm` subroutine) N
 (        bl  lstindxoffrm) N
@@ -812,7 +812,7 @@ x0 y0 moveto
 (        mov x8, ) p
 (#93 // Service command code 93 terminates) c n
 (        svc 0       // Call linux to terminate the program) p n
-(main.s) (Page 1/1) (Mar 27, 23 22:51) title
+(main.s) (Page 1/1) (Mar 27, 23 22:52) title
 border
 grestore
 (Printed by Ubuntu) rhead

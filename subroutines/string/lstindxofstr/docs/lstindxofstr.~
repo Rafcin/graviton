@@ -2,11 +2,11 @@
 %%Title: lstindxofstr.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Mar 27 23:20:55 2023
+%%CreationDate: Mon Mar 27 23:24:25 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
-%%Pages: 1
+%%Pages: 2
 %%PageOrder: Ascend
 %%DocumentMedia: A4 595 842 0 () ()
 %%DocumentNeededResources: font Courier
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -757,51 +757,146 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(.text) p n
+(/**) p n
+( * lstindxofstr - Returns the index of the last occurrence of string str ) S
+(in) K
+( a gi) p n
+(ven String.) N
+( * ) N
+( * This ) S
+(function) K
+( searches ) p
+(for) K
+( the last occurrence of the specified string str ) p
+(in) K
+() p n
+( the target string,) N
+( * starting from the specified index ") S
+(fromIndex) str
+(" and working backwards. The ) p
+(funct) K n
+(ion) S
+( returns the) p n
+( * index of the last occurrence of the string str ) S
+(in) K
+( the target string after the) p n
+( specified index) N
+( * ") S
+(fromIndex) str
+(". The search starts from the index x2 ) p
+(in) K
+( the target string, where x) p n
+(2 is the specified) N
+( * index ") S
+(fromIndex) str
+(". The ) p
+(function) K
+( returns -1 ) p
+(if) K
+( the string str is not found ) p
+(in) K
+( t) p n
+(he target string.) N
+( *) N
+( * @param x0: Address of the target string to search.) N
+( * @param x1: Address of the string to find ) S
+(in) K
+( the target string.) p n
+( * @param x2: Index to start the search at.) N
+( * @) S
+(return) K
+( x0: Integer index of the last occurrence of string str ) p
+(in) K
+( the target ) p n
+(string after the) N
+( *             specified index ") S
+(fromIndex) str
+(". If the string is not found, returns -) p n
+(1.) N
+( * ) N
+( * Registers used: x0, x1, x2, x3, w4, w5, w6, lr) N
+( * Registers saved: none) N
+( */) N
+() N
+(.text) N
 (.global lstindxofstr) N
 (    lstindxofstr:) N
+(        // Save the ) S
+(return) K
+( address and the input parameters) p n
 (        str lr, [sp, ) S
 (#-16]!) c n
 (        stp x0, x1, [sp, ) p
 (#-16]!) c n
-(        bl length) p n
+(        ) p n
+(        // Get the length of the target string) N
+(        bl length) N
 (        mov x2, x0) N
+(        ) N
+(        // Set the last index of the target string) N
 (        sub x2, x2, ) S
 (#1) c n
 (        ldp x1, x0, [sp], ) p
 (#16) c n
 (        add x2, x2, x1) p n
-(        ldr lr, [sp], ) S
-(#16) c n
-(        stp lr, x2, [sp, ) p
-(#-16]!) c n
-(        stp x1, x0, [sp, ) p
-(#-16]!) c n
-(        bl length) p n
+(        ) N
+(        // Get the length of the string to find) N
+(        bl length) N
 (        mov x3, x0) N
+(        ) N
+(        // Set the last index of the string to find) N
 (        sub x3, x3, ) S
 (#1) c n
 (        ldp x0, x1, [sp], ) p
 (#16) c n
 (        add x3, x3, x1) p n
-(        ldp lr, x2, [sp], ) S
-(#16) c n
-(        //Load last char to find) p n
+(        ) N
+(        // Load the last character of the string to find) N
 (        ldrb w4, [x3], ) S
 (#-1) c n
-(    loop:) p n
+(        ) p n
+(    loop:) N
+(        // Compare the current index with the starting index) N
 (        cmp x2, x0) N
+(        ) N
+(        // If the current index is less than the starting index, then the string) N
+( was not found) N
 (        b.lt cherror) N
+(lstindxofstr.s) (Page 1/3) (Mar 27, 23 23:24) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p n
+(        // Load the byte at the current index) N
 (        ldrb w5, [x2], ) S
 (#-1) c n
-(        cmp w4, w5) p n
+(        ) p n
+(        // Compare the byte with the last character of the string to find) N
+(        cmp w4, w5) N
+(        ) N
+(        // If the byte matches the last character of the string to find, then th) N
+(e string was found) N
 (        b.eq chfound) N
+(        ) N
+(        // If the byte does not match the last character of the string to find, ) N
+(then continue searching backwards) N
 (        b loop) N
+(        ) N
 (    chfound:) N
+(        // Save the last index of the target string and the last index of the st) N
+(ring to find) N
 (        stp x2, x3, [sp, ) S
 (#-16]!) c n
 (    sloop:) p n
+(        // Compare the current index of the string to find with the starting ind) N
+(ex of the string to find) N
 (        cmp x3, x1) N
+(        ) N
+(        // If the current index of the string to find is less than the starting ) N
+(index of the string to find,) N
+(        // then the string was found) N
 (        b.lt strfound) N
 (        cmp x2, x0) N
 (        b.lt strerror) N
@@ -815,24 +910,70 @@ x0 y0 moveto
 (#16) c n
 (        b loop) p n
 (    strfound:) N
+(        // Free the stack space used ) S
+(for) K
+( storing the pointers to the strings) p n
 (        add sp, sp, ) S
 (#16) c n
-(        add x2, x2, ) p
+(        ) p n
+(        // Add 1 to the index of the found string to get the last occurrence) N
+(        add x2, x2, ) S
 (#1) c n
-(        sub x0, x2, x0) p n
+(        ) p n
+(        // Calculate the index of the last occurrence relative to the start of t) N
+(he string) N
+(        sub x0, x2, x0) N
+(        ) N
+(        // Subtract 1 to convert from 1-based indexing to 0-based indexing) N
+(        sub x0, x0, ) S
+(#1) c n
+(        ) p n
+(        // Return the index of the last occurrence) N
 (        ret) N
+(    ) N
+(    // Handle the case where the search character is not found) N
 (    strerror:) N
+(        // Free the stack space used ) S
+(for) K
+( storing the pointers to the strings) p n
 (        add sp, sp, ) S
 (#16) c n
-(    cherror:) p n
+(    ) p n
+(    // Handle the case where the search character is not a valid ASCII character) N
+(    cherror:) N
+(        // Set the ) S
+(return) K
+( value to -1) p n
 (        mov x0, ) S
 (#-1) c n
-(        ret) p n
-(lstindxofstr.s) (Page 1/1) (Mar 27, 23 23:20) title
+(lstindxofstr.s) (Page 2/3) (Mar 27, 23 23:24) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(lstindxofstr.s) (1/1) (Monday March 27, 2023) footer
+(lstindxofstr.s) (1/2) (Monday March 27, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p n
+(        // Return the value -1) N
+(        ret) N
+(lstindxofstr.s) (Page 3/3) (Mar 27, 23 23:24) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(lstindxofstr.s) (2/2) (Monday March 27, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

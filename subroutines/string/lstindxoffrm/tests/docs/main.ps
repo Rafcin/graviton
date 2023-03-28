@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Mar 27 22:52:04 2023
+%%CreationDate: Tue Mar 28 10:15:10 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -773,7 +773,9 @@ x0 y0 moveto
 (.global main) N
 (    // Last 'B' ) S
 (in) K
-( str1: 19) p n
+( str1 whose index) p
+(\243) sy
+(15:10) p n
 (    main:) N
 (        // Load the target string address) N
 (        ldr x0, =str) N
@@ -816,7 +818,7 @@ x0 y0 moveto
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Monday March 27, 2023) footer
+(main.s) (1/1) (Tuesday March 28, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

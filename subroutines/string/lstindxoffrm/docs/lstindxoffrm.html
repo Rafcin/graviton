@@ -9,31 +9,63 @@
 <pre class="hl"><span class="hl com">/**</span>
 <span class="hl com"> * lstindxoffrm - Returns the last occurrence of character ch in the given String.</span>
 <span class="hl com"> *</span>
+<span class="hl com"> * This function searches for the last occurrence of the specified character ch in the target </span>
+<span class="hl com"> * string starting from the specified index &quot;fromIndex&quot; and working backwards. The function </span>
+<span class="hl com"> * returns the index of the last occurrence of the character ch in the target string after </span>
+<span class="hl com"> * the specified index &quot;fromIndex&quot;. The search starts from the index x2 in the target string, </span>
+<span class="hl com"> * where x2 is the specified index &quot;fromIndex&quot;. The function returns -1 if the character ch </span>
+<span class="hl com"> * is not found in the target string.</span>
+<span class="hl com"> *</span>
 <span class="hl com"> * &#64;param x0: Address of the target string to search.</span>
 <span class="hl com"> * &#64;param x1: Char to find in the target string</span>
 <span class="hl com"> * &#64;param x2: Index to start the search at</span>
-<span class="hl com"> * &#64;return x0: Index</span>
+<span class="hl com"> * &#64;return x0: Index of the last occurrence of character ch in the target string after the </span>
+<span class="hl com"> *             specified index &quot;fromIndex&quot;. If the character is not found, returns -1.</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, x1, x2, w3</span>
+<span class="hl com"> * Registers saved: none</span>
 <span class="hl com"> */</span>
- 
  
 <span class="hl ppc">.text</span>
 <span class="hl ppc">.global lstindxoffrm</span>
     lstindxoffrm<span class="hl opt">:</span>
-        <span class="hl opt">//</span>Change last index to ptr
+        <span class="hl opt">//</span> Change the last index to <span class="hl kwa">a</span> pointer
         <span class="hl kwa">add</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> x0
         <span class="hl kwa">sub</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> <span class="hl slc">#1</span>
+        
     loop<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Compare the current index with the starting index
         <span class="hl kwa">cmp</span> x2<span class="hl opt">,</span> x0
+        
+        <span class="hl opt">//</span> If the current index is less than the starting index<span class="hl opt">,</span> then the character was <span class="hl kwa">not</span> found
         b.lt error
+        
+        <span class="hl opt">//</span> Load the byte at the current index
         ldrb w3<span class="hl opt">, [</span>x2<span class="hl opt">],</span> <span class="hl slc">#-1</span>
+        
+        <span class="hl opt">//</span> Compare the byte with the search character
         <span class="hl kwa">cmp</span> w3<span class="hl opt">,</span> w1
+        
+        <span class="hl opt">//</span> If the byte matches the search character<span class="hl opt">,</span> then the character was found
         b.eq found
+        
+        <span class="hl opt">//</span> If the byte does <span class="hl kwa">not</span> match the search character<span class="hl opt">,</span> then continue searching backwards
         <span class="hl kwa">b</span> loop
+        
     found<span class="hl opt">:</span>
+        <span class="hl opt">//</span> <span class="hl kwa">Add</span> <span class="hl num">1</span> to the index of the found character to get the last occurrence
         <span class="hl kwa">add</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> <span class="hl slc">#1</span>
+        
+        <span class="hl opt">//</span> Calculate the index of the last occurrence relative to the start of the string
         <span class="hl kwa">sub</span> x0<span class="hl opt">,</span> x2<span class="hl opt">,</span> x0
+        
+        <span class="hl opt">//</span> Subtract <span class="hl num">1</span> to convert from <span class="hl num">1</span><span class="hl opt">-</span>based indexing to <span class="hl num">0</span><span class="hl opt">-</span>based indexing
+        <span class="hl kwa">sub</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> <span class="hl slc">#1</span>
+        
         ret
+        
     error<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Character <span class="hl kwa">not</span> found<span class="hl opt">,</span> return <span class="hl opt">-</span><span class="hl num">1</span>
         mov x0<span class="hl opt">,</span> <span class="hl slc">#-1</span>
         ret
 </pre>

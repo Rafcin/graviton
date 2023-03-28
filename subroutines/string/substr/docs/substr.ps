@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
 %%Title: substr.s
-%%For: root
+%%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Sat Mar 25 16:40:16 2023
+%%CreationDate: Tue Mar 28 10:15:13 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -766,95 +766,95 @@ x0 y0 moveto
 ( * ALL REGISTERS PRESERVED EXCEPT X0) N
 ( */) N
 () N
-(    .text) N
-(    .global substr) N
-(substr:) N
-(        // storing X0-X19 registers, as malloc will not preserve most of these) N
-(        str X1,     [sp, -16]!) N
-(        stp X2, X3, [sp, -16]!) N
-(        stp X4, X5, [sp, -16]!) N
-(        stp X6, X7, [sp, -16]!) N
-(        stp X8, X9, [sp, -16]!) N
-(        stp X10, X11, [sp, -16]!) N
-(        stp X12, X13, [sp, -16]!) N
-(        stp X14, X15, [sp, -16]!) N
-(        stp X16, X17, [sp, -16]!) N
-(        stp X18, X19, [sp, -16]!) N
-(        stp X20, X21, [sp, -16]!) N
-(        str lr, [sp, -16]!) N
-(        ) N
-(        mov x19, x0     // copying string ) S
+(.text) N
+(.global substr) N
+(    substr:) N
+(            // storing X0-X19 registers, as malloc will not preserve most of the) N
+(se) N
+(            str X1,     [sp, -16]!) N
+(            stp X2, X3, [sp, -16]!) N
+(            stp X4, X5, [sp, -16]!) N
+(            stp X6, X7, [sp, -16]!) N
+(            stp X8, X9, [sp, -16]!) N
+(            stp X10, X11, [sp, -16]!) N
+(            stp X12, X13, [sp, -16]!) N
+(            stp X14, X15, [sp, -16]!) N
+(            stp X16, X17, [sp, -16]!) N
+(            stp X18, X19, [sp, -16]!) N
+(            stp X20, X21, [sp, -16]!) N
+(            str lr, [sp, -16]!) N
+(            ) N
+(            mov x19, x0     // copying string ) S
 (in) K
 ( x19) p n
-(        mov x20, x1     // copying begin ) S
+(            mov x20, x1     // copying begin ) S
 (in) K
 ( x20) p n
-(        mov x21, x2     // copying end ) S
+(            mov x21, x2     // copying end ) S
 (in) K
 ( x21) p n
-(        mov x0, x21) N
-(        sub x0, x0, x20) N
-(        sub x0, x2, x1  // using difference ) S
+(            mov x0, x21) N
+(            sub x0, x0, x20) N
+(            sub x0, x2, x1  // using difference ) S
 (for) K
 ( malloc) p n
-(        cmp x0, ) S
-(#0      // if the difference is less or equal to 0, input is inv) c n
-(alid. exit routine) N
-(        b.ge substrPreLoop) p n
-(        mov x0, ) S
+(            cmp x0, ) S
+(#0      // if the difference is less or equal to 0, input is) c n
+( invalid. exit routine) N
+(            b.ge substrPreLoop) p n
+(            mov x0, ) S
 (#0      // invalid input, throw null) c n
-(        b substrEnd) p n
-(        ) N
-(substrPreLoop:) N
-(        add x0, x0, ) S
+(            b substrEnd) p n
+(            ) N
+(    substrPreLoop:) N
+(            add x0, x0, ) S
 (#1  // need one extra byte for null) c n
-(        bl malloc       // calling malloc with requests bytes) p n
-(        mov x1, ) S
+(            bl malloc       // calling malloc with requests bytes) p n
+(            mov x1, ) S
 (#0) c n
-(substrLoop:) p n
-(        ldrb w17, [x19, x20]    // loading byte of given string into w17) N
-(        strb w17, [x0, x1]      // storing w17 into new string ) N
-(        add x1, x1, ) S
+(    substrLoop:) p n
+(            ldrb w17, [x19, x20]    // loading byte of given string into w17) N
+(            strb w17, [x0, x1]      // storing w17 into new string ) N
+(            add x1, x1, ) S
 (#1) c n
-(        add x20, x20, ) p
+(            add x20, x20, ) p
 (#1        // incrementing) c n
-(        cmp x20, x21            // comparing x19 to x20) p n
-(        b.lt substrLoop         // ) S
+(            cmp x20, x21            // comparing x19 to x20) p n
+(            b.lt substrLoop         // ) S
 (if) K
 ( increment ) p
 (\263) sy
 ( end, goto end label) p n
-(        mov w17, ) S
+(            mov w17, ) S
 (#0             // storing null) c n
-(        strb w17, [x0, x1]) p n
-(substrEnd:) N
-(         // popping registers back from stack ) N
-(        ldr lr, [sp], 16) N
-(        ldp X20, X21, [sp], 16) N
-(        ldp X18, X19, [sp], 16) N
-(        ldp X16, X17, [sp], 16) N
-(        ldp X14, X15, [sp], 16) N
-(        ldp X12, X13, [sp], 16) N
-(        ldp X10, X11, [sp], 16) N
-(        ldp X8, X9, [sp], 16) N
-(        ldp X6, X7, [sp], 16) N
-(substr.s) (Page 1/2) (Mar 25, 23 16:40) title
+(            strb w17, [x0, x1]) p n
+(    substrEnd:) N
+(            // popping registers back from stack ) N
+(            ldr lr, [sp], 16) N
+(            ldp X20, X21, [sp], 16) N
+(            ldp X18, X19, [sp], 16) N
+(            ldp X16, X17, [sp], 16) N
+(            ldp X14, X15, [sp], 16) N
+(            ldp X12, X13, [sp], 16) N
+(            ldp X10, X11, [sp], 16) N
+(            ldp X8, X9, [sp], 16) N
+(substr.s) (Page 1/2) (Mar 26, 23 19:35) title
 border
 /v 1 store
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(        ldp X4, X5, [sp], 16) p n
-(        ldp X2, X3, [sp], 16) N
-(        ldr X1,     [sp], 16) N
-(        ret lr) N
-(        ) N
-(        ) N
-(substr.s) (Page 2/2) (Mar 25, 23 16:40) title
+(            ldp X6, X7, [sp], 16) p n
+(            ldp X4, X5, [sp], 16) N
+(            ldp X2, X3, [sp], 16) N
+(            ldr X1,     [sp], 16) N
+(            ret lr) N
+(        ) S
+(substr.s) (Page 2/2) (Mar 26, 23 19:35) title
 border
 grestore
-(Printed by root) rhead
-(substr.s) (1/1) (Saturday March 25, 2023) footer
+(Printed by Ubuntu) rhead
+(substr.s) (1/1) (Tuesday March 28, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

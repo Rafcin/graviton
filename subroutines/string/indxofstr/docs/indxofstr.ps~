@@ -2,7 +2,7 @@
 %%Title: indxofstr.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Sun Mar 26 20:30:33 2023
+%%CreationDate: Sun Mar 26 20:36:28 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -762,66 +762,160 @@ x0 y0 moveto
 (in) K
 ( a particular String.) p n
 ( * ) N
+( * This ) S
+(function) K
+( searches ) p
+(for) K
+( the first occurrence of the specified string str ) p
+(i) K n
+(n) S
+( the target ) p n
+( * string and returns the index of the first occurrence of the string str ) S
+(in) K
+( the) p n
+( target string. ) N
+( * The search starts from the beginning of the target string. If the string str ) N
+(is not found ) N
+( * ) S
+(in) K
+( the target string, the ) p
+(function) K
+( returns -1. ) p n
+( *) N
 ( * @param x0: Address of the target string to search.) N
 ( * @param x1: String to find ) S
 (in) K
 ( the target string.) p n
+( *) N
+( * Registers used: x0, x1, x2, x3, x4) N
+( * Registers saved: x0, x1) N
 ( */) N
-() N
+( ) N
 (.text) N
 (.global indxofstr) N
 (    indxofstr:) N
 (        str x0, [sp, ) S
-(#-16]!) c n
+(#-16]!    // Save the address of the target string on the s) c n
+(tack) N
 (        ldrb w3, [x1], ) p
-(#1) c n
-(    loop:) p n
+(#1      // Load the first character of the string to sear) c n
+(ch and move the pointer) N
+(        ) p n
+(    loop:) N
 (        ldrb w2, [x0], ) S
-(#1) c n
+(#1      // Load the next character of the target string a) c n
+(nd move the pointer) N
 (        cmp w2, ) p
-(#0) c n
-(        b.eq cherror) p n
-(        cmp w2, w3) N
-(        b.eq chfound) N
-(        b loop) N
+(#0             // Check if the end of the target string has been) c n
+( reached) N
+(        b.eq cherror           // If so, the character to search was not found ) p
+(i) K n
+(n) S
+( the target string, so ) p
+(return) K
+( -1) p n
+(        cmp w2, w3             // Compare the current character of the target st) N
+(ring with the first character of the string to search) N
+(        b.eq chfound           // If they match, start searching ) S
+(for) K
+( the rest of) p n
+( the string to search) N
+(        ) N
+(        b loop                 // If they don't match, keep searching ) S
+(for) K
+( the ch) p n
+(aracter to search ) S
+(in) K
+( the target string) p n
+(    ) N
 (    chfound:) N
 (        stp x0, x1, [sp, ) S
-(#-16]!) c n
-(    sloop:) p n
+(#-16]! // Save the current target string and string to ) c n
+(search pointers on the stack) N
+(        ) p n
+(    sloop:) N
 (        ldrb w2, [x0], ) S
-(#1) c n
+(#1      // Load the next character of the target string a) c n
+(nd move the pointer) N
 (        ldrb w4, [x1], ) p
-(#1) c n
+(#1      // Load the next character of the string to searc) c n
+(h and move the pointer) N
 (        cmp w4, ) p
-(#0) c n
-(        b.eq strfound) p n
+(#0             // Check if the end of the string to search has b) c n
+(een reached) N
+(        b.eq strfound          // If so, the entire string to search was found ) p
+(i) K n
+(n) S
+( the target string, so ) p
+(return) K
+( the index) p n
 (        cmp w2, ) S
-(#0) c n
-(        b.eq strerror) p n
-(        cmp w2, w4) N
-(        b.eq sloop) N
+(#0             // Check if the end of the target string has been) c n
+( reached) N
+(        b.eq strerror          // If so, the string to search was not found ) p
+(in) K
+( t) p n
+(he target string, so ) S
+(return) K
+( -1) p n
+(        cmp w2, w4             // Compare the current character of the target st) N
+(ring with the current character of the string to search) N
+(        b.eq sloop             // If they match, continue searching ) S
+(for) K
+( the rest) p n
+( of the string to search) N
+(indxofstr.s) (Page 1/2) (Mar 26, 23 20:36) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p n
 (        ldp x0, x1, [sp], ) S
-(#16) c n
-(        b loop) p n
+(#16  // If they don't match, pop the saved target stri) c n
+(ng and string to search pointers off the stack) N
+(        b loop                 // and continue searching ) p
+(for) K
+( the character to se) p n
+(arch ) S
+(in) K
+( the target string) p n
+() N
 (    strfound:) N
+(        // Pop the stack frame to restore the saved registers) N
 (        ldp x0, x1, [sp], ) S
 (#16) c n
-(        ldr x1, [sp], ) p
+(        // Calculate the index of the found string ) p
+(in) K
+( the target string) p n
+(        ldr x1, [sp], ) S
 (#16) c n
 (        sub x0, x0, x1) p n
 (        sub x0, x0, ) S
 (#1) c n
-(        ret) p n
+(        // Return the index) p n
+(        ret) N
+() N
 (    cherror:) N
+(        // No string match found, so pop the stack frame to restore the saved re) N
+(gisters) N
 (        add sp, sp, ) S
 (#16) c n
-(        mov x0, ) p
+(        // Return -1) p n
+(        mov x0, ) S
 (#-1) c n
 (        ret) p n
+() N
 (    strerror:) N
+(        // No string match found, so pop the stack frame to restore the saved re) N
+(gisters) N
 (        add sp, sp, ) S
 (#16) c n
-(indxofstr.s) (Page 1/1) (Mar 26, 23 20:30) title
+(        // Return -1) p n
+(        mov x0, ) S
+(#-1) c n
+(        ret) p n
+(indxofstr.s) (Page 2/2) (Mar 26, 23 20:36) title
 border
 grestore
 (Printed by Ubuntu) rhead
