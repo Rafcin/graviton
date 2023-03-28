@@ -2,7 +2,7 @@
 %%Title: lstindxoffrm.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Mar 27 22:38:17 2023
+%%CreationDate: Tue Mar 28 10:15:10 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -763,6 +763,42 @@ x0 y0 moveto
 ( the given Strin) p n
 (g.) N
 ( *) N
+( * This ) S
+(function) K
+( searches ) p
+(for) K
+( the last occurrence of the specified character ch ) p
+() K n
+(in) S
+( the target ) p n
+( * string starting from the specified index ") S
+(fromIndex) str
+(" and working backwards. Th) p n
+(e ) S
+(function) K
+( ) p n
+( * returns the index of the last occurrence of the character ch ) S
+(in) K
+( the target st) p n
+(ring after ) N
+( * the specified index ") S
+(fromIndex) str
+(". The search starts from the index x2 ) p
+(in) K
+( the ta) p n
+(rget string, ) N
+( * where x2 is the specified index ") S
+(fromIndex) str
+(". The ) p
+(function) K
+( returns -1 ) p
+(if) K
+( the ch) p n
+(aracter ch ) N
+( * is not found ) S
+(in) K
+( the target string.) p n
+( *) N
 ( * @param x0: Address of the target string to search.) N
 ( * @param x1: Char to find ) S
 (in) K
@@ -770,39 +806,83 @@ x0 y0 moveto
 ( * @param x2: Index to start the search at) N
 ( * @) S
 (return) K
-( x0: Index) p n
+( x0: Index of the last occurrence of character ch ) p
+(in) K
+( the target string) p n
+( after the ) N
+( *             specified index ") S
+(fromIndex) str
+(". If the character is not found, return) p n
+(s -1.) N
+( *) N
+( * Registers used: x0, x1, x2, w3) N
+( * Registers saved: none) N
 ( */) N
-( ) N
 ( ) N
 (.text) N
 (.global lstindxoffrm) N
 (    lstindxoffrm:) N
-(        //Change last index to ptr) N
+(        // Change the last index to a pointer) N
 (        add x2, x2, x0) N
 (        sub x2, x2, ) S
 (#1) c n
-(    loop:) p n
+(        ) p n
+(    loop:) N
+(        // Compare the current index with the starting index) N
 (        cmp x2, x0) N
+(        ) N
+(        // If the current index is less than the starting index, then the charac) N
+(ter was not found) N
 (        b.lt error) N
+(        ) N
+(        // Load the byte at the current index) N
 (        ldrb w3, [x2], ) S
 (#-1) c n
-(        cmp w3, w1) p n
+(        ) p n
+(        // Compare the byte with the search character) N
+(        cmp w3, w1) N
+(        ) N
+(        // If the byte matches the search character, then the character was foun) N
+(d) N
 (        b.eq found) N
+(        ) N
+(        // If the byte does not match the search character, then continue search) N
+(ing backwards) N
 (        b loop) N
+(        ) N
 (    found:) N
+(        // Add 1 to the index of the found character to get the last occurrence) N
 (        add x2, x2, ) S
 (#1) c n
-(        sub x0, x2, x0) p n
+(        ) p n
+(        // Calculate the index of the last occurrence relative to the start of t) N
+(lstindxoffrm.s) (Page 1/2) (Mar 27, 23 22:55) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(he string) p n
+(        sub x0, x2, x0) N
+(        ) N
+(        // Subtract 1 to convert from 1-based indexing to 0-based indexing) N
+(        sub x0, x0, ) S
+(#1) c n
+(        ) p n
 (        ret) N
+(        ) N
 (    error:) N
+(        // Character not found, ) S
+(return) K
+( -1) p n
 (        mov x0, ) S
 (#-1) c n
 (        ret) p n
-(lstindxoffrm.s) (Page 1/1) (Mar 27, 23 22:37) title
+(lstindxoffrm.s) (Page 2/2) (Mar 27, 23 22:55) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(lstindxoffrm.s) (1/1) (Monday March 27, 2023) footer
+(lstindxoffrm.s) (1/1) (Tuesday March 28, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage
