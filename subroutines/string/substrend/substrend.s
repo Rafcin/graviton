@@ -1,5 +1,5 @@
 /**
- * substr.s
+ * substrend.s
  * PARAMETERS: X0 (STRING)
  *             X1 (RANGE BEGIN)
  * OUTPUT    : X0 (POINTER TO SUBSTRING)
