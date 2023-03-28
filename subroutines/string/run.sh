@@ -26,6 +26,7 @@ for subdir in $subdirs; do
         # Check if there is a tests directory in the subdirectory
         if [ -d "$subdir/tests" ]; then
             # Run the tests in the tests directory
+            echo "[---------------------]"
             name=${subdir#"./"}
             echo "Running tests in $subdir"
             figlet -f small $name
