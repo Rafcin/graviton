@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: root
 %%Creator: a2ps version 4.14
-%%CreationDate: Fri Mar 24 14:44:55 2023
+%%CreationDate: Fri Mar 24 14:45:58 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -777,6 +777,7 @@ x0 y0 moveto
 () N
 (        // Print output text) N
 (        ldr x0,=szcopy) N
+(        ldr x0,[x0]) N
 (        bl  putstring) N
 () N
 (        // Print newline) N
@@ -794,7 +795,7 @@ x0 y0 moveto
 (        mov x8, ) p
 (#93 // Service command code 93 terminates) c n
 (        svc 0       // Call linux to terminate the program) p n
-(main.s) (Page 1/1) (Mar 24, 23 14:44) title
+(main.s) (Page 1/1) (Mar 24, 23 14:45) title
 border
 grestore
 (Printed by root) rhead

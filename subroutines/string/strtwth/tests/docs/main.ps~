@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: strtwth.s
+%%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 28 10:15:12 2023
+%%CreationDate: Tue Mar 28 19:30:01 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,30 +757,65 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/**) p n
-( * strtwth.s) N
-( */) N
-() N
-(.data) N
-(    example: .asciz ") S
-(Example) str
+(.data) p n
+(    prompt: .asciz ") S
+(Does string Hello contain He?) str
+(") p n
+(    str: .asciz ") S
+(Hello) str
+(") p n
+(    he_str: .asciz ") S
+(He) str
+(") p n
+(    out_true: .asciz ") S
+(true) str
+(") p n
+(    out_false: .asciz ") S
+(false) str
+(") p n
+(    nl:  .asciz ") S
+(\\n) str
 (") p n
 () N
 (.text) N
-(.global strtwth) N
-(    strtwth:) N
-(        // Exit) N
-(        mov x0, 0       // Move 0 to x0 to indicate successful termination) N
-(        mov X8, ) S
-(#93     // Set x8 to 93 to indicate the "exit" system call) c n
-(        svc 0           // Call the ") p
-(exit) str
-(" system call to terminate the program) p n
-(strtwth.s) (Page 1/1) (Mar 13, 23 0:38) title
+(.global main) N
+(    main:) N
+(        // Print prompt) N
+(        ldr x0, =prompt) N
+(        bl  putstring) N
+(        // Load the target string address) N
+(        ldr x0, =str) N
+(        ) N
+(        // Load the string to find) N
+(        ldr x1, =he_str) N
+(        ) N
+(        // Call the `strtwthpos` subroutine) N
+(        bl  strtwthpos) N
+(        ) N
+(        // Print the output text) N
+(        ldr x0, =out_false) N
+(        cmp x0, x29) N
+(        b.eq is_true) N
+(        ldr x0, =out_true) N
+(    is_true:) N
+(        bl putstring) N
+(        ) N
+(        // Print newline) N
+(        ldr x0, =nl) N
+(        bl  putstring) N
+(        ) N
+(        // Setup the parameters to exit the program and then call Linux to do it) N
+(.) N
+(        mov x0, ) S
+(#0  // Sets return code to 0) c n
+(        mov x8, ) p
+(#93 // Service command code 93 terminates) c n
+(        svc 0       // Call linux to terminate the program) p n
+(main.s) (Page 1/1) (Mar 28, 23 19:29) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(strtwth.s) (1/1) (Tuesday March 28, 2023) footer
+(main.s) (1/1) (Tuesday March 28, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage
