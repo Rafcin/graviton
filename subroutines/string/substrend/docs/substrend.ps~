@@ -2,7 +2,7 @@
 %%Title: substrend.s
 %%For: root
 %%Creator: a2ps version 4.14
-%%CreationDate: Sun Mar 26 12:02:21 2023
+%%CreationDate: Sun Mar 26 12:05:12 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -812,7 +812,7 @@ x0 y0 moveto
 (substrLoop:) p n
 (        ldrb w17, [x19, x20]    // loading byte of given string into w17) N
 (        strb w17, [x0, x21]     // storing w17 into new string ) N
-(        add x1, x1, ) S
+(        add x21, x21, ) S
 (#1          // incrementing) c n
 (        add x20, x20, ) p
 (#1        // incrementing) c n
@@ -840,7 +840,7 @@ x0 y0 moveto
 (        ret lr) N
 (        ) N
 (        ) N
-(substrend.s) (Page 1/1) (Mar 26, 23 12:02) title
+(substrend.s) (Page 1/1) (Mar 26, 23 12:05) title
 border
 grestore
 (Printed by root) rhead

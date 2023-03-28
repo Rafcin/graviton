@@ -1,5 +1,5 @@
 .data
-    str1:   .asciz "this is a copied string :D"
+    str1:   .asciz "This is a copied string!"
     szcopy: .quad 0
     nl:     .asciz "\n"
 

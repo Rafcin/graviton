@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Check if figlet is installed
+if ! command -v figlet &> /dev/null; then
+    echo "figlet not found, installing..."
+    sudo apt install figlet
+fi
+
+# Check if toilet is installed
+if ! command -v toilet &> /dev/null; then
+    echo "toilet not found, installing..."
+    sudo apt install toilet
+fi
+
 # Find all subdirectories
 subdirs=$(find . -type d)
 
@@ -14,13 +26,14 @@ for subdir in $subdirs; do
         # Check if there is a tests directory in the subdirectory
         if [ -d "$subdir/tests" ]; then
             # Run the tests in the tests directory
+            name=${subdir#"./"}
             echo "Running tests in $subdir"
-            echo "[------ Start of $subdir ------]"
+            figlet -f small $name
             echo -e "\n\n"
             cd $subdir/tests
             ./output/main
             echo -e "\n\n"
-            echo "[------ End of $subdir ------]"
+            echo "[---------------------]"
             cd ../../
         fi
     fi

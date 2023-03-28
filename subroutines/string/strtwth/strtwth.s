@@ -1,14 +1,18 @@
 /**
- * strtwth.s
+ * strtwth - Returns true if the given string starts with the specified prefix
+ *
+ * @param x0: Address of the target string to check.
+ * @param x1: Prefix string to check for.
+ * @return x0: 1 if the target string starts with the prefix, 0 otherwise.
+ *
+ * Registers used: x0, x1, x2, x3, x4, x5, lr
+ * Registers saved: none
  */
-
-.data
-    example: .asciz "Example"
-
 .text
 .global strtwth
     strtwth:
-        // Exit
-        mov x0, 0       // Move 0 to x0 to indicate successful termination
-        mov X8, #93     // Set x8 to 93 to indicate the "exit" system call
-        svc 0           // Call the "exit" system call to terminate the program
+            mov x2, #0      // Initialize the search index to 0
+            bl strtwthpos   // Call strtwthpos to check if the string starts with the prefix
+            cmp x0, #1      // Compare the return value of strtwthpos with 1
+            cset x0, eq     // Set x0 to 1 if the prefix was found, 0 otherwise
+            ret
