@@ -28,7 +28,6 @@ _start:
         ldr lr, [sp], #16   // popping lr
         ret lr              // returning
 
-
 .inputHandling:
         str lr, [sp, #-16]!
         mov x0, #1          // setting default return of 1
@@ -50,6 +49,8 @@ _start:
         b.eq .input2
         cmp w0, #'1'
         b.eq .input1
+        ldr x0,=szInvalid
+        bl putstring
         b .exitInput
 
 .input1:
@@ -57,6 +58,28 @@ _start:
         b .exitInput
 .input2:
         // add string
+        // 2a == add string from input
+        // 2b == add string from file
+        ldrb w0, [x1, #1]
+        cmp w0, #'a'
+        b.eq .addInput
+        cmp w0, #'b'
+        b.eq .addFile
+        ldr x0,=szInvalid
+        bl putstring
+        b .exitInput
+
+    .addInput:
+        // requirement : x1 = head, x2 = tail
+        ldr x1,=headPtr
+        ldr x2,=tailPtr
+        bl addString
+        b .exitInput
+    .addFile:
+        // requirement : x1 = head, x2 = tail
+        ldr x1,=headPtr
+        ldr x2,=tailPtr
+        bl addString
         b .exitInput
 .input3:
         // delete string given an index #
@@ -77,6 +100,7 @@ _start:
         ret lr
 
     .data
+szInvalid:  .asciz "\nInvalid input.\n"
 szInputF:   .quad 0
 szOutputF:  .quad 0
 szDefInput: .asciz "input.txt"
@@ -88,7 +112,7 @@ sz2:        .asciz "there"
 bBuffer:    .skip  512
 bBufferR:   .skip  512
 iLimitNum:  .skip  21
-szMenu:     .asciz "<1> View all strings\n\n<2> Add string\n    <a> from Keyboard\n    <b> from File. Static file named input.txt\n\n<3> Delete string. Given an index #, delete the entire string and de-allocate memory (including the node).\n\n<4> Edit string. Given an index #, replace old string w/ new string. Allocate/De-allocate as needed.\n\n<5> String search. Regardless of case, return all strings that match the substring given.\n\n<6> Save File (output.txt)\n\n<7> Quit\n\n>"
+szMenu:     .asciz "\n<1> View all strings\n\n<2> Add string\n    <a> from Keyboard\n    <b> from File. Static file named input.txt\n\n<3> Delete string. Given an index #, delete the entire string and de-allocate memory (including the node).\n\n<4> Edit string. Given an index #, replace old string w/ new string. Allocate/De-allocate as needed.\n\n<5> String search. Regardless of case, return all strings that match the substring given.\n\n<6> Save File (output.txt)\n\n<7> Quit\n\n>"
 szHeader:   .asciz "        MASM4 TEXT EDITOR\n    Data Structure Heap Memory Consumption:"
 szBytes:    .asciz "bytes\n"
 szNumNodes: .asciz "Number of Nodes: "
