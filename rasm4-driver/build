@@ -1,0 +1,2 @@
+as -g driver.s -o driver.o
+ld -lc ll.o driver.o ../obj/*.o -o driver
