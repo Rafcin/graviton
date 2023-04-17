@@ -1,2 +1,8 @@
 as -g driver.s -o driver.o
 ld -lc driver.o ll.o addString.o ./obj/*.o -o driver
+
+as -g ll.s -o ll.o
+ld -lc ll.o ./obj/*.o
+
+as -g addString.s -o addString.o
+ld -lc addString.o ll.o ./obj/*.o
