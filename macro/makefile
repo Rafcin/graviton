@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 # Define the lab name
 NAME = main
 
@@ -29,13 +31,18 @@ $(shell mkdir -p $(DOCS_DIR) $(OUTPUT_DIR))
 # Find all the object files in subroutines
 EXTERNAL_OBJS = $(shell find ./subroutines -type f -name '*.o')
 
+# Find all the subdirectories in subroutines
+SUBDIRS = $(wildcard ./subroutines/*)
+
 # Define the build rules
 all: build_subroutines $(OUTPUT_DIR)/$(TARGET) $(DOCS_DIR)/$(NAME).pdf $(DOCS_DIR)/$(NAME).html
 
 build_subroutines:
-	$(MAKE) -C ./subroutines/draw-editor
-	$(MAKE) -C ./subroutines/front-page
-	$(MAKE) -C ./subroutines/text-editor
+	for dir in ./subroutines/*; do \
+	    if [ -d "$$dir" ]; then \
+	        cd "$$dir" && make; \
+	    fi; \
+	done
 
 $(OUTPUT_DIR)/$(TARGET): $(OBJ)
 	$(LINK) -o $@ $(OBJ) $(EXTERNAL_OBJS) -lpanel -lncurses -lm
@@ -57,7 +64,4 @@ $(DOCS_DIR)/$(NAME).html: $(NAME).s
 
 # Define the clean rule
 clean:
-	rm -rf $(OUTPUT_DIR) $(DOCS_DIR)
-	$(MAKE) -C ./subroutines/draw-editor clean
-	$(MAKE) -C ./subroutines/front-page clean
-	$(MAKE) -C ./subroutines/text-editor clean
+	rm -rf $(OUTPUT_DIR) $(DOCS_DIR) ./subroutines
