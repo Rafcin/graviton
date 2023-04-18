@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Mar 27 23:00:52 2023
+%%CreationDate: Tue Mar 28 20:04:10 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,42 +757,42 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(.data ) p n
+(.data) p n
 (    str: .asciz ") S
-(This is a BeginnersBook tutorial) str
+(This is a test String) str
 (") p n
-(    out: .asciz ") S
-(Last 'B' in str1 - ) str
+(    suffix: .asciz ") S
+(String) str
 (") p n
-(    result: .skip 21) N
+(    out_true: .asciz ") S
+(true) str
+(") p n
+(    out_false: .asciz ") S
+(false) str
+(") p n
 (    nl:  .asciz ") S
 (\\n) str
 (") p n
-(    ) N
+() N
 (.text) N
 (.global main) N
 (    main:) N
 (        // Load the target string address) N
 (        ldr x0, =str) N
 (        ) N
-(        // Set the search character to 'B') N
-(        mov w1, ) S
-(#'B') c n
-(        ) p n
-(        // Call the `lstindxof` subroutine) N
-(        bl  lstindxof) N
+(        // Load the suffix string to find) N
+(        ldr x1, =suffix) N
 (        ) N
-(        // Convert the result to a string) N
-(        ldr x1, =result) N
-(        bl  int64asc) N
+(        // Call the `endwth` subroutine) N
+(        bl  endwth) N
 (        ) N
 (        // Print the output text) N
-(        ldr x0, =out) N
-(        bl  putstring) N
-(        ) N
-(        // Print the result) N
-(        ldr x0, =result) N
-(        bl  putstring) N
+(        ldr x0, =out_false) N
+(        cmp x0, x29) N
+(        b.eq is_true) N
+(        ldr x0, =out_true) N
+(    is_true:) N
+(        bl putstring) N
 (        ) N
 (        // Print newline) N
 (        ldr x0, =nl) N
@@ -805,11 +805,11 @@ x0 y0 moveto
 (        mov x8, ) p
 (#93 // Service command code 93 terminates) c n
 (        svc 0       // Call linux to terminate the program) p n
-(main.s) (Page 1/1) (Mar 27, 23 23:00) title
+(main.s) (Page 1/1) (Mar 28, 23 20:04) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Monday March 27, 2023) footer
+(main.s) (1/1) (Tuesday March 28, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

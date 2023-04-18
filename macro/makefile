@@ -10,17 +10,14 @@ SRC = $(NAME).s
 # Define the object file
 OBJ = output/$(SRC:.s=.o)
 
-# Define the external object directories as a list
-EXTERNAL_DIRS = ../../external
-
 # Define the flags for debugging
-DEBUG_FLAGS = -g
+DEBUG_FLAGS = -g -gdwarf-2
 
 # Define the compile command
 CC = as $(DEBUG_FLAGS)
 
 # Define the linking command
-LINK = ld -lc -lm -e $(NAME)
+LINK = g++ -L/usr/lib/aarch64-linux-gnu
 
 # Define the output directories
 DOCS_DIR = docs
@@ -29,11 +26,19 @@ OUTPUT_DIR = output
 # Create output directory if it does not exist
 $(shell mkdir -p $(DOCS_DIR) $(OUTPUT_DIR))
 
+# Find all the object files in subroutines
+EXTERNAL_OBJS = $(shell find ./subroutines -type f -name '*.o')
+
 # Define the build rules
-all: $(OUTPUT_DIR)/$(TARGET) $(DOCS_DIR)/$(NAME).pdf $(DOCS_DIR)/$(NAME).html
+all: build_subroutines $(OUTPUT_DIR)/$(TARGET) $(DOCS_DIR)/$(NAME).pdf $(DOCS_DIR)/$(NAME).html
+
+build_subroutines:
+	$(MAKE) -C ./subroutines/draw-editor
+	$(MAKE) -C ./subroutines/front-page
+	$(MAKE) -C ./subroutines/text-editor
 
 $(OUTPUT_DIR)/$(TARGET): $(OBJ)
-	$(LINK) -o $@ $(OBJ) $(foreach DIR,$(EXTERNAL_DIRS),$(wildcard $(DIR)/*.o))
+	$(LINK) -o $@ $(OBJ) $(EXTERNAL_OBJS) -lpanel -lncurses -lm
 
 $(OBJ): $(SRC)
 	$(CC) -o $@ $<
@@ -53,3 +58,6 @@ $(DOCS_DIR)/$(NAME).html: $(NAME).s
 # Define the clean rule
 clean:
 	rm -rf $(OUTPUT_DIR) $(DOCS_DIR)
+	$(MAKE) -C ./subroutines/draw-editor clean
+	$(MAKE) -C ./subroutines/front-page clean
+	$(MAKE) -C ./subroutines/text-editor clean

@@ -2,7 +2,7 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Mar 14 20:31:35 2023
+%%CreationDate: Tue Apr 18 03:05:45 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,153 +757,132 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(// I wanted to be different so I used length but it doesn't work properly it onl) p n
-(y prints ") S
-(Cat in) str
-("...) p n
-(.data) N
-(    szX: .asciz ") S
-(Cat         ) str
+(.data) p n
+(app_name: .asciz ") S
+(Macro) str
 (") p n
-(    szY: .asciz ") S
-(in the hat.) str
+(app_description: .asciz ") S
+(Macro is a Nano-like app that lets you create, edit, and delete text files.) str
 (") p n
-(    ptr: .quad 0) N
-(    nl: .asciz ") S
-(\\n) str
+(untitled_string:) N
+() S 8 T (.string) S 16 T (") S
+(Untitled) str
 (") p n
+() S 8 T (.align) S 16 T (3) N
+(empty_string:) N
+() S 8 T (.string) S 16 T ("") N
+() S 8 T (.text) N
+() S 8 T (.align) S 16 T (2) N
+(/*) N
+(  __  __       _       ) N
+( |  \\/  |     \(_\)      ) N
+( | \\  / | __ _ _ _ __  ) N
+( | |\\/| |/ _` | | '_ \\ ) N
+( | |  | | \(_| | | | | |) N
+( |_|  |_|\\__,_|_|_| |_|) N
+(                       ) N
+(*/) N
+(.global) S 8 T (main) N
+(.type) S 8 T (main, %) S
+(function) K n
+(// main ) p
+(function) K n
+(main:) p n
+(    .LFB0:) N
+(    .cfi_startproc) N
 () N
-(.text) N
-(.global main) N
-(    main:) N
-(        // Calculate the length of szX and szY) N
-(        ldr x0, =szX) N
-(        bl length) N
-(        sub x4, x0, ) S
-(#1) c n
-() p n
-(        ldr x0, =szY) N
-(        bl length) N
-(        mov x5, x0) N
+(    stp x29, x30, [sp, -32]!) N
+(    .cfi_def_cfa_offset 32) N
+(    .cfi_offset 29, -32) N
+(    .cfi_offset 30, -24) N
+(    mov x29, sp) N
 () N
-(        // Calculate the total size needed \(plus one byte ) S
-(for) K
-( null terminator\)) p n
-(        add x0, x4, x5) N
-(        add x0, x0, ) S
-(#1) c n
-(        bl malloc) p n
-(        ldr x1, =ptr) N
-(        str x0, [x1]) N
+(    // Initialization) N
+(    bl  initscr) N
+(    bl  start_color) N
+(    mov w2, 4) N
+(    mov w1, 7) N
+(    mov w0, 1) N
+(    bl  init_pair) N
+(    adrp    x0, :got:stdscr) N
+(    ldr x0, [x0, ) S
+(#:got_lo12:stdscr]) c n
+(    ldr x0, [x0]) p n
+(    mov w1, 1) N
+(    bl  keypad) N
+(    bl  cbreak) N
+(    bl  noecho) N
 () N
-(        // Set destination and source pointers ) S
-(for) K
-( custom_memcpy) p n
-(        ldr x19, =ptr) N
-(        ldr x19, [x19]) N
-(        ldr x20, =szX) N
-(        mov x21, x4) N
+(main_loop:) N
+(    adrp    x0, app_description) N
+(    add x1, x0, :lo12:app_description) N
+(    adrp    x0, app_name) N
+(    add x0, x0, :lo12:app_name) N
 () N
-(        // Copy szX to the allocated memory) N
-(        bl custom_memcpy) N
+(    bl  front_page) N
+(    str w0, [sp, 28]) N
 () N
-(        // Set destination and source pointers ) S
-(for) K
-( custom_memcpy) p n
-(        ldr x19, =ptr) N
-(        ldr x19, [x19]) N
-(        add x19, x19, x4) N
-(        ldr x20, =szY) N
-(        mov x21, x5) N
+(    ldr w0, [sp, 28]) N
+(    cmp w0, 3) N
+(    beq exit) N
 () N
-(        // Copy szY to the allocated memory after szX) N
-(        bl custom_memcpy) N
-() N
-(        // Add null terminator to the end of the combined string) N
-(        mov w3, ) S
-(#0) c n
-(        strb w3, [x19], ) p
-(#1) c n
-() p n
-(        // Print the concatenated string) N
-(        ldr x0, =ptr) N
-(        ldr x0, [x0]) N
-(        bl putstring) N
-() N
-(        // Print a newline character) N
-(        ldr x0, =nl) N
-(        bl putstring) N
-() N
-(        // Free allocated memory) N
-(        ldr x0, =ptr) N
-(        ldr x0, [x0]) N
-(main.s) (Page 1/2) (Mar 14, 23 20:31) title
+(    ldr w0, [sp, 28]) N
+(    cmp w0, 3) N
+(main.s) (Page 1/2) (Apr 18, 23 3:03) title
 border
 /v 1 store
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(        bl free) p n
+(    bgt main_loop) p n
 () N
-(        // Exit the program) N
-(        mov x0, 0       // Move 0 to x0 to indicate successful termination) N
-(        mov x8, ) S
-(#93     // Set x8 to 93 to indicate the "exit" system call) c n
-(        svc 0           // Call the ") p
-(exit) str
-(" system call to terminate the program) p n
+(    ldr w0, [sp, 28]) N
+(    cmp w0, 1) N
+(    beq create_new_file) N
 () N
-(/**) N
-( * custom_memcpy - copies memory from source to destination) N
-( * @param x19: pointer to the destination) N
-( * @param x20: pointer to the source) N
-( * @param x21: number of bytes to copy) N
-( */) N
-(.global custom_memcpy) N
-(    custom_memcpy:) N
-(        cbz x21, memcpy_done // If x21 is 0, there's nothing to copy; ) S
-(return) K n
-(    memcpy_loop:) p n
-(        ldrb w3, [x20], ) S
-(#1    // Load a byte from source \(x20\) and increment x20) c n
-(        strb w3, [x19], ) p
-(#1    // Store the byte to destination \(x19\) and increme) c n
-(nt x19) N
-(        subs x21, x21, ) p
-(#1     // Decrement the count \(x21\)) c n
-(        b.ne memcpy_loop      // If x21 is not 0, continue copying bytes) p n
-(    memcpy_done:) N
-(        ret) N
+(    ldr w0, [sp, 28]) N
+(    cmp w0, 2) N
+(    beq open_existing_file) N
 () N
-(/**) N
-( * length - calculates the length of a null-terminated string) N
-( * @param x0: pointer to the beginning of the string) N
-( * @) S
-(return) K
-(: the length of the string \(excluding the null terminator\)) p n
-( */) N
-(.global length) N
-(length:) N
-(    mov x1, x0          // Copy pointer to x1) N
-(    length_loop:) N
-(        ldrb w2, [x0], ) S
-(#1    // Load a byte from the string \(x0\) and increment x) c n
-(0) N
-(        cbz w2, length_done  // If the byte is null, ) p
-(return) K n
-(        b length_loop        // Otherwise, continue looping) p n
-(    length_done:) N
-(        sub x0, x0, x1      // Subtract the starting pointer from the current po) N
-(inter) N
-(        sub x0, x0, ) S
-(#1       // Subtract 1 from the result to exclude the null t) c n
-(erminator) N
-(        ret) p
-(main.s) (Page 2/2) (Mar 14, 23 20:31) title
+(main_loop_continue:) N
+(    b   main_loop) N
+() N
+(// Create new file) N
+(create_new_file:) N
+(    adrp    x0, untitled_string) N
+(    add x0, x0, :lo12:untitled_string) N
+(    bl  text_editor) N
+(    b   main_loop_continue) N
+() N
+(// Open existing file) N
+(open_existing_file:) N
+(    adrp    x0, empty_string) N
+(    add x0, x0, :lo12:empty_string) N
+(    bl  text_editor) N
+(    b   main_loop_continue) N
+() N
+(// Exit application) N
+(exit:) N
+(    bl  endwin) N
+(    mov w0, 0) N
+() N
+(main_cleanup:) N
+(    ldp x29, x30, [sp], 32) N
+(    .cfi_restore 30) N
+(    .cfi_restore 29) N
+(    .cfi_def_cfa_offset 0) N
+(    ret) N
+(    .cfi_endproc) N
+() N
+(main_end:) N
+(    .size   main, .-main) N
+(    .section    .rodata) N
+(    .align  3) S
+(main.s) (Page 2/2) (Apr 18, 23 3:03) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Tuesday March 14, 2023) footer
+(main.s) (1/1) (Tuesday April 18, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage
