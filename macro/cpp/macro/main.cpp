@@ -38,6 +38,81 @@ void save_file(const char *filename, const std::list<std::string> &lines) {
     outfile.close();
 }
 
+std::string get_user_input(const char *prompt) {
+    nocbreak();
+    echo();
+    curs_set(TRUE);
+
+    char input[256];
+    mvprintw(LINES - 1, 0, "%s", prompt);
+    getstr(input);
+
+    curs_set(FALSE);
+    noecho();
+    cbreak();
+
+    return std::string(input);
+}
+
+void highlight_search(size_t found_pos, size_t search_length, int y) {
+    attron(COLOR_PAIR(1));
+    for (size_t i = 0; i < search_length; i++) {
+        mvaddch(y, found_pos + i, mvinch(y, found_pos + i) & A_CHARTEXT);
+    }
+    attroff(COLOR_PAIR(1));
+    refresh();
+}
+
+void search_text(std::list<std::string> &lines, const std::string &search_str, int &cursor_x, int &cursor_y, int &scroll_offset, std::list<std::string>::iterator &current_line) {
+    if (search_str.empty()) return;
+
+    bool first_instance = true;
+
+    for (size_t line_idx = 0; auto &line : lines) {
+        size_t found_pos = 0;
+
+        while ((found_pos = line.find(search_str, found_pos)) != std::string::npos) {
+            if (first_instance) {
+                // Move the cursor to the first found text
+                cursor_x = found_pos;
+                cursor_y = 3 - scroll_offset + line_idx;
+                current_line = lines.begin();
+                std::advance(current_line, line_idx);
+
+                // Update scroll_offset if found text is off-screen
+                if (cursor_y >= LINES - 1) {
+                    scroll_offset += cursor_y - (LINES - 2);
+                    cursor_y = LINES - 2;
+                }
+
+                first_instance = false;
+            }
+
+            // Display the highlighted text at the correct position on the screen
+            if (3 + line_idx - scroll_offset >= 3 && 3 + line_idx - scroll_offset < LINES - 1) {
+                highlight_search(found_pos, search_str.length(), 3 + line_idx - scroll_offset);
+            }
+
+            found_pos += search_str.length();
+        }
+
+        ++line_idx;
+    }
+}
+
+void replace_text(std::list<std::string> &lines, const std::string &search_str, const std::string &replace_str) {
+    if (search_str.empty()) return;
+
+    for (auto &line : lines) {
+        size_t found_pos = line.find(search_str);
+
+        if (found_pos != std::string::npos) {
+            line.replace(found_pos, search_str.length(), replace_str);
+            break;
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
     initscr();
     raw();
@@ -67,13 +142,20 @@ int main(int argc, char *argv[]) {
     }
 
     std::list<std::string>::iterator current_line = lines.begin();
+    std::string search_str;
+    std::string replace_str;
+
+    if (has_colors()) {
+        start_color();
+        init_pair(1, COLOR_YELLOW, COLOR_BLACK);
+    }
 
     while (true) {
         clear();
 
         // Display header
         attron(A_REVERSE);
-        mvprintw(0, 0, " C++ Nano Clone (Ctrl+X: Exit, Ctrl+O: Save) ");
+        mvprintw(0, 0, "Macro");
         attroff(A_REVERSE);
 
         // Display linked list memory usage
@@ -88,16 +170,30 @@ int main(int argc, char *argv[]) {
             }
             line_count++;
         }
+        // Call the search function here to highlight the search results
+        search_text(lines, search_str, cursor_x, cursor_y, scroll_offset, current_line);
 
+        attron(A_BOLD);
         // Display controls
-        mvprintw(LINES - 1, 0, "^X:Exit  ^O:Save");
-
+        mvprintw(LINES - 1, 0, "^X:Exit  ^O:Save  ^W:Search  ^/:Replace");
+        attroff(A_BOLD);
         // Position the cursor
         move(cursor_y, cursor_x);
 
         ch = getch();
 
         switch (ch) {
+        //https://www.physics.udel.edu/~watson/scen103/ascii.html
+        case 23: // Ctrl+W (search)
+            search_str = get_user_input("Search: ");
+            search_text(lines, search_str, cursor_x, cursor_y, scroll_offset, current_line);
+            move(cursor_y, cursor_x);
+            break;
+        case 28: // Ctrl+\ (replace)
+            search_str = get_user_input("Search for: ");
+            replace_str = get_user_input("Replace with: ");
+            replace_text(lines, search_str, replace_str);
+            break;
         case 24: // Ctrl+X
             endwin();
             return 0;
@@ -202,5 +298,7 @@ int main(int argc, char *argv[]) {
             }
             break;
         }
+        refresh();
+        move(cursor_y, cursor_x);
     }
 }
