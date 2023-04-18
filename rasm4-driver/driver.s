@@ -72,13 +72,11 @@ _start:
     .addInput:
         // requirement : x1 = head, x2 = tail
         ldr x1,=headPtr
-        ldr x2,=tailPtr
         bl addString
         b .exitInput
     .addFile:
         // requirement : x1 = head, x2 = tail
         ldr x1,=headPtr
-        ldr x2,=tailPtr
         bl addString
         b .exitInput
 .input3:
@@ -106,7 +104,6 @@ szOutputF:  .quad 0
 szDefInput: .asciz "input.txt"
 szDefOut:   .asciz "output.txt"
 headPtr:    .quad 0
-tailPtr:    .quad 0
 sz1:        .asciz "hello"
 sz2:        .asciz "there"
 bBuffer:    .skip  512

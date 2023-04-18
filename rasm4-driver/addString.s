@@ -7,6 +7,7 @@
     .equ RW_RW____, 0660
     .equ AT_FDCWD, -100
     .data
+szInvalid:   .asciz "File invalid. Try again.\n"
 ptr:         .quad 0
 szEnterFile: .asciz "Enter file name: "
 szFileName:  .skip 64
@@ -52,7 +53,7 @@ addString:
             // ------
 
             cmp w0, #0
-            b.le exit
+            b.le invalidFile
             ldr x4,=iFD
             strb w0,[x4]
             
@@ -63,8 +64,9 @@ addString:
                 cmp x0, #0
                 beq last
                 
-                ldr x0,=fileBuf
-                bl putstring
+                //ldr x0,=fileBuf
+                //bl putstring
+                ldr x1,=fileBuf
                 ldr x0,=ptr
                 bl ll
 
@@ -77,10 +79,16 @@ addString:
                 ldrb w0,[x0]
                 mov x8, #57
                 svc 0
+                b exit
+                // used for debugging purposes
                 //b printNodes
+            invalidFile:
+                ldr x0,=szInvalid
+                bl putstring
             exit:
                 ldp x1, x2, [sp, -16]
                 ldr lr, [sp], 16
+                ldr x0,=ptr     // loading headptr for return
                 ret
             getchar:
                 ldr x0,=iFD
@@ -126,3 +134,24 @@ addString:
             skip:
                 ldr x30, [sp], #16
                 ret
+
+        printNodes:
+            stp x0, x19, [sp, #-16]!
+            ldr x19,=ptr
+            ldr x19,[x19]
+            mov x0, x19
+        loop:
+            cmp x0, #0
+            b.eq preExit
+            ldr x0,[x0]
+            bl putstring
+
+            ldr x0, [x19, #8]
+            cmp x0, #0
+            b.eq preExit
+            ldr x19, [x19, #8]
+            mov x0, x19
+            b loop
+        preExit:
+            ldp x0, x19, [sp], 16
+            b exit
