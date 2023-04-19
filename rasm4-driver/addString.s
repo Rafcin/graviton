@@ -8,8 +8,9 @@
     .equ AT_FDCWD, -100
     .data
 szInvalid:   .asciz "File invalid. Try again.\n"
-ptr:         .quad 0
+//ptr:         .quad 0
 szEnterFile: .asciz "Enter file name: "
+szEnterStr:  .asciz "Enter string: " 
 szFileName:  .skip 64
 szFile:      .asciz "input.txt"
 szEOL:       .asciz "end of line"
@@ -27,10 +28,32 @@ addString:
     ret lr          // if for some reason the input is incorrect it will return
 
     fromText:
-            ret lr
+            str lr, [sp, #-16]!
+            stp x1, x2, [sp, #-16]!
+
+            mov x20, x1
+            mov x21, x2
+
+            ldr x0,=szEnterStr
+            bl putstring
+            
+            ldr x0,=fileBuf
+            mov x1, #1024
+            bl getstring
+
+            ldr x19,=fileBuf
+            bl ll
+            b exit
+
     fromFile:
-            str lr, [sp, -16]
-            stp x1, x2, [sp, -16]
+            str lr, [sp, #-16]!
+            stp x1, x2, [sp, #-16]!
+
+            mov x20, x1
+            mov x21, x2
+
+            //ldr x2,=ptr
+            //str x2,[x1]
             // printing enter file prompt :
             ldr x0,=szEnterFile
             bl putstring
@@ -66,8 +89,7 @@ addString:
                 
                 //ldr x0,=fileBuf
                 //bl putstring
-                ldr x1,=fileBuf
-                ldr x0,=ptr
+                ldr x19,=fileBuf
                 bl ll
 
                 ldr x0,=iFD
@@ -80,15 +102,13 @@ addString:
                 mov x8, #57
                 svc 0
                 b exit
-                // used for debugging purposes
-                //b printNodes
             invalidFile:
                 ldr x0,=szInvalid
                 bl putstring
             exit:
-                ldp x1, x2, [sp, -16]
+                ldp x1, x2, [sp], 16
                 ldr lr, [sp], 16
-                ldr x0,=ptr     // loading headptr for return
+                mov x0, x21
                 ret
             getchar:
                 ldr x0,=iFD
@@ -135,23 +155,26 @@ addString:
                 ldr x30, [sp], #16
                 ret
 
-        printNodes:
-            stp x0, x19, [sp, #-16]!
-            ldr x19,=ptr
-            ldr x19,[x19]
-            mov x0, x19
-        loop:
-            cmp x0, #0
-            b.eq preExit
-            ldr x0,[x0]
-            bl putstring
 
-            ldr x0, [x19, #8]
-            cmp x0, #0
-            b.eq preExit
-            ldr x19, [x19, #8]
-            mov x0, x19
-            b loop
-        preExit:
-            ldp x0, x19, [sp], 16
-            b exit
+// PRINT NODES:
+// PARAM @ X0: HEADPTR
+printNodes:
+        stp x0, x21, [sp, #-16]!
+        mov x19, x21
+        ldr x19, [x19]
+            .printLoop:
+                ldr x0, [x19, #0]
+                cmp x0, #0
+                b.eq .exitLoop
+
+                //ldr x0,[x0]
+                bl putstring
+
+                ldr x19, [x19, #8]
+                cmp x19, #0
+                b.eq .exitLoop
+                b .printLoop
+            .exitLoop:
+                ldp x0, x21, [sp], 16
+                b exit
+

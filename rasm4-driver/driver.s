@@ -55,6 +55,7 @@ _start:
 
 .input1:
         // view all strings
+        bl printNodes
         b .exitInput
 .input2:
         // add string
@@ -72,11 +73,13 @@ _start:
     .addInput:
         // requirement : x1 = head, x2 = tail
         ldr x1,=headPtr
+        ldr x2,=tailPtr
         bl addString
         b .exitInput
     .addFile:
         // requirement : x1 = head, x2 = tail
         ldr x1,=headPtr
+        ldr x2,=tailPtr
         bl addString
         b .exitInput
 .input3:
@@ -97,6 +100,37 @@ _start:
         ldr lr, [sp], #16
         ret lr
 
+// PRINT NODES:
+// PARAM @ X0: HEADPTR
+printNodes:
+        str lr, [sp, #-16]!
+        stp x0, x19, [sp, #-16]!
+        ldr x0,=headPtr
+        ldr x0,[x0]
+        ldr x1,=currNode
+        str x0,[x1]
+            .printLoop:
+                cmp x0, #0
+                b.eq .exitLoop
+
+                ldr x0,[x0]
+                bl putstring
+
+                ldr x1,=currNode
+                ldr x1,[x1]
+                add x1, x1, #8
+                ldr x1,[x1]
+
+                ldr x0,=currNode
+                str x1,[x0]
+
+                mov x0, x1
+                b .printLoop
+                
+            .exitLoop:
+                ldp x0, x19, [sp], 16
+                ldr lr, [sp], 16
+                ret
     .data
 szInvalid:  .asciz "\nInvalid input.\n"
 szInputF:   .quad 0
@@ -104,10 +138,12 @@ szOutputF:  .quad 0
 szDefInput: .asciz "input.txt"
 szDefOut:   .asciz "output.txt"
 headPtr:    .quad 0
+tailPtr:    .quad 0
+currNode:    .quad 0
 sz1:        .asciz "hello"
 sz2:        .asciz "there"
-bBuffer:    .skip  512
-bBufferR:   .skip  512
+bBuffer:    .skip  1024
+bBufferR:   .skip  1024
 iLimitNum:  .skip  21
 szMenu:     .asciz "\n<1> View all strings\n\n<2> Add string\n    <a> from Keyboard\n    <b> from File. Static file named input.txt\n\n<3> Delete string. Given an index #, delete the entire string and de-allocate memory (including the node).\n\n<4> Edit string. Given an index #, replace old string w/ new string. Allocate/De-allocate as needed.\n\n<5> String search. Regardless of case, return all strings that match the substring given.\n\n<6> Save File (output.txt)\n\n<7> Quit\n\n>"
 szHeader:   .asciz "        MASM4 TEXT EDITOR\n    Data Structure Heap Memory Consumption:"
