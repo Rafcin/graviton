@@ -3,202 +3,259 @@
 #include <string>
 #include <fstream>
 
-// ASM_LABEL_START: global_constants
 const char *CONTROLS = "^X:Exit  ^O:Save  ^W:Search  ^T:Replace";
-// ASM_LABEL_END: global_constants
 
-// ASM_LABEL_START: node
+/* @Name: Node
+ * @Description: A struct that represents a node in a linked list. Each node contains a line of text and a pointer to the next node.
+ */
 struct Node
 {
-    std::string line;
-    Node *next;
+    std::string line; // The text line stored in the node
+    Node *next;       // Pointer to the next node in the linked list
 };
-// ASM_LABEL_END: node
 
-// ASM_LABEL_START: make_node
+/* @Name: make_node
+ * @Description: Allocates memory for a new node and initializes it with the given text line.
+ * @Parameters:
+ *   - line: the text line to be stored in the node
+ * Return: a pointer to the newly allocated node
+ */
 Node *make_node(const std::string &line)
 {
-    Node *new_node = (Node *)malloc(sizeof(Node));
+    Node *new_node = (Node *)malloc(sizeof(Node)); // Allocate memory for the new node
     if (new_node == NULL)
     {
-        throw std::bad_alloc();
+        throw std::bad_alloc(); // Throw an exception if the memory allocation fails
     }
     new (&new_node->line) std::string(line); // Using placement new to construct string
-    new_node->next = NULL;
+    new_node->next = NULL;                   // Set the next pointer to null
     return new_node;
 }
-// ASM_LABEL_END: make_node
 
-// ASM_LABEL_START: destroy_node
+/* @Name: destroy_node
+ * @Description: Deallocates memory for a node and manually calls the destructor for the stored text line.
+ * @Parameters:
+ *   - node: a pointer to the node to be deallocated
+ */
 void destroy_node(Node *node)
 {
     node->line.~basic_string(); // Manually calling string destructor
-    free(node);
+    free(node);                 // Deallocate memory for the node
 }
-// ASM_LABEL_END: destroy_node
 
-// ASM_LABEL_START: LinkedList
+/* @Name: LinkedList
+ * @Description: A struct that represents a linked list data structure. Contains a pointer to the head node of the list.
+ */
 struct LinkedList
 {
-    Node *head;
-    LinkedList() : head(NULL) {}
+    Node *head;                  // Pointer to the head node of the list
+    LinkedList() : head(NULL) {} // Constructor that initializes the head pointer to null
 };
-// ASM_LABEL_END: LinkedList
 
-// ASM_LABEL_START: display_memory_info
+/* @Name: display_memory_info
+ * @Description: Displays the heap memory consumption and number of nodes in the linked list on the screen.
+ * @Parameters:
+ *   - memory: the amount of heap memory currently consumed by the program
+ *   - nodes: the number of nodes in the linked list
+ */
 void display_memory_info(size_t memory, size_t nodes)
 {
-    attron(A_BOLD);
-    mvprintw(1, 0, "Heap Memory Consumption: %zu bytes | Number of Nodes: %zu", memory, nodes);
-    attroff(A_BOLD);
+    attron(A_BOLD);                                                                             // Turn on bold text attribute
+    mvprintw(1, 0, "Heap Memory Consumption: %zu bytes | Number of Nodes: %zu", memory, nodes); // Print the memory consumption and number of nodes on the screen
+    attroff(A_BOLD);                                                                            // Turn off bold text attribute
 }
-// ASM_LABEL_END: display_memory_info
 
-// ASM_LABEL_START: list_push_back
+/* @Name: list_push_back
+ * @Description: Adds a new node with the given text line to the end of the linked list.
+ * @Parameters:
+ *   - list: a reference to the linked list to add the new node to
+ *   - line: the text line to be stored in the new node
+ * Return: a pointer to the newly added node
+ */
 Node *list_push_back(LinkedList &list, const std::string &line)
 {
-    Node *new_node = make_node(line);
+    Node *new_node = make_node(line); // Allocate memory for the new node and initialize it with the given text line
     if (!list.head)
     {
-        list.head = new_node;
+        list.head = new_node; // If the list is empty, set the new node as the head
     }
     else
     {
         Node *last = list.head;
         while (last->next)
         {
-            last = last->next;
+            last = last->next; // Traverse the list to find the last node
         }
-        last->next = new_node;
+        last->next = new_node; // Set the next pointer of the last node to the new node
     }
     return new_node;
 }
-// ASM_LABEL_END: list_push_back
 
-// ASM_LABEL_START: list_erase_next
+/* @Name: list_erase_next
+ * @Description: Removes the next node after the given node from the linked list and deallocates its memory.
+ * @Parameters:
+ *     - node: A pointer to the node whose next node should be removed.
+ */
 void list_erase_next(Node *&node)
 {
     if (node->next)
     {
-        Node *tmp = node->next;
-        node->next = tmp->next;
-        destroy_node(tmp);
+        Node *tmp = node->next; // Store a pointer to the next node
+        node->next = tmp->next; // Update the current node's next pointer to skip over the next node
+        destroy_node(tmp);      // Deallocate the memory used by the removed node
     }
 }
-// ASM_LABEL_END: list_erase_next
 
-// ASM_LABEL_START: list_clear
+/* @Name: list_clear
+ * @Description: Deallocates all nodes in a linked list and sets its head pointer to NULL.
+ * @Parameters:
+ *     - list: The linked list to clear.
+ */
 void list_clear(LinkedList &list)
 {
     Node *current = list.head;
     while (current)
     {
-        Node *tmp = current->next;
-        destroy_node(current);
-        current = tmp;
+        Node *tmp = current->next; // Store a pointer to the next node
+        destroy_node(current);     // Deallocate the memory used by the current node
+        current = tmp;             // Move to the next node
     }
-    list.head = NULL;
+    list.head = NULL; // Set the list's head pointer to NULL
 }
-// ASM_LABEL_END: list_clear
 
-// ASM_LABEL_START: list_size
+/* @Name: list_size
+ * @Description: Returns the number of nodes in a linked list.
+ * @Parameters:
+ *     - list: The linked list to measure.
+ */
 size_t list_size(LinkedList &list)
 {
     size_t size = 0;
     Node *current = list.head;
     while (current)
     {
-        size++;
-        current = current->next;
+        size++;                  // Increment the size count
+        current = current->next; // Move to the next node
     }
     return size;
 }
-// ASM_LABEL_END: list_size
 
-// ASM_LABEL_START: list_advance
+/* @Name: list_advance
+ * @Description: Returns a pointer to the node n positions after the given node in a linked list.
+ * @Parameters:
+ *     - node: A pointer to the starting node.
+ *     - n: The number of positions to advance.
+ */
 Node *list_advance(Node *node, int n)
 {
     while (n-- > 0 && node)
     {
-        node = node->next;
+        node = node->next; // Move to the next node n times (or until the end of the list is reached)
     }
     return node;
 }
-// ASM_LABEL_END: list_advance
 
-// ASM_LABEL_START: open_file
+/* @Name: open_file
+ * @Description: Reads a file and creates a linked list of its lines, along with tracking the memory and node counts.
+ * @Parameters:
+ *     - filename: The name of the file to read.
+ *     - lines: The linked list to store the lines in.
+ *     - memory: A reference to a size_t variable to store the memory usage in bytes.
+ *     - nodes: A reference to a size_t variable to store the number of nodes in the list.
+ */
 void open_file(const char *filename, LinkedList &lines, size_t &memory, size_t &nodes)
 {
-    std::ifstream infile(filename);
-    if (!infile.is_open())
+    std::ifstream infile(filename); // Open the file for reading
+    if (!infile.is_open())          // Check if the file was successfully opened
     {
-        return;
+        return; // If not, return without doing anything
     }
 
     std::string line;
-    while (std::getline(infile, line))
+    while (std::getline(infile, line)) // Read each line of the file
     {
-        Node *new_node = list_push_back(lines, line);
-        memory += new_node->line.size() * sizeof(char) + sizeof(Node);
-        nodes++;
+        Node *new_node = list_push_back(lines, line);                  // Add the line to the linked list
+        memory += new_node->line.size() * sizeof(char) + sizeof(Node); // Update the memory count
+        nodes++;                                                       // Update the node count
     }
-    infile.close();
+    infile.close(); // Close the file
 }
-// ASM_LABEL_END: open_file
 
-// ASM_LABEL_START: save_file
+/* @Name: save_file
+ * @Description: Writes the contents of a linked list to a file.
+ * @Parameters:
+ *     - filename: The name of the file to write to.
+ *     - lines: The linked list containing the lines to write.
+ */
 void save_file(const char *filename, const LinkedList &lines)
 {
-    std::ofstream outfile(filename);
-    if (!outfile.is_open())
+    std::ofstream outfile(filename); // Open the file for writing
+    if (!outfile.is_open())          // Check if the file was successfully opened
     {
-        return;
+        return; // If not, return without doing anything
     }
 
     Node *current = lines.head;
     while (current)
     {
-        outfile << current->line << '\n';
+        outfile << current->line << '\n'; // Write each line to the file
         current = current->next;
     }
-    outfile.close();
+    outfile.close(); // Close the file
 }
-// ASM_LABEL_END: save_file
 
-// ASM_LABEL_START: get_user_input
+/* @Name: get_user_input
+ * @Description: Gets a string input from the user.
+ * @Parameters:
+ *     - prompt: The message to display to the user to prompt input.
+ * @Return: The string input by the user.
+ */
 std::string get_user_input(const char *prompt)
 {
-    nocbreak();
-    echo();
-    curs_set(TRUE);
+    nocbreak();     // Turn off cbreak mode to enable line buffering
+    echo();         // Turn on echoing of characters
+    curs_set(TRUE); // Show the cursor
 
-    char input[256];
-    mvprintw(LINES - 1, 0, "%s", prompt);
-    getstr(input);
+    char input[256];                      // Create a character array to hold the user input
+    mvprintw(LINES - 1, 0, "%s", prompt); // Print the prompt message to the screen
+    getstr(input);                        // Get the user input and store it in the input array
 
-    curs_set(FALSE);
-    noecho();
-    cbreak();
+    curs_set(FALSE); // Hide the cursor
+    noecho();        // Turn off echoing of characters
+    cbreak();        // Turn on cbreak mode to disable line buffering
 
-    return std::string(input);
+    return std::string(input); // Return the user input as a string
 }
-// ASM_LABEL_END: get_user_input
 
-// ASM_LABEL_START: highlight_search
+/* @Name: highlight_search
+ * @Description: Highlights the search result on the screen.
+ * @Parameters:
+ *     - found_pos: The position of the first character of the search result.
+ *     - search_length: The length of the search result.
+ *     - y: The line number of the search result.
+ */
 void highlight_search(size_t found_pos, size_t search_length, int y)
 {
-    attron(COLOR_PAIR(1));
+    attron(COLOR_PAIR(1)); // Turn on color pair 1 (black on yellow)
     for (size_t i = 0; i < search_length; i++)
     {
-        chtype original_char = mvinch(y, found_pos + i);
-        chtype new_char = (original_char & A_CHARTEXT) | (COLOR_PAIR(1));
-        mvaddch(y, found_pos + i, new_char);
+        chtype original_char = mvinch(y, found_pos + i);                  // Get the original character at the current position
+        chtype new_char = (original_char & A_CHARTEXT) | (COLOR_PAIR(1)); // Combine the original character with the color pair
+        mvaddch(y, found_pos + i, new_char);                              // Print the new character to the screen
     }
-    attroff(COLOR_PAIR(1));
+    attroff(COLOR_PAIR(1)); // Turn off color pair 1
 }
-// ASM_LABEL_END: highlight_search
 
-// ASM_LABEL_START: search_text
+/* @Name: search_text
+ * @Description: Searches for a text string in the linked list and highlights the results on the screen.
+ * @Parameters:
+ *     - lines: The linked list to search.
+ *     - search_str: The text string to search for.
+ *     - cursor_x: A reference to the x-coordinate of the cursor.
+ *     - cursor_y: A reference to the y-coordinate of the cursor.
+ *     - scroll_offset: A reference to the number of lines the text is scrolled down.
+ *     - current_line: A pointer to the current line.
+ */
 void search_text(LinkedList &lines, const std::string &search_str, int &cursor_x, int &cursor_y,
                  int &scroll_offset, Node *&current_line)
 {
@@ -234,7 +291,7 @@ void search_text(LinkedList &lines, const std::string &search_str, int &cursor_x
 
             if (3 + line_idx - scroll_offset >= 3 && 3 + line_idx - scroll_offset < LINES - 1)
             {
-                highlight_search(found_pos, search_str.length(), 3 + line_idx - scroll_offset);
+                highlight_search(found_pos, search_str.length(), 3 + line_idx - scroll_offset); // Highlight the search result on the screen
             }
 
             found_pos += search_str.length();
@@ -244,12 +301,17 @@ void search_text(LinkedList &lines, const std::string &search_str, int &cursor_x
         line_it = line_it->next;
     }
 }
-// ASM_LABEL_END: search_text
 
-// ASM_LABEL_START: replace_text
+/* @Name: replace_text
+ * @Description: Replaces the first occurrence of a text string in the linked list with a given replacement string.
+ * @Parameters:
+ *     - lines: The linked list to modify.
+ *     - search_str: The text string to search for.
+ *     - replace_str: The replacement string.
+ */
 void replace_text(LinkedList &lines, const std::string &search_str, const std::string &replace_str)
 {
-    if (search_str.empty())
+    if (search_str.empty()) // Return early if the search string is empty
         return;
 
     Node *current = lines.head;
@@ -257,39 +319,51 @@ void replace_text(LinkedList &lines, const std::string &search_str, const std::s
     {
         size_t found_pos = current->line.find(search_str);
 
-        if (found_pos != std::string::npos)
+        if (found_pos != std::string::npos) // If the search string is found in the current line, replace it with the given string
         {
             current->line.replace(found_pos, search_str.length(), replace_str);
-            break;
+            break; // Stop searching after the first replacement is made
         }
         current = current->next;
     }
 }
-// ASM_LABEL_END: replace_text
 
-// ASM_LABEL_START: handle_mouse
+/* @Name: handle_mouse
+ * @Description: Updates the cursor position based on mouse input.
+ * @Parameters:
+ *     - x: The x-coordinate of the mouse click.
+ *     - y: The y-coordinate of the mouse click.
+ *     - cursor_x: A reference to the x-coordinate of the cursor.
+ *     - cursor_y: A reference to the y-coordinate of the cursor.
+ *     - scroll_offset: A reference to the number of lines the text is scrolled down.
+ *     - lines: The linked list containing the text.
+ */
 void handle_mouse(int x, int y, int &cursor_x, int &cursor_y, int &scroll_offset, LinkedList &lines)
 {
-    if (y == 1)
+    if (y == 1) // If the mouse was clicked in the menu bar, ignore it
     {
         return;
     }
 
-    int max_y = std::min(LINES - 3, static_cast<int>(list_size(lines)));
-    if (y >= 3 && y <= max_y)
+    int max_y = std::min(LINES - 3, static_cast<int>(list_size(lines))); // Calculate the maximum valid y-coordinate based on the number of lines in the text
+    if (y >= 3 && y <= max_y)                                            // If the mouse was clicked within the bounds of the text, update the cursor position accordingly
     {
         cursor_x = x;
         cursor_y = y;
     }
-    else if (y > max_y)
+    else if (y > max_y) // If the mouse was clicked below the last line of text, update the cursor to the last line of text
     {
         cursor_x = x;
         cursor_y = max_y;
     }
 }
-// ASM_LABEL_END: handle_mouse
 
-// ASM_LABEL_START: main
+/* @Name: main
+ * @Description: The main function that runs the text editor.
+ * @Parameters:
+ *     - argc: The number of command-line arguments passed to the program.
+ *     - argv: An array of strings containing the command-line arguments passed to the program.
+ */
 int main(int argc, char *argv[])
 {
     initscr();
@@ -309,6 +383,7 @@ int main(int argc, char *argv[])
     LinkedList lines;
     std::string filename;
 
+    // If a filename was specified as a command-line argument, open the file
     if (argc > 1)
     {
         filename = argv[1];
@@ -325,25 +400,29 @@ int main(int argc, char *argv[])
     std::string search_str;
     std::string replace_str;
 
+    // Initialize colors
     if (has_colors())
     {
         start_color();
         init_pair(1, COLOR_YELLOW, COLOR_BLACK);
     }
 
+    // Display initial screen
     init_pair(1, COLOR_WHITE, COLOR_BLUE);
     mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 
     while (true)
     {
-        clear();
+        clear(); // Clear the screen
 
+        // Display the title bar
         attron(A_REVERSE);
         mvprintw(0, 0, "Macro");
         attroff(A_REVERSE);
 
-        display_memory_info(memory, nodes);
+        display_memory_info(memory, nodes); // Display memory usage
 
+        // Display the text in the linked list
         int y = 3;
         Node *current = lines.head;
         int line_count = 0;
@@ -357,15 +436,19 @@ int main(int argc, char *argv[])
             current = current->next;
         }
 
+        // Highlight search results
         search_text(lines, search_str, cursor_x, cursor_y, scroll_offset, current_line);
+
+        // Move the cursor to its current position
         move(cursor_y, cursor_x);
 
+        // Display the controls at the bottom of the screen
         attron(A_BOLD | A_REVERSE);
         mvprintw(LINES - 1, 0, CONTROLS);
         attroff(A_BOLD | A_REVERSE);
         move(cursor_y, cursor_x);
 
-        ch = getch();
+        ch = getch(); // Wait for user input
 
         switch (ch)
         {
@@ -510,4 +593,3 @@ int main(int argc, char *argv[])
     endwin();
     return 0;
 }
-// ASM_LABEL_END: main

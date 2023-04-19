@@ -1,0 +1,5030 @@
+%!PS-Adobe-3.0
+%%Title: main.s
+%%For: Ubuntu
+%%Creator: a2ps version 4.14
+%%CreationDate: Wed Apr 19 02:02:56 2023
+%%BoundingBox: 24 24 571 818
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 23
+%%PageOrder: Ascend
+%%DocumentMedia: A4 595 842 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed strings
+% Version 1.2 1/31/1990
+% Original Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 595 def
+/sw 842 def
+/llx 24 def
+/urx 818 def
+/ury 571 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 8.005733 def
+/cw 4.803440 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   501.959430 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (.arch armv8-a) N
+() S 8 T (.file) S 16 T (") S
+(main.cpp) str
+(") p n
+(// GNU C++11 \(Ubuntu 11.3.0-1ubuntu1~22.04\) version 11.3.0 \(aarch64-linux-gnu\)) N
+(//) S 8 T (compiled by GNU C version 11.3.0, GMP version 6.2.1, MPFR version 4.1.0,) N
+( MPC version 1.2.1, isl version isl-0.24-GMP) N
+() N
+(// GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072) N
+(// options passed: -mlittle-endian -mabi=lp64 -std=c++11 -fno-rtti -fomit-frame-) N
+(pointer -fno-stack-protector -fasynchronous-unwind-tables -fstack-clash-protecti) N
+(on) N
+() S 8 T (.text) N
+() S 8 T (.section) S 24 T (.text._ZNSt9exceptionC2Ev,") S
+(axG) str
+(",@progbits,_ZNSt9exceptio) p n
+(nC5Ev,comdat) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.weak) S 16 T (_ZNSt9exceptionC2Ev) N
+() S 8 T (.type) S 16 T (_ZNSt9exceptionC2Ev, %) S
+(function) K n
+(_ZNSt9exceptionC2Ev:) p n
+(.LFB13:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#16) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 16) N
+() S 8 T (str) S 16 T (x0, [sp, 8]) S 32 T (// this, this) N
+(// /usr/include/c++/11/bits/exception.h:64:     exception\(\) _GLIBCXX_NOTHROW { }) N
+() S 8 T (adrp) S 16 T (x0, :got:_ZTVSt9exception) S 48 T (// tmp94,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:_ZTVSt9exception]) c 56 T (// tmp93, tmp94,) N
+() p 8 T (add) S 16 T (x1, x0, 16) S 32 T (// _1, tmp93,) N
+() S 8 T (ldr) S 16 T (x0, [sp, 8]) S 32 T (// tmp95, this) N
+() S 8 T (str) S 16 T (x1, [x0]) S 32 T (// _1, this_3\(D\)) S
+(\256) sy
+(_vptr.exception) p n
+(// /usr/include/c++/11/bits/exception.h:64:     exception\(\) _GLIBCXX_NOTHROW { }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (add) S 16 T (sp, sp, 16) S 32 T (//,,) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE13:) N
+() S 8 T (.size) S 16 T (_ZNSt9exceptionC2Ev, .-_ZNSt9exceptionC2Ev) N
+() S 8 T (.weak) S 16 T (_ZNSt9exceptionC1Ev) N
+() S 8 T (.set) S 16 T (_ZNSt9exceptionC1Ev,_ZNSt9exceptionC2Ev) N
+() S 8 T (.section) S 24 T (.text._ZNSt9bad_allocC2Ev,") S
+(axG) str
+(",@progbits,_ZNSt9bad_allo) p n
+(cC5Ev,comdat) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.weak) S 16 T (_ZNSt9bad_allocC2Ev) N
+() S 8 T (.type) S 16 T (_ZNSt9bad_allocC2Ev, %) S
+(function) K n
+(_ZNSt9bad_allocC2Ev:) p n
+(.LFB33:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -32]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 32) N
+() S 8 T (.cfi_offset 30, -32) N
+() S 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// this, this) N
+(// /usr/include/c++/11/new:58:     bad_alloc\(\) throw\(\) { }) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// _1, this) N
+() S 8 T (bl) S 16 T (_ZNSt9exceptionC2Ev) S 40 T () S 48 T (//) N
+() S 8 T (adrp) S 16 T (x0, :got:_ZTVSt9bad_alloc) S 48 T (// tmp97,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:_ZTVSt9bad_alloc]) c 56 T (// tmp96, tmp97,) N
+() p 8 T (add) S 16 T (x1, x0, 16) S 32 T (// _2, tmp96,) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp98, this) N
+() S 8 T (str) S 16 T (x1, [x0]) S 32 T (// _2, this_6\(D\)) S
+(\256) sy
+(D.5087._vptr.exception) p n
+(// /usr/include/c++/11/new:58:     bad_alloc\(\) throw\(\) { }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (ldr) S 16 T (x30, [sp], 32) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+(main.s) (Page 1/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE33:) N
+() S 8 T (.size) S 16 T (_ZNSt9bad_allocC2Ev, .-_ZNSt9bad_allocC2Ev) N
+() S 8 T (.weak) S 16 T (_ZNSt9bad_allocC1Ev) N
+() S 8 T (.set) S 16 T (_ZNSt9bad_allocC1Ev,_ZNSt9bad_allocC2Ev) N
+() S 8 T (.section) S 24 T (.text._ZnwmPv,") S
+(axG) str
+(",@progbits,_ZnwmPv,comdat) p n
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.weak) S 16 T (_ZnwmPv) N
+() S 8 T (.type) S 16 T (_ZnwmPv, %) S
+(function) K n
+(_ZnwmPv:) p n
+(.LFB38:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#16) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 16) N
+() S 8 T (str) S 16 T (x0, [sp, 8]) S 32 T (// D.5164, D.5164) N
+() S 8 T (str) S 16 T (x1, [sp]) S 32 T (// __p, __p) N
+(// /usr/include/c++/11/new:175: { ) S
+(return) K
+( __p; }) p n
+() S 8 T (ldr) S 16 T (x0, [sp]) S 32 T (// _2, __p) N
+(// /usr/include/c++/11/new:175: { ) S
+(return) K
+( __p; }) p n
+() S 8 T (add) S 16 T (sp, sp, 16) S 32 T (//,,) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE38:) N
+() S 8 T (.size) S 16 T (_ZnwmPv, .-_ZnwmPv) N
+() S 8 T (.section) S 24 T (.text._ZdlPvS_,") S
+(axG) str
+(",@progbits,_ZdlPvS_,comdat) p n
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.weak) S 16 T (_ZdlPvS_) N
+() S 8 T (.type) S 16 T (_ZdlPvS_, %) S
+(function) K n
+(_ZdlPvS_:) p n
+(.LFB40:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#16) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 16) N
+() S 8 T (str) S 16 T (x0, [sp, 8]) S 32 T (// D.5172, D.5172) N
+() S 8 T (str) S 16 T (x1, [sp]) S 32 T (// D.5173, D.5173) N
+(// /usr/include/c++/11/new:180: inline void operator delete  \(void*, void*\) _GLI) N
+(BCXX_USE_NOEXCEPT { }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (add) S 16 T (sp, sp, 16) S 32 T (//,,) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE40:) N
+() S 8 T (.size) S 16 T (_ZdlPvS_, .-_ZdlPvS_) N
+() S 8 T (.section) S 24 T (.rodata) N
+() S 8 T (.align) S 16 T (3) N
+() S 8 T (.type) S 16 T (_ZStL19piecewise_construct, %object) N
+() S 8 T (.size) S 16 T (_ZStL19piecewise_construct, 1) N
+(_ZStL19piecewise_construct:) N
+() S 8 T (.zero) S 16 T (1) N
+() S 8 T (.local) S 16 T (_ZStL8__ioinit) N
+() S 8 T (.comm) S 16 T (_ZStL8__ioinit,1,8) N
+() S 8 T (.global) S 16 T (CONTROLS) N
+() S 8 T (.align) S 16 T (3) N
+(.LC0:) N
+() S 8 T (.string) S 16 T (") S
+(^X:Exit  ^O:Save  ^W:Search  ^T:Replace) str
+(") p n
+() S 8 T (.section) S 24 T (.data.rel.local,") S
+(aw) str
+(") p n
+() S 8 T (.align) S 16 T (3) N
+() S 8 T (.type) S 16 T (CONTROLS, %object) N
+(main.s) (Page 2/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (1/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (.size) S 16 T (CONTROLS, 8) N
+(CONTROLS:) N
+() S 8 T (.xword) S 16 T (.LC0) N
+() S 8 T (.text) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z9make_nodeRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcE) N
+(EE) N
+() S 8 T (.type) S 16 T (_Z9make_nodeRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcE) N
+(EE, %) S
+(function) K n
+(_Z9make_nodeRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE:) p n
+(.LFB1656:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (.cfi_personality 0x9b,DW.ref.__gxx_personality_v0) N
+() S 8 T (.cfi_lsda 0x1b,.LLSDA1656) N
+() S 8 T (stp) S 16 T (x19, x20, [sp, -64]!) S 40 T (//,,,) N
+() S 8 T (.cfi_def_cfa_offset 64) N
+() S 8 T (.cfi_offset 19, -64) N
+() S 8 T (.cfi_offset 20, -56) N
+() S 8 T (stp) S 16 T (x21, x30, [sp, 16]) S 40 T (//,,) N
+() S 8 T (.cfi_offset 21, -48) N
+() S 8 T (.cfi_offset 30, -40) N
+() S 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// line, line) N
+(// main.cpp:21:     Node *new_node = \(Node *\)malloc\(sizeof\(Node\)\);) N
+() S 8 T (mov) S 16 T (x0, 40) S 24 T (//,) N
+() S 8 T (bl) S 16 T (malloc) S 24 T () S 32 T (//) N
+() S 8 T (str) S 16 T (x0, [sp, 56]) S 32 T (// tmp98, new_node) N
+(// main.cpp:22:     ) S
+(if) K
+( \(new_node ) p
+(\272) sy
+( ) p
+(NULL) K
+(\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// tmp99, new_node) N
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// tmp99,) N
+() S 8 T (bne) S 16 T (.L7) S 24 T () S 32 T (//,) N
+(// main.cpp:24:         throw std::bad_alloc\(\);) N
+() S 8 T (mov) S 16 T (x0, 8) S 24 T (//,) N
+() S 8 T (bl) S 16 T (__cxa_allocate_exception) S 48 T () S 56 T (//) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// _13, tmp100) N
+(// main.cpp:24:         throw std::bad_alloc\(\);) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (//, _13) N
+() S 8 T (bl) S 16 T (_ZNSt9bad_allocC1Ev) S 40 T () S 48 T (//) N
+(// main.cpp:24:         throw std::bad_alloc\(\);) N
+() S 8 T (adrp) S 16 T (x0, :got:_ZNSt9bad_allocD1Ev) S 48 T (// tmp101,) N
+() S 8 T (ldr) S 16 T (x2, [x0, ) S
+(#:got_lo12:_ZNSt9bad_allocD1Ev]) c 64 T (//, tmp101,) N
+() p 8 T (adrp) S 16 T (x0, _ZTISt9bad_alloc) S 40 T (// tmp102,) N
+() S 8 T (add) S 16 T (x1, x0, :lo12:_ZTISt9bad_alloc) S 48 T (//, tmp102,) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (//, _13) N
+(.LEHB0:) N
+() S 8 T (bl) S 16 T (__cxa_throw) S 32 T () S 40 T (//) N
+(.LEHE0:) N
+(.L7:) N
+(// main.cpp:26:     new \(&new_node) S
+(\256) sy
+(line\) std::string\(line\); // Using placement ) p n
+(new to construct string) N
+() S 8 T (ldr) S 16 T (x19, [sp, 56]) S 32 T (// _4, new_node) N
+(// main.cpp:26:     new \(&new_node) S
+(\256) sy
+(line\) std::string\(line\); // Using placement ) p n
+(new to construct string) N
+() S 8 T (mov) S 16 T (x1, x19) S 24 T (//, _4) N
+() S 8 T (mov) S 16 T (x0, 32) S 24 T (//,) N
+() S 8 T (bl) S 16 T (_ZnwmPv) S 24 T () S 32 T (//) N
+() S 8 T (mov) S 16 T (x20, x0) S 24 T (// _6,) N
+() S 8 T (ldr) S 16 T (x1, [sp, 40]) S 32 T (//, line) N
+() S 8 T (mov) S 16 T (x0, x20) S 24 T (//, _6) N
+(.LEHB1:) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1ERKS4_) S 80 T () N
+() S 0 T (//) N
+(.LEHE1:) N
+(main.s) (Page 3/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// main.cpp:27:     new_node) p
+(\256) sy
+(next) K
+( = ) p
+(NULL) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// tmp103, new_node) N
+() S 8 T (str) S 16 T (xzr, [x0, 32]) S 32 T (//, new_node_3) S
+(\256) sy
+(next) K n
+(// main.cpp:28:     ) p
+(return) K
+( new_node;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// _10, new_node) N
+() S 8 T (b) S 16 T (.L11) S 24 T () S 32 T (//) N
+(.L10:) N
+(// main.cpp:26:     new \(&new_node) S
+(\256) sy
+(line\) std::string\(line\); // Using placement ) p n
+(new to construct string) N
+() S 8 T (mov) S 16 T (x21, x0) S 24 T (// tmp105,) N
+() S 8 T (mov) S 16 T (x1, x19) S 24 T (//, _4) N
+() S 8 T (mov) S 16 T (x0, x20) S 24 T (//, _6) N
+() S 8 T (bl) S 16 T (_ZdlPvS_) S 32 T () S 40 T (//) N
+() S 8 T (mov) S 16 T (x0, x21) S 24 T (// D.49577, tmp105) N
+(.LEHB2:) N
+() S 8 T (bl) S 16 T (_Unwind_Resume) S 32 T () S 40 T (//) N
+(.LEHE2:) N
+(.L11:) N
+(// main.cpp:29: }) N
+() S 8 T (ldp) S 16 T (x21, x30, [sp, 16]) S 40 T (//,,) N
+() S 8 T (ldp) S 16 T (x19, x20, [sp], 64) S 40 T (//,,,) N
+() S 8 T (.cfi_restore 20) N
+() S 8 T (.cfi_restore 19) N
+() S 8 T (.cfi_restore 21) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1656:) N
+() S 8 T (.global) S 16 T (__gxx_personality_v0) N
+() S 8 T (.section) S 24 T (.gcc_except_table,") S
+(a) str
+(",@progbits) p n
+(.LLSDA1656:) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0x1) N
+() S 8 T (.uleb128 .LLSDACSE1656-.LLSDACSB1656) N
+(.LLSDACSB1656:) N
+() S 8 T (.uleb128 .LEHB0-.LFB1656) N
+() S 8 T (.uleb128 .LEHE0-.LEHB0) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB1-.LFB1656) N
+() S 8 T (.uleb128 .LEHE1-.LEHB1) N
+() S 8 T (.uleb128 .L10-.LFB1656) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB2-.LFB1656) N
+() S 8 T (.uleb128 .LEHE2-.LEHB2) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+(.LLSDACSE1656:) N
+() S 8 T (.text) N
+() S 8 T (.size) S 16 T (_Z9make_nodeRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcE) N
+(EE, .-_Z9make_nodeRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z12destroy_nodeP4Node) N
+() S 8 T (.type) S 16 T (_Z12destroy_nodeP4Node, %) S
+(function) K n
+(_Z12destroy_nodeP4Node:) p n
+(.LFB1663:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -32]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 32) N
+() S 8 T (.cfi_offset 30, -32) N
+(main.s) (Page 4/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (2/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// node, node) N
+(// main.cpp:35:     node) S
+(\256) sy
+(line.~basic_string\(\); // Manually calling string destr) p n
+(uctor) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// _1, node) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:36:     free\(node\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (//, node) N
+() S 8 T (bl) S 16 T (free) S 24 T () S 32 T (//) N
+(// main.cpp:37: }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (ldr) S 16 T (x30, [sp], 32) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1663:) N
+() S 8 T (.size) S 16 T (_Z12destroy_nodeP4Node, .-_Z12destroy_nodeP4Node) N
+() S 8 T (.section) S 24 T (.text._ZN10LinkedListC2Ev,") S
+(axG) str
+(",@progbits,_ZN10LinkedLis) p n
+(tC5Ev,comdat) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.weak) S 16 T (_ZN10LinkedListC2Ev) N
+() S 8 T (.type) S 16 T (_ZN10LinkedListC2Ev, %) S
+(function) K n
+(_ZN10LinkedListC2Ev:) p n
+(.LFB1665:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#16) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 16) N
+() S 8 T (str) S 16 T (x0, [sp, 8]) S 32 T (// this, this) N
+(// main.cpp:44:     LinkedList\(\) : head\() S
+(NULL) K
+(\) {}) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 8]) S 32 T (// tmp92, this) N
+() S 8 T (str) S 16 T (xzr, [x0]) S 32 T (//, this_2\(D\)) S
+(\256) sy
+(head) p n
+(// main.cpp:44:     LinkedList\(\) : head\() S
+(NULL) K
+(\) {}) p n
+() S 8 T (nop) S 16 T () N
+() S 8 T (add) S 16 T (sp, sp, 16) S 32 T (//,,) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1665:) N
+() S 8 T (.size) S 16 T (_ZN10LinkedListC2Ev, .-_ZN10LinkedListC2Ev) N
+() S 8 T (.weak) S 16 T (_ZN10LinkedListC1Ev) N
+() S 8 T (.set) S 16 T (_ZN10LinkedListC1Ev,_ZN10LinkedListC2Ev) N
+() S 8 T (.section) S 24 T (.rodata) N
+() S 8 T (.align) S 16 T (3) N
+(.LC1:) N
+() S 8 T (.string) S 16 T (") S
+(Heap Memory Consumption: %zu bytes | Number of Nodes: %zu) str
+(") p n
+() S 8 T (.text) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z19display_memory_infomm) N
+() S 8 T (.type) S 16 T (_Z19display_memory_infomm, %) S
+(function) K n
+(_Z19display_memory_infomm:) p n
+(.LFB1667:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -32]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 32) N
+() S 8 T (.cfi_offset 30, -32) N
+() S 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// memory, memory) N
+() S 8 T (str) S 16 T (x1, [sp, 16]) S 32 T (// nodes, nodes) N
+(// main.cpp:51:     attron\(A_BOLD\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp95,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp94, tmp95,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.6_1, stdscr) N
+(main.s) (Page 5/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 2097152) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_on) S 32 T () S 40 T (//) N
+(// main.cpp:52:     mvprintw\(1, 0, ") S
+(Heap Memory Consumption: %zu bytes | Number of Nodes: %zu) str
+() p n
+(", memory, nodes\);) N
+() S 8 T (ldr) S 16 T (x4, [sp, 16]) S 32 T (//, nodes) N
+() S 8 T (ldr) S 16 T (x3, [sp, 24]) S 32 T (//, memory) N
+() S 8 T (adrp) S 16 T (x0, .LC1) S 32 T (// tmp96,) N
+() S 8 T (add) S 16 T (x2, x0, :lo12:.LC1) S 40 T (//, tmp96,) N
+() S 8 T (mov) S 16 T (w1, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w0, 1) S 24 T (//,) N
+() S 8 T (bl) S 16 T (mvprintw) S 32 T () S 40 T (//) N
+(// main.cpp:53:     attroff\(A_BOLD\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp98,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp97, tmp98,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.7_2, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 2097152) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_off) S 32 T () S 40 T (//) N
+(// main.cpp:54: }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (ldr) S 16 T (x30, [sp], 32) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1667:) N
+() S 8 T (.size) S 16 T (_Z19display_memory_infomm, .-_Z19display_memory_infomm) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z14list_push_backR10LinkedListRKNSt7__cxx1112basic_stringIcSt11) N
+(char_traitsIcESaIcEEE) N
+() S 8 T (.type) S 16 T (_Z14list_push_backR10LinkedListRKNSt7__cxx1112basic_stringIcSt11) N
+(char_traitsIcESaIcEEE, %) S
+(function) K n
+(_Z14list_push_backR10LinkedListRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESa) p n
+(IcEEE:) N
+(.LFB1668:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -48]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 48) N
+() S 8 T (.cfi_offset 30, -48) N
+() S 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// list, list) N
+() S 8 T (str) S 16 T (x1, [sp, 16]) S 32 T (// line, line) N
+(// main.cpp:60:     Node *new_node = make_node\(line\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (//, line) N
+() S 8 T (bl) S 16 T (_Z9make_nodeRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcE) N
+(EE) S 8 T () S 16 T (//) N
+() S 8 T (str) S 16 T (x0, [sp, 32]) S 32 T (// _8, new_node) N
+(// main.cpp:61:     ) S
+(if) K
+( \(!list.head\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp97, list) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// _1, list_10\(D\)) S
+(\256) sy
+(head) p n
+(// main.cpp:61:     ) S
+(if) K
+( \(!list.head\)) p n
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// _1,) N
+() S 8 T (bne) S 16 T (.L16) S 24 T () S 32 T (//,) N
+(// main.cpp:63:         list.head = new_node;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp98, list) N
+() S 8 T (ldr) S 16 T (x1, [sp, 32]) S 32 T (// tmp99, new_node) N
+() S 8 T (str) S 16 T (x1, [x0]) S 32 T (// tmp99, list_10\(D\)) S
+(\256) sy
+(head) p n
+() S 8 T (b) S 16 T (.L17) S 24 T () S 32 T (//) N
+(.L16:) N
+(// main.cpp:67:         Node *last = list.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp100, list) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// tmp101, list_10\(D\)) S
+(\256) sy
+(head) p n
+(main.s) (Page 6/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (3/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// tmp101, last) N
+(// main.cpp:68:         ) S
+(while) K
+( \(last) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (b) S 16 T (.L18) S 24 T () S 32 T (//) N
+(.L19:) N
+(// main.cpp:70:             last = last) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp102, last) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp103, last_3) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// tmp103, last) N
+(.L18:) N
+(// main.cpp:68:         ) S
+(while) K
+( \(last) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp104, last) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _2, last_3) S
+(\256) sy
+(next) K n
+() p 8 T (cmp) S 16 T (x0, 0) S 24 T (// _2,) N
+() S 8 T (bne) S 16 T (.L19) S 24 T () S 32 T (//,) N
+(// main.cpp:72:         last) S
+(\256) sy
+(next) K
+( = new_node;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp105, last) N
+() S 8 T (ldr) S 16 T (x1, [sp, 32]) S 32 T (// tmp106, new_node) N
+() S 8 T (str) S 16 T (x1, [x0, 32]) S 32 T (// tmp106, last_3) S
+(\256) sy
+(next) K n
+(.L17:) p n
+(// main.cpp:74:     ) S
+(return) K
+( new_node;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (// _15, new_node) N
+(// main.cpp:75: }) N
+() S 8 T (ldr) S 16 T (x30, [sp], 48) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1668:) N
+() S 8 T (.size) S 16 T (_Z14list_push_backR10LinkedListRKNSt7__cxx1112basic_stringIcSt11) N
+(char_traitsIcESaIcEEE, .-_Z14list_push_backR10LinkedListRKNSt7__cxx1112basic_str) N
+(ingIcSt11char_traitsIcESaIcEEE) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z15list_erase_nextRP4Node) N
+() S 8 T (.type) S 16 T (_Z15list_erase_nextRP4Node, %) S
+(function) K n
+(_Z15list_erase_nextRP4Node:) p n
+(.LFB1669:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -48]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 48) N
+() S 8 T (.cfi_offset 30, -48) N
+() S 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// node, node) N
+(// main.cpp:81:     ) S
+(if) K
+( \(node) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp97, node) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// _1, *node_8\(D\)) N
+(// main.cpp:81:     ) S
+(if) K
+( \(node) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _2, _1) S
+(\256) sy
+(next) K n
+(// main.cpp:81:     ) p
+(if) K
+( \(node) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// _2,) N
+() S 8 T (beq) S 16 T (.L23) S 24 T () S 32 T (//,) N
+(// main.cpp:83:         Node *tmp = node) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp98, node) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// _3, *node_8\(D\)) N
+(// main.cpp:83:         Node *tmp = node) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp99, _3) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// tmp99, tmp) N
+(// main.cpp:84:         node) S
+(\256) sy
+(next) K
+( = tmp) p
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp100, node) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// _4, *node_8\(D\)) N
+(// main.cpp:84:         node) S
+(\256) sy
+(next) K
+( = tmp) p
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x1, [sp, 40]) S 32 T (// tmp101, tmp) N
+() S 8 T (ldr) S 16 T (x1, [x1, 32]) S 32 T (// _5, tmp_9) S
+(\256) sy
+(next) K n
+(// main.cpp:84:         node) p
+(\256) sy
+(next) K
+( = tmp) p
+(\256) sy
+(next) K
+(;) p n
+(main.s) (Page 7/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (str) S 16 T (x1, [x0, 32]) S 32 T (// _5, _4) S
+(\256) sy
+(next) K n
+(// main.cpp:85:         destroy_node\(tmp\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (//, tmp) N
+() S 8 T (bl) S 16 T (_Z12destroy_nodeP4Node) S 40 T () S 48 T (//) N
+(.L23:) N
+(// main.cpp:87: }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (ldr) S 16 T (x30, [sp], 48) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1669:) N
+() S 8 T (.size) S 16 T (_Z15list_erase_nextRP4Node, .-_Z15list_erase_nextRP4Node) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z10list_clearR10LinkedList) N
+() S 8 T (.type) S 16 T (_Z10list_clearR10LinkedList, %) S
+(function) K n
+(_Z10list_clearR10LinkedList:) p n
+(.LFB1670:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -48]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 48) N
+() S 8 T (.cfi_offset 30, -48) N
+() S 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// list, list) N
+(// main.cpp:93:     Node *current = list.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp92, list) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// tmp93, list_4\(D\)) S
+(\256) sy
+(head) p n
+() S 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// tmp93, current) N
+(// main.cpp:94:     ) S
+(while) K
+( \(current\)) p n
+() S 8 T (b) S 16 T (.L25) S 24 T () S 32 T (//) N
+(.L26:) N
+(// main.cpp:96:         Node *tmp = current) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp94, current) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp95, current_1) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 32]) S 32 T (// tmp95, tmp) N
+(// main.cpp:97:         destroy_node\(current\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (//, current) N
+() S 8 T (bl) S 16 T (_Z12destroy_nodeP4Node) S 40 T () S 48 T (//) N
+(// main.cpp:98:         current = tmp;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (// tmp96, tmp) N
+() S 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// tmp96, current) N
+(.L25:) N
+(// main.cpp:94:     ) S
+(while) K
+( \(current\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp97, current) N
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// tmp97,) N
+() S 8 T (bne) S 16 T (.L26) S 24 T () S 32 T (//,) N
+(// main.cpp:100:     list.head = ) S
+(NULL) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp98, list) N
+() S 8 T (str) S 16 T (xzr, [x0]) S 32 T (//, list_4\(D\)) S
+(\256) sy
+(head) p n
+(// main.cpp:101: }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (ldr) S 16 T (x30, [sp], 48) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1670:) N
+() S 8 T (.size) S 16 T (_Z10list_clearR10LinkedList, .-_Z10list_clearR10LinkedList) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z9list_sizeR10LinkedList) N
+() S 8 T (.type) S 16 T (_Z9list_sizeR10LinkedList, %) S
+(function) K n
+(_Z9list_sizeR10LinkedList:) p n
+(main.s) (Page 8/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (4/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (9-10) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(.LFB1671:) p n
+() S 8 T (.cfi_startproc) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#32) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 32) N
+() S 8 T (str) S 16 T (x0, [sp, 8]) S 32 T (// list, list) N
+(// main.cpp:107:     size_t size = 0;) N
+() S 8 T (str) S 16 T (xzr, [sp, 24]) S 32 T (//, size) N
+(// main.cpp:108:     Node *current = list.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 8]) S 32 T (// tmp94, list) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// tmp95, list_5\(D\)) S
+(\256) sy
+(head) p n
+() S 8 T (str) S 16 T (x0, [sp, 16]) S 32 T (// tmp95, current) N
+(// main.cpp:109:     ) S
+(while) K
+( \(current\)) p n
+() S 8 T (b) S 16 T (.L28) S 24 T () S 32 T (//) N
+(.L29:) N
+(// main.cpp:111:         size++;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp97, size) N
+() S 8 T (add) S 16 T (x0, x0, 1) S 32 T (// tmp96, tmp97,) N
+() S 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// tmp96, size) N
+(// main.cpp:112:         current = current) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp98, current) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp99, current_2) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 16]) S 32 T (// tmp99, current) N
+(.L28:) N
+(// main.cpp:109:     ) S
+(while) K
+( \(current\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp100, current) N
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// tmp100,) N
+() S 8 T (bne) S 16 T (.L29) S 24 T () S 32 T (//,) N
+(// main.cpp:114:     ) S
+(return) K
+( size;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// _7, size) N
+(// main.cpp:115: }) N
+() S 8 T (add) S 16 T (sp, sp, 32) S 32 T (//,,) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1671:) N
+() S 8 T (.size) S 16 T (_Z9list_sizeR10LinkedList, .-_Z9list_sizeR10LinkedList) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z12list_advanceP4Nodei) N
+() S 8 T (.type) S 16 T (_Z12list_advanceP4Nodei, %) S
+(function) K n
+(_Z12list_advanceP4Nodei:) p n
+(.LFB1672:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#16) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 16) N
+() S 8 T (str) S 16 T (x0, [sp, 8]) S 32 T (// node, node) N
+() S 8 T (str) S 16 T (w1, [sp, 4]) S 32 T (// n, n) N
+(// main.cpp:121:     ) S
+(while) K
+( \(n-- > 0 && node\)) p n
+() S 8 T (b) S 16 T (.L32) S 24 T () S 32 T (//) N
+(.L35:) N
+(// main.cpp:123:         node = node) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 8]) S 32 T (// tmp96, node) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp97, node_2) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 8]) S 32 T (// tmp97, node) N
+(.L32:) N
+(// main.cpp:121:     ) S
+(while) K
+( \(n-- > 0 && node\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 4]) S 32 T (// n.10_1, n) N
+() S 8 T (sub) S 16 T (w1, w0, ) S
+(#1) c 32 T (// tmp98, n.10_1,) N
+() p 8 T (str) S 16 T (w1, [sp, 4]) S 32 T (// tmp98, n) N
+(// main.cpp:121:     ) S
+(while) K
+( \(n-- > 0 && node\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// n.10_1,) N
+() S 8 T (ble) S 16 T (.L33) S 24 T () S 32 T (//,) N
+(// main.cpp:121:     ) S
+(while) K
+( \(n-- > 0 && node\)) p n
+(main.s) (Page 9/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (ldr) S 16 T (x0, [sp, 8]) S 32 T (// tmp99, node) N
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// tmp99,) N
+() S 8 T (beq) S 16 T (.L33) S 24 T () S 32 T (//,) N
+(// main.cpp:121:     ) S
+(while) K
+( \(n-- > 0 && node\)) p n
+() S 8 T (mov) S 16 T (w0, 1) S 24 T (// iftmp.9_4,) N
+() S 8 T (b) S 16 T (.L34) S 24 T () S 32 T (//) N
+(.L33:) N
+(// main.cpp:121:     ) S
+(while) K
+( \(n-- > 0 && node\)) p n
+() S 8 T (mov) S 16 T (w0, 0) S 24 T (// iftmp.9_4,) N
+(.L34:) N
+(// main.cpp:121:     ) S
+(while) K
+( \(n-- > 0 && node\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// iftmp.9_4,) N
+() S 8 T (bne) S 16 T (.L35) S 24 T () S 32 T (//,) N
+(// main.cpp:125:     ) S
+(return) K
+( node;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 8]) S 32 T (// _11, node) N
+(// main.cpp:126: }) N
+() S 8 T (add) S 16 T (sp, sp, 16) S 32 T (//,,) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1672:) N
+() S 8 T (.size) S 16 T (_Z12list_advanceP4Nodei, .-_Z12list_advanceP4Nodei) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z9open_filePKcR10LinkedListRmS3_) N
+() S 8 T (.type) S 16 T (_Z9open_filePKcR10LinkedListRmS3_, %) S
+(function) K n
+(_Z9open_filePKcR10LinkedListRmS3_:) p n
+(.LFB1673:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (.cfi_personality 0x9b,DW.ref.__gxx_personality_v0) N
+() S 8 T (.cfi_lsda 0x1b,.LLSDA1673) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#624) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 624) N
+() S 8 T (stp) S 16 T (x19, x30, [sp]) S 32 T (//,,) N
+() S 8 T (.cfi_offset 19, -624) N
+() S 8 T (.cfi_offset 30, -616) N
+() S 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// filename, filename) N
+() S 8 T (str) S 16 T (x1, [sp, 32]) S 32 T (// lines, lines) N
+() S 8 T (str) S 16 T (x2, [sp, 24]) S 32 T (// memory, memory) N
+() S 8 T (str) S 16 T (x3, [sp, 16]) S 32 T (// nodes, nodes) N
+(// main.cpp:132:     std::ifstream infile\(filename\);) N
+() S 8 T (add) S 16 T (x0, sp, 88) S 32 T (// tmp111,,) N
+() S 8 T (mov) S 16 T (w2, 8) S 24 T (//,) N
+() S 8 T (ldr) S 16 T (x1, [sp, 40]) S 32 T (//, filename) N
+(.LEHB3:) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ifstreamIcSt11char_traitsIcEEC1EPKcSt13_Ios_Openmod) N
+(e) S 8 T () S 16 T (//) N
+(.LEHE3:) N
+(// main.cpp:133:     ) S
+(if) K
+( \(!infile.is_open\(\)\)) p n
+() S 8 T (add) S 16 T (x0, sp, 88) S 32 T (// tmp112,,) N
+(.LEHB4:) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ifstreamIcSt11char_traitsIcEE7is_openEv) S 72 T () S 80 T () N
+(//) N
+(.LEHE4:) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// _1, tmp113) N
+(// main.cpp:133:     ) S
+(if) K
+( \(!infile.is_open\(\)\)) p n
+() S 8 T (eor) S 16 T (w0, w0, 1) S 32 T (// tmp114, _1,) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// retval.11_25, tmp114) N
+(// main.cpp:133:     ) S
+(if) K
+( \(!infile.is_open\(\)\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// retval.11_25,) N
+() S 8 T (beq) S 16 T (.L38) S 24 T () S 32 T (//,) N
+(// main.cpp:135:         ) S
+(return) K
+(;) p n
+() S 8 T (mov) S 16 T (w19, 0) S 24 T (// finally_tmp.13_13,) N
+(main.s) (Page 10/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (5/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (11-12) 6
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (b) S 16 T (.L39) S 24 T () S 32 T (//) N
+(.L38:) N
+(// main.cpp:138:     std::string line;) N
+() S 8 T (add) S 16 T (x0, sp, 56) S 32 T (// tmp115,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1Ev) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:139:     ) S
+(while) K
+( \(std::getline\(infile, line\)\)) p n
+() S 8 T (b) S 16 T (.L40) S 24 T () S 32 T (//) N
+(.L41:) N
+(// main.cpp:141:         Node *new_node = list_push_back\(lines, line\);) N
+() S 8 T (add) S 16 T (x0, sp, 56) S 32 T (// tmp116,,) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, tmp116) N
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (//, lines) N
+(.LEHB5:) N
+() S 8 T (bl) S 16 T (_Z14list_push_backR10LinkedListRKNSt7__cxx1112basic_stringIcSt11) N
+(char_traitsIcESaIcEEE) S 24 T () S 32 T (//) N
+(// main.cpp:141:         Node *new_node = list_push_back\(lines, line\);) N
+() S 8 T (str) S 16 T (x0, [sp, 616]) S 32 T (// _38, new_node) N
+(// main.cpp:142:         memory += new_node) S
+(\256) sy
+(line.size\(\) * sizeof\(char\) + sizeof) p n
+(\(Node\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 616]) S 32 T (// _2, new_node) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4sizeEv) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:142:         memory += new_node) S
+(\256) sy
+(line.size\(\) * sizeof\(char\) + sizeof) p n
+(\(Node\);) N
+() S 8 T (add) S 16 T (x1, x0, 40) S 32 T (// _41, _3,) N
+(// main.cpp:142:         memory += new_node) S
+(\256) sy
+(line.size\(\) * sizeof\(char\) + sizeof) p n
+(\(Node\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp117, memory) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// _4, *memory_42\(D\)) N
+() S 8 T (add) S 16 T (x1, x1, x0) S 32 T (// _5, _41, _4) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp118, memory) N
+() S 8 T (str) S 16 T (x1, [x0]) S 32 T (// _5, *memory_42\(D\)) N
+(// main.cpp:143:         nodes++;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp119, nodes) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// _6, *nodes_44\(D\)) N
+(// main.cpp:143:         nodes++;) N
+() S 8 T (add) S 16 T (x1, x0, 1) S 32 T (// _7, _6,) N
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp120, nodes) N
+() S 8 T (str) S 16 T (x1, [x0]) S 32 T (// _7, *nodes_44\(D\)) N
+(.L40:) N
+(// main.cpp:139:     ) S
+(while) K
+( \(std::getline\(infile, line\)\)) p n
+() S 8 T (add) S 16 T (x1, sp, 56) S 32 T (// tmp121,,) N
+() S 8 T (add) S 16 T (x0, sp, 88) S 32 T (// tmp122,,) N
+() S 8 T (bl) S 16 T (_ZSt7getlineIcSt11char_traitsIcESaIcEERSt13basic_istreamIT_T0_ES) N
+(7_RNSt7__cxx1112basic_stringIS4_S5_T1_EE) S 48 T () S 56 T (//) N
+(// main.cpp:139:     ) S
+(while) K
+( \(std::getline\(infile, line\)\)) p n
+() S 8 T (ldr) S 16 T (x1, [x0]) S 32 T (// _8, _29) S
+(\256) sy
+(_vptr.basic_istream) p n
+() S 8 T (sub) S 16 T (x1, x1, ) S
+(#24) c 32 T (// _9, _8,) N
+() p 8 T (ldr) S 16 T (x1, [x1]) S 32 T (// _10, MEM[\(long int *\)_9]) N
+() S 8 T (add) S 16 T (x0, x0, x1) S 32 T (// _12, _28, _11) N
+() S 8 T (bl) S 16 T (_ZNKSt9basic_iosIcSt11char_traitsIcEEcvbEv) S 64 T () S 72 T (//) N
+(// main.cpp:139:     ) S
+(while) K
+( \(std::getline\(infile, line\)\)) p n
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// _31, tmp123) N
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// _31,) N
+() S 8 T (bne) S 16 T (.L41) S 24 T () S 32 T (//,) N
+(// main.cpp:145:     infile.close\(\);) N
+() S 8 T (add) S 16 T (x0, sp, 88) S 32 T (// tmp124,,) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ifstreamIcSt11char_traitsIcEE5closeEv) S 72 T () S 80 T () N
+(//) N
+(.LEHE5:) N
+(// main.cpp:146: }) N
+(main.s) (Page 11/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (add) S 16 T (x0, sp, 56) S 32 T (// tmp125,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (mov) S 16 T (w19, 1) S 24 T (// finally_tmp.13_13,) N
+(.L39:) N
+(// main.cpp:146: }) N
+() S 8 T (add) S 16 T (x0, sp, 88) S 32 T (// tmp126,,) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ifstreamIcSt11char_traitsIcEED1Ev) S 64 T () S 72 T (//) N
+() S 8 T (cmp) S 16 T (w19, 1) S 24 T (// finally_tmp.13_13,) N
+() S 8 T (b) S 16 T (.L48) S 24 T () S 32 T (//) N
+(.L47:) N
+(// main.cpp:146: }) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp129,) N
+() S 8 T (add) S 16 T (x0, sp, 56) S 32 T (// tmp127,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (b) S 16 T (.L45) S 24 T () S 32 T (//) N
+(.L46:) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp128,) N
+(.L45:) N
+() S 8 T (add) S 16 T (x0, sp, 88) S 32 T (// tmp132,,) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ifstreamIcSt11char_traitsIcEED1Ev) S 64 T () S 72 T (//) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (// D.49579, tmp128) N
+(.LEHB6:) N
+() S 8 T (bl) S 16 T (_Unwind_Resume) S 32 T () S 40 T (//) N
+(.LEHE6:) N
+(.L48:) N
+() S 8 T (ldp) S 16 T (x19, x30, [sp]) S 32 T (//,,) N
+() S 8 T (add) S 16 T (sp, sp, 624) S 32 T (//,,) N
+() S 8 T (.cfi_restore 19) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1673:) N
+() S 8 T (.section) S 24 T (.gcc_except_table) N
+(.LLSDA1673:) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0x1) N
+() S 8 T (.uleb128 .LLSDACSE1673-.LLSDACSB1673) N
+(.LLSDACSB1673:) N
+() S 8 T (.uleb128 .LEHB3-.LFB1673) N
+() S 8 T (.uleb128 .LEHE3-.LEHB3) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB4-.LFB1673) N
+() S 8 T (.uleb128 .LEHE4-.LEHB4) N
+() S 8 T (.uleb128 .L46-.LFB1673) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB5-.LFB1673) N
+() S 8 T (.uleb128 .LEHE5-.LEHB5) N
+() S 8 T (.uleb128 .L47-.LFB1673) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB6-.LFB1673) N
+() S 8 T (.uleb128 .LEHE6-.LEHB6) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+(.LLSDACSE1673:) N
+() S 8 T (.text) N
+() S 8 T (.size) S 16 T (_Z9open_filePKcR10LinkedListRmS3_, .-_Z9open_filePKcR10LinkedLis) N
+(tRmS3_) N
+(main.s) (Page 12/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (6/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (13-14) 7
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z9save_filePKcRK10LinkedList) N
+() S 8 T (.type) S 16 T (_Z9save_filePKcRK10LinkedList, %) S
+(function) K n
+(_Z9save_filePKcRK10LinkedList:) p n
+(.LFB1675:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (.cfi_personality 0x9b,DW.ref.__gxx_personality_v0) N
+() S 8 T (.cfi_lsda 0x1b,.LLSDA1675) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#560) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 560) N
+() S 8 T (stp) S 16 T (x19, x30, [sp]) S 32 T (//,,) N
+() S 8 T (.cfi_offset 19, -560) N
+() S 8 T (.cfi_offset 30, -552) N
+() S 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// filename, filename) N
+() S 8 T (str) S 16 T (x1, [sp, 16]) S 32 T (// lines, lines) N
+(// main.cpp:152:     std::ofstream outfile\(filename\);) N
+() S 8 T (add) S 16 T (x0, sp, 32) S 32 T (// tmp98,,) N
+() S 8 T (mov) S 16 T (w2, 16) S 24 T (//,) N
+() S 8 T (ldr) S 16 T (x1, [sp, 24]) S 32 T (//, filename) N
+(.LEHB7:) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ofstreamIcSt11char_traitsIcEEC1EPKcSt13_Ios_Openmod) N
+(e) S 8 T () S 16 T (//) N
+(.LEHE7:) N
+(// main.cpp:153:     ) S
+(if) K
+( \(!outfile.is_open\(\)\)) p n
+() S 8 T (add) S 16 T (x0, sp, 32) S 32 T (// tmp99,,) N
+(.LEHB8:) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ofstreamIcSt11char_traitsIcEE7is_openEv) S 72 T () S 80 T () N
+(//) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// _1, tmp100) N
+(// main.cpp:153:     ) S
+(if) K
+( \(!outfile.is_open\(\)\)) p n
+() S 8 T (eor) S 16 T (w0, w0, 1) S 32 T (// tmp101, _1,) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// retval.14_16, tmp101) N
+(// main.cpp:153:     ) S
+(if) K
+( \(!outfile.is_open\(\)\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// retval.14_16,) N
+() S 8 T (beq) S 16 T (.L50) S 24 T () S 32 T (//,) N
+(// main.cpp:155:         ) S
+(return) K
+(;) p n
+() S 8 T (mov) S 16 T (w19, 0) S 24 T (// finally_tmp.15_5,) N
+() S 8 T (b) S 16 T (.L51) S 24 T () S 32 T (//) N
+(.L50:) N
+(// main.cpp:158:     Node *current = lines.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp102, lines) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// tmp103, lines_17\(D\)) S
+(\256) sy
+(head) p n
+() S 8 T (str) S 16 T (x0, [sp, 552]) S 32 T (// tmp103, current) N
+(// main.cpp:159:     ) S
+(while) K
+( \(current\)) p n
+() S 8 T (b) S 16 T (.L52) S 24 T () S 32 T (//) N
+(.L53:) N
+(// main.cpp:161:         outfile << current) S
+(\256) sy
+(line << '\\n';) p n
+() S 8 T (ldr) S 16 T (x1, [sp, 552]) S 32 T (// _2, current) N
+(// main.cpp:161:         outfile << current) S
+(\256) sy
+(line << '\\n';) p n
+() S 8 T (add) S 16 T (x0, sp, 32) S 32 T (// tmp104,,) N
+() S 8 T (bl) S 16 T (_ZStlsIcSt11char_traitsIcESaIcEERSt13basic_ostreamIT_T0_ES7_RKNS) N
+(t7__cxx1112basic_stringIS4_S5_T1_EE) S 40 T () S 48 T (//) N
+() S 8 T (mov) S 16 T (w1, 10) S 24 T (//,) N
+() S 8 T (bl) S 16 T (_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_c) S 72 T () S 80 T () N
+(//) N
+(// main.cpp:162:         current = current) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 552]) S 32 T (// tmp105, current) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp106, current_4) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 552]) S 32 T (// tmp106, current) N
+(.L52:) N
+(// main.cpp:159:     ) S
+(while) K
+( \(current\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 552]) S 32 T (// tmp107, current) N
+(main.s) (Page 13/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (cmp) S 16 T (x0, 0) S 24 T (// tmp107,) N
+() S 8 T (bne) S 16 T (.L53) S 24 T () S 32 T (//,) N
+(// main.cpp:164:     outfile.close\(\);) N
+() S 8 T (add) S 16 T (x0, sp, 32) S 32 T (// tmp108,,) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ofstreamIcSt11char_traitsIcEE5closeEv) S 72 T () S 80 T () N
+(//) N
+(.LEHE8:) N
+(// main.cpp:165: }) N
+() S 8 T (mov) S 16 T (w19, 1) S 24 T (// finally_tmp.15_5,) N
+(.L51:) N
+(// main.cpp:165: }) N
+() S 8 T (add) S 16 T (x0, sp, 32) S 32 T (// tmp109,,) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ofstreamIcSt11char_traitsIcEED1Ev) S 64 T () S 72 T (//) N
+() S 8 T (cmp) S 16 T (w19, 1) S 24 T (// finally_tmp.15_5,) N
+() S 8 T (b) S 16 T (.L58) S 24 T () S 32 T (//) N
+(.L57:) N
+(// main.cpp:165: }) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp111,) N
+() S 8 T (add) S 16 T (x0, sp, 32) S 32 T (// tmp110,,) N
+() S 8 T (bl) S 16 T (_ZNSt14basic_ofstreamIcSt11char_traitsIcEED1Ev) S 64 T () S 72 T (//) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (// D.49580, tmp111) N
+(.LEHB9:) N
+() S 8 T (bl) S 16 T (_Unwind_Resume) S 32 T () S 40 T (//) N
+(.LEHE9:) N
+(.L58:) N
+() S 8 T (ldp) S 16 T (x19, x30, [sp]) S 32 T (//,,) N
+() S 8 T (add) S 16 T (sp, sp, 560) S 32 T (//,,) N
+() S 8 T (.cfi_restore 19) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1675:) N
+() S 8 T (.section) S 24 T (.gcc_except_table) N
+(.LLSDA1675:) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0x1) N
+() S 8 T (.uleb128 .LLSDACSE1675-.LLSDACSB1675) N
+(.LLSDACSB1675:) N
+() S 8 T (.uleb128 .LEHB7-.LFB1675) N
+() S 8 T (.uleb128 .LEHE7-.LEHB7) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB8-.LFB1675) N
+() S 8 T (.uleb128 .LEHE8-.LEHB8) N
+() S 8 T (.uleb128 .L57-.LFB1675) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB9-.LFB1675) N
+() S 8 T (.uleb128 .LEHE9-.LEHB9) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+(.LLSDACSE1675:) N
+() S 8 T (.text) N
+() S 8 T (.size) S 16 T (_Z9save_filePKcRK10LinkedList, .-_Z9save_filePKcRK10LinkedList) N
+() S 8 T (.section) S 24 T (.rodata) N
+() S 8 T (.align) S 16 T (3) N
+(.LC2:) N
+() S 8 T (.string) S 16 T (") S
+(%s) str
+(") p n
+() S 8 T (.text) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z14get_user_inputB5cxx11PKc) N
+(main.s) (Page 14/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (7/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (15-16) 8
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (.type) S 16 T (_Z14get_user_inputB5cxx11PKc, %) S
+(function) K n
+(_Z14get_user_inputB5cxx11PKc:) p n
+(.LFB1676:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (.cfi_personality 0x9b,DW.ref.__gxx_personality_v0) N
+() S 8 T (.cfi_lsda 0x1b,.LLSDA1676) N
+() S 8 T (stp) S 16 T (x19, x30, [sp, -304]!) S 40 T (//,,,) N
+() S 8 T (.cfi_def_cfa_offset 304) N
+() S 8 T (.cfi_offset 19, -304) N
+() S 8 T (.cfi_offset 30, -296) N
+() S 8 T (mov) S 16 T (x19, x8) S 24 T (// <retval>,) N
+() S 8 T (str) S 16 T (x0, [sp, 24]) S 32 T (// prompt, prompt) N
+(.LEHB10:) N
+(// main.cpp:171:     nocbreak\(\);) N
+() S 8 T (bl) S 16 T (nocbreak) S 32 T () S 40 T (//) N
+(// main.cpp:172:     echo\(\);) N
+() S 8 T (bl) S 16 T (echo) S 24 T () S 32 T (//) N
+(// main.cpp:173:     curs_set\() S
+(TRUE) K
+(\);) p n
+() S 8 T (mov) S 16 T (w0, 1) S 24 T (//,) N
+() S 8 T (bl) S 16 T (curs_set) S 32 T () S 40 T (//) N
+(// main.cpp:176:     mvprintw\(LINES - 1, 0, ") S
+(%s) str
+(", prompt\);) p n
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp98,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp97, tmp98,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.16_1, LINES) N
+() S 8 T (sub) S 16 T (w4, w0, ) S
+(#1) c 32 T (// _2, LINES.16_1,) N
+() p 8 T (ldr) S 16 T (x3, [sp, 24]) S 32 T (//, prompt) N
+() S 8 T (adrp) S 16 T (x0, .LC2) S 32 T (// tmp99,) N
+() S 8 T (add) S 16 T (x2, x0, :lo12:.LC2) S 40 T (//, tmp99,) N
+() S 8 T (mov) S 16 T (w1, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w0, w4) S 24 T (//, _2) N
+() S 8 T (bl) S 16 T (mvprintw) S 32 T () S 40 T (//) N
+(// main.cpp:177:     getstr\(input\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp101,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp100, tmp101,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.17_3, stdscr) N
+() S 8 T (add) S 16 T (x1, sp, 40) S 32 T (// tmp102,,) N
+() S 8 T (mov) S 16 T (w2, -1) S 24 T (//,) N
+() S 8 T (bl) S 16 T (wgetnstr) S 32 T () S 40 T (//) N
+(// main.cpp:179:     curs_set\() S
+(FALSE) K
+(\);) p n
+() S 8 T (mov) S 16 T (w0, 0) S 24 T (//,) N
+() S 8 T (bl) S 16 T (curs_set) S 32 T () S 40 T (//) N
+(// main.cpp:180:     noecho\(\);) N
+() S 8 T (bl) S 16 T (noecho) S 24 T () S 32 T (//) N
+(// main.cpp:181:     cbreak\(\);) N
+() S 8 T (bl) S 16 T (cbreak) S 24 T () S 32 T (//) N
+(.LEHE10:) N
+(// main.cpp:183:     ) S
+(return) K
+( std::string\(input\);) p n
+() S 8 T (add) S 16 T (x0, sp, 296) S 32 T (// tmp103,,) N
+() S 8 T (bl) S 16 T (_ZNSaIcEC1Ev) S 32 T () S 40 T (//) N
+() S 8 T (add) S 16 T (x1, sp, 296) S 32 T (// tmp104,,) N
+() S 8 T (add) S 16 T (x0, sp, 40) S 32 T (// tmp105,,) N
+() S 8 T (mov) S 16 T (x2, x1) S 24 T (//, tmp104) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, tmp105) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (//, <retval>) N
+(.LEHB11:) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1EPKcRKS3_) N
+() S 0 T () S 8 T (//) N
+(.LEHE11:) N
+() S 8 T (add) S 16 T (x0, sp, 296) S 32 T (// tmp106,,) N
+() S 8 T (bl) S 16 T (_ZNSaIcED1Ev) S 32 T () S 40 T (//) N
+() S 8 T (b) S 16 T (.L63) S 24 T () S 32 T (//) N
+(.L62:) N
+(main.s) (Page 15/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp109,) N
+() S 8 T (add) S 16 T (x0, sp, 296) S 32 T (// tmp108,,) N
+() S 8 T (bl) S 16 T (_ZNSaIcED1Ev) S 32 T () S 40 T (//) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (// D.49581, tmp109) N
+(.LEHB12:) N
+() S 8 T (bl) S 16 T (_Unwind_Resume) S 32 T () S 40 T (//) N
+(.LEHE12:) N
+(.L63:) N
+(// main.cpp:184: }) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (//, <retval>) N
+() S 8 T (ldp) S 16 T (x19, x30, [sp], 304) S 40 T (//,,,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_restore 19) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1676:) N
+() S 8 T (.section) S 24 T (.gcc_except_table) N
+(.LLSDA1676:) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0x1) N
+() S 8 T (.uleb128 .LLSDACSE1676-.LLSDACSB1676) N
+(.LLSDACSB1676:) N
+() S 8 T (.uleb128 .LEHB10-.LFB1676) N
+() S 8 T (.uleb128 .LEHE10-.LEHB10) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB11-.LFB1676) N
+() S 8 T (.uleb128 .LEHE11-.LEHB11) N
+() S 8 T (.uleb128 .L62-.LFB1676) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB12-.LFB1676) N
+() S 8 T (.uleb128 .LEHE12-.LEHB12) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+(.LLSDACSE1676:) N
+() S 8 T (.text) N
+() S 8 T (.size) S 16 T (_Z14get_user_inputB5cxx11PKc, .-_Z14get_user_inputB5cxx11PKc) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z16highlight_searchmmi) N
+() S 8 T (.type) S 16 T (_Z16highlight_searchmmi, %) S
+(function) K n
+(_Z16highlight_searchmmi:) p n
+(.LFB1677:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -64]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 64) N
+() S 8 T (.cfi_offset 30, -64) N
+() S 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// found_pos, found_pos) N
+() S 8 T (str) S 16 T (x1, [sp, 32]) S 32 T (// search_length, search_length) N
+() S 8 T (str) S 16 T (w2, [sp, 28]) S 32 T (// y, y) N
+(// main.cpp:190:     attron\(COLOR_PAIR\(1\)\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp111,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp110, tmp111,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.25_1, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 256) S 24 T (//,) N
+() S 8 T (bl) S 16 T (wattr_on) S 32 T () S 40 T (//) N
+(// main.cpp:191:     ) S
+(for) K
+( \(size_t i = 0; i < search_length; i++\)) p n
+() S 8 T (str) S 16 T (xzr, [sp, 56]) S 32 T (//, i) N
+(// main.cpp:191:     ) S
+(for) K
+( \(size_t i = 0; i < search_length; i++\)) p n
+() S 8 T (b) S 16 T (.L65) S 24 T () S 32 T (//) N
+(main.s) (Page 16/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (8/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (17-18) 9
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(.L69:) p n
+(// main.cpp:193:         chtype original_char = mvinch\(y, found_pos + i\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp113,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp112, tmp113,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.27_2, stdscr) N
+() S 8 T (ldr) S 16 T (x1, [sp, 40]) S 32 T (// tmp114, found_pos) N
+() S 8 T (mov) S 16 T (w2, w1) S 24 T (// _3, tmp114) N
+() S 8 T (ldr) S 16 T (x1, [sp, 56]) S 32 T (// tmp115, i) N
+() S 8 T (add) S 16 T (w1, w2, w1) S 32 T (// _5, _3, _4) N
+() S 8 T (mov) S 16 T (w2, w1) S 24 T (//, _6) N
+() S 8 T (ldr) S 16 T (w1, [sp, 28]) S 32 T (//, y) N
+() S 8 T (bl) S 16 T (wmove) S 24 T () S 32 T (//) N
+() S 8 T (cmn) S 16 T (w0, ) S
+(#1) c 24 T (// _7,) N
+() p 8 T (beq) S 16 T (.L66) S 24 T () S 32 T (//,) N
+(// main.cpp:193:         chtype original_char = mvinch\(y, found_pos + i\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp117,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp116, tmp117,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.28_8, stdscr) N
+() S 8 T (bl) S 16 T (winch) S 24 T () S 32 T (//) N
+() S 8 T (b) S 16 T (.L67) S 24 T () S 32 T (//) N
+(.L66:) N
+(// main.cpp:193:         chtype original_char = mvinch\(y, found_pos + i\);) N
+() S 8 T (mov) S 16 T (w0, -1) S 24 T (// _34,) N
+(.L67:) N
+(// main.cpp:193:         chtype original_char = mvinch\(y, found_pos + i\);) N
+() S 8 T (str) S 16 T (w0, [sp, 52]) S 32 T (// _34, original_char) N
+(// main.cpp:194:         chtype new_char = \(original_char & A_CHARTEXT\) | \(COLOR) N
+(_PAIR\(1\)\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 52]) S 32 T (// tmp118, original_char) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// _9, tmp118,) N
+(// main.cpp:194:         chtype new_char = \(original_char & A_CHARTEXT\) | \(COLOR) N
+(_PAIR\(1\)\);) N
+() S 8 T (orr) S 16 T (w0, w0, 256) S 32 T (// tmp119, _9,) N
+() S 8 T (str) S 16 T (w0, [sp, 48]) S 32 T (// tmp119, new_char) N
+(// main.cpp:195:         mvaddch\(y, found_pos + i, new_char\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp121,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp120, tmp121,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.29_10, stdscr) N
+() S 8 T (ldr) S 16 T (x1, [sp, 40]) S 32 T (// tmp122, found_pos) N
+() S 8 T (mov) S 16 T (w2, w1) S 24 T (// _11, tmp122) N
+() S 8 T (ldr) S 16 T (x1, [sp, 56]) S 32 T (// tmp123, i) N
+() S 8 T (add) S 16 T (w1, w2, w1) S 32 T (// _13, _11, _12) N
+() S 8 T (mov) S 16 T (w2, w1) S 24 T (//, _14) N
+() S 8 T (ldr) S 16 T (w1, [sp, 28]) S 32 T (//, y) N
+() S 8 T (bl) S 16 T (wmove) S 24 T () S 32 T (//) N
+() S 8 T (cmn) S 16 T (w0, ) S
+(#1) c 24 T (// _15,) N
+() p 8 T (beq) S 16 T (.L68) S 24 T () S 32 T (//,) N
+(// main.cpp:195:         mvaddch\(y, found_pos + i, new_char\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp125,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp124, tmp125,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.30_16, stdscr) N
+() S 8 T (ldr) S 16 T (w1, [sp, 48]) S 32 T (//, new_char) N
+() S 8 T (bl) S 16 T (waddch) S 24 T () S 32 T (//) N
+(.L68:) N
+(// main.cpp:191:     ) S
+(for) K
+( \(size_t i = 0; i < search_length; i++\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// tmp127, i) N
+() S 8 T (add) S 16 T (x0, x0, 1) S 32 T (// tmp126, tmp127,) N
+() S 8 T (str) S 16 T (x0, [sp, 56]) S 32 T (// tmp126, i) N
+(.L65:) N
+(// main.cpp:191:     ) S
+(for) K
+( \(size_t i = 0; i < search_length; i++\)) p n
+() S 8 T (ldr) S 16 T (x1, [sp, 56]) S 32 T (// tmp128, i) N
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (// tmp129, search_length) N
+(main.s) (Page 17/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (cmp) S 16 T (x1, x0) S 24 T (// tmp128, tmp129) N
+() S 8 T (bcc) S 16 T (.L69) S 24 T () S 32 T (//,) N
+(// main.cpp:197:     attroff\(COLOR_PAIR\(1\)\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp131,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp130, tmp131,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.31_17, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 256) S 24 T (//,) N
+() S 8 T (bl) S 16 T (wattr_off) S 32 T () S 40 T (//) N
+(// main.cpp:198: }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (ldr) S 16 T (x30, [sp], 64) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1677:) N
+() S 8 T (.size) S 16 T (_Z16highlight_searchmmi, .-_Z16highlight_searchmmi) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z11search_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11cha) N
+(r_traitsIcESaIcEEERiS9_S9_RP4Node) N
+() S 8 T (.type) S 16 T (_Z11search_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11cha) N
+(r_traitsIcESaIcEEERiS9_S9_RP4Node, %) S
+(function) K n
+(_Z11search_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcE) p n
+(EERiS9_S9_RP4Node:) N
+(.LFB1678:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -112]!) S 40 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 112) N
+() S 8 T (.cfi_offset 30, -112) N
+() S 8 T (str) S 16 T (x0, [sp, 56]) S 32 T (// lines, lines) N
+() S 8 T (str) S 16 T (x1, [sp, 48]) S 32 T (// search_str, search_str) N
+() S 8 T (str) S 16 T (x2, [sp, 40]) S 32 T (// cursor_x, cursor_x) N
+() S 8 T (str) S 16 T (x3, [sp, 32]) S 32 T (// cursor_y, cursor_y) N
+() S 8 T (str) S 16 T (x4, [sp, 24]) S 32 T (// scroll_offset, scroll_offset) N
+() S 8 T (str) S 16 T (x5, [sp, 16]) S 32 T (// current_line, current_line) N
+(// main.cpp:205:     ) S
+(if) K
+( \(search_str.empty\(\)\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 48]) S 32 T (//, search_str) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE5emptyEv) S 80 T () N
+() S 0 T (//) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// retval.32_56, tmp135) N
+(// main.cpp:205:     ) S
+(if) K
+( \(search_str.empty\(\)\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// retval.32_56,) N
+() S 8 T (bne) S 16 T (.L80) S 24 T () S 32 T (//,) N
+(// main.cpp:208:     bool first_instance = true;) N
+() S 8 T (mov) S 16 T (w0, 1) S 24 T (// tmp136,) N
+() S 8 T (strb) S 16 T (w0, [sp, 111]) S 32 T (// tmp136, first_instance) N
+(// main.cpp:210:     Node *line_it = lines.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// tmp137, lines) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// tmp138, lines_58\(D\)) S
+(\256) sy
+(head) p n
+() S 8 T (str) S 16 T (x0, [sp, 96]) S 32 T (// tmp138, line_it) N
+(// main.cpp:211:     size_t line_idx = 0;) N
+() S 8 T (str) S 16 T (xzr, [sp, 88]) S 32 T (//, line_idx) N
+(// main.cpp:212:     ) S
+(while) K
+( \(line_it\)) p n
+() S 8 T (b) S 16 T (.L73) S 24 T () S 32 T (//) N
+(.L79:) N
+(// main.cpp:214:         std::string &line = line_it) S
+(\256) sy
+(line;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 96]) S 32 T (// tmp139, line_it) N
+() S 8 T (str) S 16 T (x0, [sp, 72]) S 32 T (// tmp139, line) N
+(// main.cpp:215:         size_t found_pos = 0;) N
+() S 8 T (str) S 16 T (xzr, [sp, 80]) S 32 T (//, found_pos) N
+(// main.cpp:217:         ) S
+(while) K
+( \(\(found_pos = line.find\(search_str, found_pos\)\) ) p
+(\271) sy
+() p n
+(main.s) (Page 18/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (9/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (19-20) 10
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+( std::string::npos\)) p n
+() S 8 T (b) S 16 T (.L74) S 24 T () S 32 T (//) N
+(.L78:) N
+(// main.cpp:219:             ) S
+(if) K
+( \(first_instance\)) p n
+() S 8 T (ldrb) S 16 T (w0, [sp, 111]) S 32 T (// tmp140, first_instance) N
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// tmp140,) N
+() S 8 T (beq) S 16 T (.L75) S 24 T () S 32 T (//,) N
+(// main.cpp:221:                 cursor_x = found_pos;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 80]) S 32 T (// tmp141, found_pos) N
+() S 8 T (mov) S 16 T (w1, w0) S 24 T (// _1, tmp141) N
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp142, cursor_x) N
+() S 8 T (str) S 16 T (w1, [x0]) S 32 T (// _1, *cursor_x_68\(D\)) N
+(// main.cpp:222:                 cursor_y = 3 - scroll_offset + line_idx;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 88]) S 32 T (// tmp143, line_idx) N
+() S 8 T (mov) S 16 T (w1, w0) S 24 T (// _2, tmp143) N
+(// main.cpp:222:                 cursor_y = 3 - scroll_offset + line_idx;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp144, scroll_offset) N
+() S 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// _3, *scroll_offset_70\(D\)) N
+(// main.cpp:222:                 cursor_y = 3 - scroll_offset + line_idx;) N
+() S 8 T (sub) S 16 T (w0, w1, w0) S 32 T (// _5, _2, _4) N
+() S 8 T (add) S 16 T (w0, w0, 3) S 32 T (// _6, _5,) N
+() S 8 T (mov) S 16 T (w1, w0) S 24 T (// _7, _6) N
+(// main.cpp:222:                 cursor_y = 3 - scroll_offset + line_idx;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (// tmp145, cursor_y) N
+() S 8 T (str) S 16 T (w1, [x0]) S 32 T (// _7, *cursor_y_71\(D\)) N
+(// main.cpp:223:                 current_line = lines.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// tmp146, lines) N
+() S 8 T (ldr) S 16 T (x1, [x0]) S 32 T (// _8, lines_58\(D\)) S
+(\256) sy
+(head) p n
+(// main.cpp:223:                 current_line = lines.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp147, current_line) N
+() S 8 T (str) S 16 T (x1, [x0]) S 32 T (// _8, *current_line_73\(D\)) N
+(// main.cpp:224:                 current_line = list_advance\(current_line, line_) N
+(idx\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp148, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// _9, *current_line_73\(D\)) N
+() S 8 T (ldr) S 16 T (x1, [sp, 88]) S 32 T (// tmp149, line_idx) N
+() S 8 T (bl) S 16 T (_Z12list_advanceP4Nodei) S 40 T () S 48 T (//) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (// _11,) N
+(// main.cpp:224:                 current_line = list_advance\(current_line, line_) N
+(idx\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp150, current_line) N
+() S 8 T (str) S 16 T (x1, [x0]) S 32 T (// _11, *current_line_73\(D\)) N
+(// main.cpp:226:                 ) S
+(if) K
+( \(cursor_y ) p
+(\263) sy
+( LINES - 1\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (// tmp151, cursor_y) N
+() S 8 T (ldr) S 16 T (w1, [x0]) S 32 T (// _12, *cursor_y_71\(D\)) N
+(// main.cpp:226:                 ) S
+(if) K
+( \(cursor_y ) p
+(\263) sy
+( LINES - 1\)) p n
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp153,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp152, tmp153,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.33_13, LINES) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _14, LINES.33_13,) N
+(// main.cpp:226:                 ) p
+(if) K
+( \(cursor_y ) p
+(\263) sy
+( LINES - 1\)) p n
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// _12, _14) N
+() S 8 T (blt) S 16 T (.L76) S 24 T () S 32 T (//,) N
+(// main.cpp:228:                     scroll_offset += cursor_y - \(LINES - 2\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp154, scroll_offset) N
+() S 8 T (ldr) S 16 T (w1, [x0]) S 32 T (// _15, *scroll_offset_70\(D\)) N
+(// main.cpp:228:                     scroll_offset += cursor_y - \(LINES - 2\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (// tmp155, cursor_y) N
+() S 8 T (ldr) S 16 T (w2, [x0]) S 32 T (// _16, *cursor_y_71\(D\)) N
+(// main.cpp:228:                     scroll_offset += cursor_y - \(LINES - 2\);) N
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp157,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp156, tmp157,) N
+(main.s) (Page 19/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.34_17, LINES) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#2) c 32 T (// _18, LINES.34_17,) N
+(// main.cpp:228:                     scroll_offset += cursor_y - \(LINES - 2\);) p n
+() S 8 T (sub) S 16 T (w0, w2, w0) S 32 T (// _19, _16, _18) N
+(// main.cpp:228:                     scroll_offset += cursor_y - \(LINES - 2\);) N
+() S 8 T (add) S 16 T (w1, w1, w0) S 32 T (// _20, _15, _19) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp158, scroll_offset) N
+() S 8 T (str) S 16 T (w1, [x0]) S 32 T (// _20, *scroll_offset_70\(D\)) N
+(// main.cpp:229:                     cursor_y = LINES - 2;) N
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp160,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp159, tmp160,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.35_21, LINES) N
+() S 8 T (sub) S 16 T (w1, w0, ) S
+(#2) c 32 T (// _22, LINES.35_21,) N
+(// main.cpp:229:                     cursor_y = LINES - 2;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (// tmp161, cursor_y) N
+() S 8 T (str) S 16 T (w1, [x0]) S 32 T (// _22, *cursor_y_71\(D\)) N
+(.L76:) N
+(// main.cpp:232:                 first_instance = false;) N
+() S 8 T (strb) S 16 T (wzr, [sp, 111]) S 32 T (//, first_instance) N
+(.L75:) N
+(// main.cpp:235:             ) S
+(if) K
+( \(3 + line_idx - scroll_offset ) p
+(\263) sy
+( 3 && 3 + line_id) p n
+(x - scroll_offset < LINES - 1\)) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp162, scroll_offset) N
+() S 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// _23, *scroll_offset_70\(D\)) N
+() S 8 T (sxtw) S 16 T (x0, w0) S 24 T (// _24, _23) N
+(// main.cpp:235:             ) S
+(if) K
+( \(3 + line_idx - scroll_offset ) p
+(\263) sy
+( 3 && 3 + line_id) p n
+(x - scroll_offset < LINES - 1\)) N
+() S 8 T (ldr) S 16 T (x1, [sp, 88]) S 32 T (// tmp163, line_idx) N
+() S 8 T (sub) S 16 T (x0, x1, x0) S 32 T (// _25, tmp163, _24) N
+() S 8 T (add) S 16 T (x0, x0, 3) S 32 T (// _26, _25,) N
+(// main.cpp:235:             ) S
+(if) K
+( \(3 + line_idx - scroll_offset ) p
+(\263) sy
+( 3 && 3 + line_id) p n
+(x - scroll_offset < LINES - 1\)) N
+() S 8 T (cmp) S 16 T (x0, 2) S 24 T (// _26,) N
+() S 8 T (bls) S 16 T (.L77) S 24 T () S 32 T (//,) N
+(// main.cpp:235:             ) S
+(if) K
+( \(3 + line_idx - scroll_offset ) p
+(\263) sy
+( 3 && 3 + line_id) p n
+(x - scroll_offset < LINES - 1\)) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp164, scroll_offset) N
+() S 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// _27, *scroll_offset_70\(D\)) N
+() S 8 T (sxtw) S 16 T (x0, w0) S 24 T (// _28, _27) N
+(// main.cpp:235:             ) S
+(if) K
+( \(3 + line_idx - scroll_offset ) p
+(\263) sy
+( 3 && 3 + line_id) p n
+(x - scroll_offset < LINES - 1\)) N
+() S 8 T (ldr) S 16 T (x1, [sp, 88]) S 32 T (// tmp165, line_idx) N
+() S 8 T (sub) S 16 T (x0, x1, x0) S 32 T (// _29, tmp165, _28) N
+() S 8 T (add) S 16 T (x1, x0, 3) S 32 T (// _30, _29,) N
+(// main.cpp:235:             ) S
+(if) K
+( \(3 + line_idx - scroll_offset ) p
+(\263) sy
+( 3 && 3 + line_id) p n
+(x - scroll_offset < LINES - 1\)) N
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp167,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp166, tmp167,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.36_31, LINES) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _32, LINES.36_31,) N
+() p 8 T (sxtw) S 16 T (x0, w0) S 24 T (// _33, _32) N
+(// main.cpp:235:             ) S
+(if) K
+( \(3 + line_idx - scroll_offset ) p
+(\263) sy
+( 3 && 3 + line_id) p n
+(x - scroll_offset < LINES - 1\)) N
+() S 8 T (cmp) S 16 T (x1, x0) S 24 T (// _30, _33) N
+() S 8 T (bcs) S 16 T (.L77) S 24 T () S 32 T (//,) N
+(// main.cpp:237:                 highlight_search\(found_pos, search_str.length\(\)) N
+(, 3 + line_idx - scroll_offset\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 48]) S 32 T (//, search_str) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6lengthEv) S 80 T () N
+() S 0 T (//) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (// _34,) N
+(// main.cpp:237:                 highlight_search\(found_pos, search_str.length\(\)) N
+(main.s) (Page 20/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (10/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (21-22) 11
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(, 3 + line_idx - scroll_offset\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 88]) S 32 T (// tmp168, line_idx) N
+() S 8 T (mov) S 16 T (w2, w0) S 24 T (// _35, tmp168) N
+(// main.cpp:237:                 highlight_search\(found_pos, search_str.length\(\)) N
+(, 3 + line_idx - scroll_offset\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (// tmp169, scroll_offset) N
+() S 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// _36, *scroll_offset_70\(D\)) N
+(// main.cpp:237:                 highlight_search\(found_pos, search_str.length\(\)) N
+(, 3 + line_idx - scroll_offset\);) N
+() S 8 T (sub) S 16 T (w0, w2, w0) S 32 T (// _38, _35, _37) N
+() S 8 T (add) S 16 T (w0, w0, 3) S 32 T (// _39, _38,) N
+(// main.cpp:237:                 highlight_search\(found_pos, search_str.length\(\)) N
+(, 3 + line_idx - scroll_offset\);) N
+() S 8 T (mov) S 16 T (w2, w0) S 24 T (//, _40) N
+() S 8 T (ldr) S 16 T (x0, [sp, 80]) S 32 T (//, found_pos) N
+() S 8 T (bl) S 16 T (_Z16highlight_searchmmi) S 40 T () S 48 T (//) N
+(.L77:) N
+(// main.cpp:240:             found_pos += search_str.length\(\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 48]) S 32 T (//, search_str) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6lengthEv) S 80 T () N
+() S 0 T (//) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (// _83,) N
+(// main.cpp:240:             found_pos += search_str.length\(\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 80]) S 32 T (// tmp171, found_pos) N
+() S 8 T (add) S 16 T (x0, x0, x1) S 32 T (// tmp170, tmp171, _83) N
+() S 8 T (str) S 16 T (x0, [sp, 80]) S 32 T (// tmp170, found_pos) N
+(.L74:) N
+(// main.cpp:217:         ) S
+(while) K
+( \(\(found_pos = line.find\(search_str, found_pos\)\) ) p
+(\271) sy
+() p n
+( std::string::npos\)) N
+() S 8 T (ldr) S 16 T (x2, [sp, 80]) S 32 T (//, found_pos) N
+() S 8 T (ldr) S 16 T (x1, [sp, 48]) S 32 T (//, search_str) N
+() S 8 T (ldr) S 16 T (x0, [sp, 72]) S 32 T (//, line) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4findERKS4) N
+(_m) S 8 T () S 16 T (//) N
+() S 8 T (str) S 16 T (x0, [sp, 80]) S 32 T (//, found_pos) N
+(// main.cpp:217:         ) S
+(while) K
+( \(\(found_pos = line.find\(search_str, found_pos\)\) ) p
+(\271) sy
+() p n
+( std::string::npos\)) N
+() S 8 T (ldr) S 16 T (x0, [sp, 80]) S 32 T (// tmp173, found_pos) N
+() S 8 T (cmn) S 16 T (x0, ) S
+(#1) c 24 T (// tmp173,) N
+() p 8 T (cset) S 16 T (w0, ne) S 24 T (// tmp174,) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// retval.37_65, tmp172) N
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// retval.37_65,) N
+() S 8 T (bne) S 16 T (.L78) S 24 T () S 32 T (//,) N
+(// main.cpp:243:         ++line_idx;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 88]) S 32 T (// tmp176, line_idx) N
+() S 8 T (add) S 16 T (x0, x0, 1) S 32 T (// tmp175, tmp176,) N
+() S 8 T (str) S 16 T (x0, [sp, 88]) S 32 T (// tmp175, line_idx) N
+(// main.cpp:244:         line_it = line_it) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 96]) S 32 T (// tmp177, line_it) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp178, line_it_44) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 96]) S 32 T (// tmp178, line_it) N
+(.L73:) N
+(// main.cpp:212:     ) S
+(while) K
+( \(line_it\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 96]) S 32 T (// tmp179, line_it) N
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// tmp179,) N
+() S 8 T (bne) S 16 T (.L79) S 24 T () S 32 T (//,) N
+() S 8 T (b) S 16 T (.L70) S 24 T () S 32 T (//) N
+(.L80:) N
+(// main.cpp:206:         ) S
+(return) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+(.L70:) N
+(// main.cpp:246: }) N
+(main.s) (Page 21/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (ldr) S 16 T (x30, [sp], 112) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1678:) N
+() S 8 T (.size) S 16 T (_Z11search_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11cha) N
+(r_traitsIcESaIcEEERiS9_S9_RP4Node, .-_Z11search_textR10LinkedListRKNSt7__cxx1112) N
+(basic_stringIcSt11char_traitsIcESaIcEEERiS9_S9_RP4Node) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z12replace_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11ch) N
+(ar_traitsIcESaIcEEES8_) N
+() S 8 T (.type) S 16 T (_Z12replace_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11ch) N
+(ar_traitsIcESaIcEEES8_, %) S
+(function) K n
+(_Z12replace_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIc) p n
+(EEES8_:) N
+(.LFB1679:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (stp) S 16 T (x19, x30, [sp, -64]!) S 40 T (//,,,) N
+() S 8 T (.cfi_def_cfa_offset 64) N
+() S 8 T (.cfi_offset 19, -64) N
+() S 8 T (.cfi_offset 30, -56) N
+() S 8 T (str) S 16 T (x0, [sp, 40]) S 32 T (// lines, lines) N
+() S 8 T (str) S 16 T (x1, [sp, 32]) S 32 T (// search_str, search_str) N
+() S 8 T (str) S 16 T (x2, [sp, 24]) S 32 T (// replace_str, replace_str) N
+(// main.cpp:252:     ) S
+(if) K
+( \(search_str.empty\(\)\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (//, search_str) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE5emptyEv) S 80 T () N
+() S 0 T (//) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// retval.38_10, tmp96) N
+(// main.cpp:252:     ) S
+(if) K
+( \(search_str.empty\(\)\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// retval.38_10,) N
+() S 8 T (bne) S 16 T (.L87) S 24 T () S 32 T (//,) N
+(// main.cpp:255:     Node *current = lines.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp97, lines) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// tmp98, lines_11\(D\)) S
+(\256) sy
+(head) p n
+() S 8 T (str) S 16 T (x0, [sp, 56]) S 32 T (// tmp98, current) N
+(// main.cpp:256:     ) S
+(while) K
+( \(current\)) p n
+() S 8 T (b) S 16 T (.L84) S 24 T () S 32 T (//) N
+(.L86:) N
+(// main.cpp:258:         size_t found_pos = current) S
+(\256) sy
+(line.find\(search_str\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// _1, current) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (ldr) S 16 T (x1, [sp, 32]) S 32 T (//, search_str) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4findERKS4) N
+(_m) S 8 T () S 16 T (//) N
+() S 8 T (str) S 16 T (x0, [sp, 48]) S 32 T (//, found_pos) N
+(// main.cpp:260:         ) S
+(if) K
+( \(found_pos ) p
+(\271) sy
+( std::string::npos\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 48]) S 32 T (// tmp99, found_pos) N
+() S 8 T (cmn) S 16 T (x0, ) S
+(#1) c 24 T (// tmp99,) N
+() p 8 T (beq) S 16 T (.L85) S 24 T () S 32 T (//,) N
+(// main.cpp:262:             current) S
+(\256) sy
+(line.replace\(found_pos, search_str.length\() p n
+(\), replace_str\);) N
+() S 8 T (ldr) S 16 T (x19, [sp, 56]) S 32 T (// _2, current) N
+() S 8 T (ldr) S 16 T (x0, [sp, 32]) S 32 T (//, search_str) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6lengthEv) S 80 T () N
+() S 0 T (//) N
+() S 8 T (ldr) S 16 T (x3, [sp, 24]) S 32 T (//, replace_str) N
+() S 8 T (mov) S 16 T (x2, x0) S 24 T (//, _3) N
+() S 8 T (ldr) S 16 T (x1, [sp, 48]) S 32 T (//, found_pos) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (//, _2) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE7replaceEmm) N
+(main.s) (Page 22/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (11/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (23-24) 12
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(RKS4_) p 8 T () S 16 T (//) N
+(// main.cpp:263:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L81) S 24 T () S 32 T (//) N
+(.L85:) N
+(// main.cpp:265:         current = current) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// tmp100, current) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp101, current_4) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 56]) S 32 T (// tmp101, current) N
+(.L84:) N
+(// main.cpp:256:     ) S
+(while) K
+( \(current\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 56]) S 32 T (// tmp102, current) N
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// tmp102,) N
+() S 8 T (bne) S 16 T (.L86) S 24 T () S 32 T (//,) N
+() S 8 T (b) S 16 T (.L81) S 24 T () S 32 T (//) N
+(.L87:) N
+(// main.cpp:253:         ) S
+(return) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+(.L81:) N
+(// main.cpp:267: }) N
+() S 8 T (ldp) S 16 T (x19, x30, [sp], 64) S 40 T (//,,,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_restore 19) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1679:) N
+() S 8 T (.size) S 16 T (_Z12replace_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11ch) N
+(ar_traitsIcESaIcEEES8_, .-_Z12replace_textR10LinkedListRKNSt7__cxx1112basic_stri) N
+(ngIcSt11char_traitsIcESaIcEEES8_) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (_Z12handle_mouseiiRiS_S_R10LinkedList) N
+() S 8 T (.type) S 16 T (_Z12handle_mouseiiRiS_S_R10LinkedList, %) S
+(function) K n
+(_Z12handle_mouseiiRiS_S_R10LinkedList:) p n
+(.LFB1680:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -80]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 80) N
+() S 8 T (.cfi_offset 30, -80) N
+() S 8 T (str) S 16 T (w0, [sp, 60]) S 32 T (// x, x) N
+() S 8 T (str) S 16 T (w1, [sp, 56]) S 32 T (// y, y) N
+() S 8 T (str) S 16 T (x2, [sp, 48]) S 32 T (// cursor_x, cursor_x) N
+() S 8 T (str) S 16 T (x3, [sp, 40]) S 32 T (// cursor_y, cursor_y) N
+() S 8 T (str) S 16 T (x4, [sp, 32]) S 32 T (// scroll_offset, scroll_offset) N
+() S 8 T (str) S 16 T (x5, [sp, 24]) S 32 T (// lines, lines) N
+(// main.cpp:273:     ) S
+(if) K
+( \(y ) p
+(\272) sy
+( 1\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 56]) S 32 T (// tmp97, y) N
+() S 8 T (cmp) S 16 T (w0, 1) S 24 T (// tmp97,) N
+() S 8 T (beq) S 16 T (.L92) S 24 T () S 32 T (//,) N
+(// main.cpp:278:     int max_y = std::min\(LINES - 3, static_cast<int>\(list_size\() N
+(lines\)\)\);) N
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp99,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp98, tmp99,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.39_1, LINES) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#3) c 32 T (// _2, LINES.39_1,) N
+() p 8 T (str) S 16 T (w0, [sp, 68]) S 32 T (// _2, D.45771) N
+(// main.cpp:278:     int max_y = std::min\(LINES - 3, static_cast<int>\(list_size\() N
+(lines\)\)\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 24]) S 32 T (//, lines) N
+() S 8 T (bl) S 16 T (_Z9list_sizeR10LinkedList) S 48 T () S 56 T (//) N
+(// main.cpp:278:     int max_y = std::min\(LINES - 3, static_cast<int>\(list_size\() N
+(lines\)\)\);) N
+() S 8 T (str) S 16 T (w0, [sp, 72]) S 32 T (// _4, D.45772) N
+(main.s) (Page 23/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// main.cpp:278:     int max_y = std::min\(LINES - 3, static_cast<int>\(list_size\() p n
+(lines\)\)\);) N
+() S 8 T (add) S 16 T (x1, sp, 72) S 32 T (// tmp100,,) N
+() S 8 T (add) S 16 T (x0, sp, 68) S 32 T (// tmp101,,) N
+() S 8 T (bl) S 16 T (_ZSt3minIiERKT_S2_S2_) S 40 T () S 48 T (//) N
+(// main.cpp:278:     int max_y = std::min\(LINES - 3, static_cast<int>\(list_size\() N
+(lines\)\)\);) N
+() S 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// tmp102, *_5) N
+() S 8 T (str) S 16 T (w0, [sp, 76]) S 32 T (// tmp102, max_y) N
+(// main.cpp:279:     ) S
+(if) K
+( \(y ) p
+(\263) sy
+( 3 && y ) p
+(\243) sy
+( max_y\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 56]) S 32 T (// tmp103, y) N
+() S 8 T (cmp) S 16 T (w0, 2) S 24 T (// tmp103,) N
+() S 8 T (ble) S 16 T (.L91) S 24 T () S 32 T (//,) N
+(// main.cpp:279:     ) S
+(if) K
+( \(y ) p
+(\263) sy
+( 3 && y ) p
+(\243) sy
+( max_y\)) p n
+() S 8 T (ldr) S 16 T (w1, [sp, 56]) S 32 T (// tmp104, y) N
+() S 8 T (ldr) S 16 T (w0, [sp, 76]) S 32 T (// tmp105, max_y) N
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// tmp104, tmp105) N
+() S 8 T (bgt) S 16 T (.L91) S 24 T () S 32 T (//,) N
+(// main.cpp:281:         cursor_x = x;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 48]) S 32 T (// tmp106, cursor_x) N
+() S 8 T (ldr) S 16 T (w1, [sp, 60]) S 32 T (// tmp107, x) N
+() S 8 T (str) S 16 T (w1, [x0]) S 32 T (// tmp107, *cursor_x_17\(D\)) N
+(// main.cpp:282:         cursor_y = y;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp108, cursor_y) N
+() S 8 T (ldr) S 16 T (w1, [sp, 56]) S 32 T (// tmp109, y) N
+() S 8 T (str) S 16 T (w1, [x0]) S 32 T (// tmp109, *cursor_y_20\(D\)) N
+() S 8 T (b) S 16 T (.L88) S 24 T () S 32 T (//) N
+(.L91:) N
+(// main.cpp:284:     ) S
+(else) K
+( ) p
+(if) K
+( \(y > max_y\)) p n
+() S 8 T (ldr) S 16 T (w1, [sp, 56]) S 32 T (// tmp110, y) N
+() S 8 T (ldr) S 16 T (w0, [sp, 76]) S 32 T (// tmp111, max_y) N
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// tmp110, tmp111) N
+() S 8 T (ble) S 16 T (.L88) S 24 T () S 32 T (//,) N
+(// main.cpp:286:         cursor_x = x;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 48]) S 32 T (// tmp112, cursor_x) N
+() S 8 T (ldr) S 16 T (w1, [sp, 60]) S 32 T (// tmp113, x) N
+() S 8 T (str) S 16 T (w1, [x0]) S 32 T (// tmp113, *cursor_x_17\(D\)) N
+(// main.cpp:287:         cursor_y = max_y;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 40]) S 32 T (// tmp114, cursor_y) N
+() S 8 T (ldr) S 16 T (w1, [sp, 76]) S 32 T (// tmp115, max_y) N
+() S 8 T (str) S 16 T (w1, [x0]) S 32 T (// tmp115, *cursor_y_20\(D\)) N
+() S 8 T (b) S 16 T (.L88) S 24 T () S 32 T (//) N
+(.L92:) N
+(// main.cpp:275:         ) S
+(return) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+(.L88:) N
+(// main.cpp:289: }) N
+() S 8 T (ldr) S 16 T (x30, [sp], 80) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1680:) N
+() S 8 T (.size) S 16 T (_Z12handle_mouseiiRiS_S_R10LinkedList, .-_Z12handle_mouseiiRiS_S) N
+(_R10LinkedList) N
+() S 8 T (.section) S 24 T (.rodata) N
+() S 8 T (.align) S 16 T (3) N
+(.LC3:) N
+() S 8 T (.string) S 16 T ("") N
+() S 8 T (.align) S 16 T (3) N
+(.LC4:) N
+() S 8 T (.string) S 16 T (") S
+(Macro) str
+(") p n
+(main.s) (Page 24/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (12/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (25-26) 13
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (.align) S 16 T (3) N
+(.LC5:) N
+() S 8 T (.string) S 16 T (") S
+(Search: ) str
+(") p n
+() S 8 T (.align) S 16 T (3) N
+(.LC6:) N
+() S 8 T (.string) S 16 T (") S
+(Search for: ) str
+(") p n
+() S 8 T (.align) S 16 T (3) N
+(.LC7:) N
+() S 8 T (.string) S 16 T (") S
+(Replace with: ) str
+(") p n
+() S 8 T (.text) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.global) S 16 T (main) N
+() S 8 T (.type) S 16 T (main, %) S
+(function) K n
+(main:) p n
+(.LFB1681:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (.cfi_personality 0x9b,DW.ref.__gxx_personality_v0) N
+() S 8 T (.cfi_lsda 0x1b,.LLSDA1681) N
+() S 8 T (stp) S 16 T (x19, x30, [sp, -416]!) S 40 T (//,,,) N
+() S 8 T (.cfi_def_cfa_offset 416) N
+() S 8 T (.cfi_offset 19, -416) N
+() S 8 T (.cfi_offset 30, -408) N
+() S 8 T (str) S 16 T (w0, [sp, 28]) S 32 T (// argc, argc) N
+() S 8 T (str) S 16 T (x1, [sp, 16]) S 32 T (// argv, argv) N
+(.LEHB13:) N
+(// main.cpp:295:     initscr\(\);) N
+() S 8 T (bl) S 16 T (initscr) S 24 T () S 32 T (//) N
+(// main.cpp:296:     raw\(\);) N
+() S 8 T (bl) S 16 T (raw) S 24 T () S 32 T (//) N
+(// main.cpp:297:     keypad\(stdscr, ) S
+(TRUE) K
+(\);) p n
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp275,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp274, tmp275,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.40_1, stdscr) N
+() S 8 T (mov) S 16 T (w1, 1) S 24 T (//,) N
+() S 8 T (bl) S 16 T (keypad) S 24 T () S 32 T (//) N
+(// main.cpp:298:     noecho\(\);) N
+() S 8 T (bl) S 16 T (noecho) S 24 T () S 32 T (//) N
+(.LEHE13:) N
+(// main.cpp:300:     size_t memory = 0;) N
+() S 8 T (str) S 16 T (xzr, [sp, 240]) S 32 T (//, memory) N
+(// main.cpp:301:     size_t nodes = 0;) N
+() S 8 T (str) S 16 T (xzr, [sp, 232]) S 32 T (//, nodes) N
+(// main.cpp:304:     int cursor_x = 0;) N
+() S 8 T (str) S 16 T (wzr, [sp, 228]) S 32 T (//, cursor_x) N
+(// main.cpp:305:     int cursor_y = 3;) N
+() S 8 T (mov) S 16 T (w0, 3) S 24 T (// tmp276,) N
+() S 8 T (str) S 16 T (w0, [sp, 224]) S 32 T (// tmp276, cursor_y) N
+(// main.cpp:307:     int scroll_offset = 0;) N
+() S 8 T (str) S 16 T (wzr, [sp, 220]) S 32 T (//, scroll_offset) N
+(// main.cpp:309:     LinkedList lines;) N
+() S 8 T (add) S 16 T (x0, sp, 208) S 32 T (// tmp277,,) N
+() S 8 T (bl) S 16 T (_ZN10LinkedListC1Ev) S 40 T () S 48 T (//) N
+(// main.cpp:310:     std::string filename;) N
+() S 8 T (add) S 16 T (x0, sp, 176) S 32 T (// tmp278,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1Ev) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:312:     ) S
+(if) K
+( \(argc > 1\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 28]) S 32 T (// tmp279, argc) N
+() S 8 T (cmp) S 16 T (w0, 1) S 24 T (// tmp279,) N
+() S 8 T (ble) S 16 T (.L94) S 24 T () S 32 T (//,) N
+(// main.cpp:314:         filename = argv[1];) N
+() S 8 T (ldr) S 16 T (x0, [sp, 16]) S 32 T (// tmp280, argv) N
+(main.s) (Page 25/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (add) S 16 T (x0, x0, 8) S 32 T (// _2, tmp280,) N
+() S 8 T (ldr) S 16 T (x1, [x0]) S 32 T (// _3, *_2) N
+() S 8 T (add) S 16 T (x0, sp, 176) S 32 T (// tmp281,,) N
+(.LEHB14:) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEaSEPKc) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:315:         open_file\(filename.c_str\(\), lines, memory, nodes\);) N
+() S 8 T (add) S 16 T (x0, sp, 176) S 32 T (// tmp282,,) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE5c_strEv) S 80 T () N
+() S 0 T (//) N
+() S 8 T (mov) S 16 T (x4, x0) S 24 T (// _4,) N
+() S 8 T (add) S 16 T (x2, sp, 232) S 32 T (// tmp283,,) N
+() S 8 T (add) S 16 T (x1, sp, 240) S 32 T (// tmp284,,) N
+() S 8 T (add) S 16 T (x0, sp, 208) S 32 T (// tmp285,,) N
+() S 8 T (mov) S 16 T (x3, x2) S 24 T (//, tmp283) N
+() S 8 T (mov) S 16 T (x2, x1) S 24 T (//, tmp284) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, tmp285) N
+() S 8 T (mov) S 16 T (x0, x4) S 24 T (//, _4) N
+() S 8 T (bl) S 16 T (_Z9open_filePKcR10LinkedListRmS3_) S 56 T () S 64 T (//) N
+(.LEHE14:) N
+(.L94:) N
+(// main.cpp:318:     ) S
+(if) K
+( \(!lines.head\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 208]) S 32 T (// _5, lines.head) N
+(// main.cpp:318:     ) S
+(if) K
+( \(!lines.head\)) p n
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// _5,) N
+() S 8 T (bne) S 16 T (.L95) S 24 T () S 32 T (//,) N
+(// main.cpp:320:         list_push_back\(lines, ""\);) N
+() S 8 T (add) S 16 T (x0, sp, 280) S 32 T (// tmp286,,) N
+() S 8 T (bl) S 16 T (_ZNSaIcEC1Ev) S 32 T () S 40 T (//) N
+() S 8 T (add) S 16 T (x0, sp, 280) S 32 T (// tmp287,,) N
+() S 8 T (add) S 16 T (x3, sp, 248) S 32 T (// tmp288,,) N
+() S 8 T (mov) S 16 T (x2, x0) S 24 T (//, tmp287) N
+() S 8 T (adrp) S 16 T (x0, .LC3) S 32 T (// tmp289,) N
+() S 8 T (add) S 16 T (x1, x0, :lo12:.LC3) S 40 T (//, tmp289,) N
+() S 8 T (mov) S 16 T (x0, x3) S 24 T (//, tmp288) N
+(.LEHB15:) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1EPKcRKS3_) N
+() S 0 T () S 8 T (//) N
+(.LEHE15:) N
+(// main.cpp:320:         list_push_back\(lines, ""\);) N
+() S 8 T (add) S 16 T (x1, sp, 248) S 32 T (// tmp290,,) N
+() S 8 T (add) S 16 T (x0, sp, 208) S 32 T (// tmp291,,) N
+(.LEHB16:) N
+() S 8 T (bl) S 16 T (_Z14list_push_backR10LinkedListRKNSt7__cxx1112basic_stringIcSt11) N
+(char_traitsIcESaIcEEE) S 24 T () S 32 T (//) N
+(.LEHE16:) N
+(// main.cpp:320:         list_push_back\(lines, ""\);) N
+() S 8 T (add) S 16 T (x0, sp, 248) S 32 T (// tmp292,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (add) S 16 T (x0, sp, 280) S 32 T (// tmp293,,) N
+() S 8 T (bl) S 16 T (_ZNSaIcED1Ev) S 32 T () S 40 T (//) N
+(// main.cpp:321:         nodes++;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 232]) S 32 T (// nodes.41_6, nodes) N
+() S 8 T (add) S 16 T (x0, x0, 1) S 32 T (// _7, nodes.41_6,) N
+() S 8 T (str) S 16 T (x0, [sp, 232]) S 32 T (// _7, nodes) N
+(.L95:) N
+(// main.cpp:324:     Node *current_line = lines.head;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 208]) S 32 T (// _8, lines.head) N
+(// main.cpp:324:     Node *current_line = lines.head;) N
+() S 8 T (str) S 16 T (x0, [sp, 168]) S 32 T (// _8, current_line) N
+(// main.cpp:325:     std::string search_str;) N
+(main.s) (Page 26/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (13/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (27-28) 14
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (add) S 16 T (x0, sp, 136) S 32 T (// tmp294,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1Ev) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:326:     std::string replace_str;) N
+() S 8 T (add) S 16 T (x0, sp, 104) S 32 T (// tmp295,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1Ev) S 80 T () N
+() S 0 T (//) N
+(.LEHB17:) N
+(// main.cpp:328:     ) S
+(if) K
+( \(has_colors\(\)\)) p n
+() S 8 T (bl) S 16 T (has_colors) S 32 T () S 40 T (//) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// _234, tmp296) N
+(// main.cpp:328:     ) S
+(if) K
+( \(has_colors\(\)\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// _234,) N
+() S 8 T (beq) S 16 T (.L96) S 24 T () S 32 T (//,) N
+(// main.cpp:330:         start_color\(\);) N
+() S 8 T (bl) S 16 T (start_color) S 32 T () S 40 T (//) N
+(// main.cpp:331:         init_pair\(1, COLOR_YELLOW, COLOR_BLACK\);) N
+() S 8 T (mov) S 16 T (w2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 3) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w0, 1) S 24 T (//,) N
+() S 8 T (bl) S 16 T (init_pair) S 32 T () S 40 T (//) N
+(.L96:) N
+(// main.cpp:334:     init_pair\(1, COLOR_WHITE, COLOR_BLUE\);) N
+() S 8 T (mov) S 16 T (w2, 4) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 7) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w0, 1) S 24 T (//,) N
+() S 8 T (bl) S 16 T (init_pair) S 32 T () S 40 T (//) N
+(// main.cpp:335:     mousemask\(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, ) S
+(NULL) K
+(\);) p n
+() S 8 T (mov) S 16 T (x1, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w0, 536870911) S 32 T (//,) N
+() S 8 T (bl) S 16 T (mousemask) S 32 T () S 40 T (//) N
+(.L130:) N
+(// main.cpp:339:         clear\(\);) N
+() S 8 T (bl) S 16 T (clear) S 24 T () S 32 T (//) N
+(// main.cpp:341:         attron\(A_REVERSE\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp298,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp297, tmp298,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.43_9, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 262144) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_on) S 32 T () S 40 T (//) N
+(// main.cpp:342:         mvprintw\(0, 0, ") S
+(Macro) str
+("\);) p n
+() S 8 T (adrp) S 16 T (x0, .LC4) S 32 T (// tmp299,) N
+() S 8 T (add) S 16 T (x2, x0, :lo12:.LC4) S 40 T (//, tmp299,) N
+() S 8 T (mov) S 16 T (w1, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w0, 0) S 24 T (//,) N
+() S 8 T (bl) S 16 T (mvprintw) S 32 T () S 40 T (//) N
+(// main.cpp:343:         attroff\(A_REVERSE\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp301,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp300, tmp301,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.44_10, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 262144) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_off) S 32 T () S 40 T (//) N
+(// main.cpp:345:         display_memory_info\(memory, nodes\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 240]) S 32 T (// memory.45_11, memory) N
+() S 8 T (ldr) S 16 T (x1, [sp, 232]) S 32 T (// nodes.46_12, nodes) N
+() S 8 T (bl) S 16 T (_Z19display_memory_infomm) S 48 T () S 56 T (//) N
+(// main.cpp:347:         int y = 3;) N
+() S 8 T (mov) S 16 T (w0, 3) S 24 T (// tmp302,) N
+() S 8 T (str) S 16 T (w0, [sp, 412]) S 32 T (// tmp302, y) N
+(// main.cpp:348:         Node *current = lines.head;) N
+(main.s) (Page 27/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (ldr) S 16 T (x0, [sp, 208]) S 32 T (// tmp303, lines.head) N
+() S 8 T (str) S 16 T (x0, [sp, 400]) S 32 T (// tmp303, current) N
+(// main.cpp:349:         int line_count = 0;) N
+() S 8 T (str) S 16 T (wzr, [sp, 396]) S 32 T (//, line_count) N
+(// main.cpp:350:         ) S
+(while) K
+( \(current\)) p n
+() S 8 T (b) S 16 T (.L97) S 24 T () S 32 T (//) N
+(.L99:) N
+(// main.cpp:352:             ) S
+(if) K
+( \(line_count ) p
+(\263) sy
+( scroll_offset && y < LINES - 1\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 220]) S 32 T (// scroll_offset.47_13, scroll_offset) N
+(// main.cpp:352:             ) S
+(if) K
+( \(line_count ) p
+(\263) sy
+( scroll_offset && y < LINES - 1\)) p n
+() S 8 T (ldr) S 16 T (w1, [sp, 396]) S 32 T (// tmp304, line_count) N
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// tmp304, scroll_offset.47_13) N
+() S 8 T (blt) S 16 T (.L98) S 24 T () S 32 T (//,) N
+(// main.cpp:352:             ) S
+(if) K
+( \(line_count ) p
+(\263) sy
+( scroll_offset && y < LINES - 1\)) p n
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp306,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp305, tmp306,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.48_14, LINES) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _15, LINES.48_14,) N
+(// main.cpp:352:             ) p
+(if) K
+( \(line_count ) p
+(\263) sy
+( scroll_offset && y < LINES - 1\)) p n
+() S 8 T (ldr) S 16 T (w1, [sp, 412]) S 32 T (// tmp307, y) N
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// tmp307, _15) N
+() S 8 T (bge) S 16 T (.L98) S 24 T () S 32 T (//,) N
+(// main.cpp:354:                 mvprintw\(y++, 0, ") S
+(%s) str
+(", current) p
+(\256) sy
+(line.c_str\(\)\);) p n
+() S 8 T (ldr) S 16 T (w19, [sp, 412]) S 32 T (// y.49_16, y) N
+() S 8 T (add) S 16 T (w0, w19, 1) S 32 T (// tmp308, y.49_16,) N
+() S 8 T (str) S 16 T (w0, [sp, 412]) S 32 T (// tmp308, y) N
+() S 8 T (ldr) S 16 T (x0, [sp, 400]) S 32 T (// _17, current) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE5c_strEv) S 80 T () N
+() S 0 T (//) N
+() S 8 T (mov) S 16 T (x3, x0) S 24 T (//, _18) N
+() S 8 T (adrp) S 16 T (x0, .LC2) S 32 T (// tmp309,) N
+() S 8 T (add) S 16 T (x2, x0, :lo12:.LC2) S 40 T (//, tmp309,) N
+() S 8 T (mov) S 16 T (w1, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w0, w19) S 24 T (//, y.49_16) N
+() S 8 T (bl) S 16 T (mvprintw) S 32 T () S 40 T (//) N
+(.L98:) N
+(// main.cpp:356:             line_count++;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 396]) S 32 T (// tmp311, line_count) N
+() S 8 T (add) S 16 T (w0, w0, 1) S 32 T (// tmp310, tmp311,) N
+() S 8 T (str) S 16 T (w0, [sp, 396]) S 32 T (// tmp310, line_count) N
+(// main.cpp:357:             current = current) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 400]) S 32 T (// tmp312, current) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// tmp313, current_176) S
+(\256) sy
+(next) K n
+() p 8 T (str) S 16 T (x0, [sp, 400]) S 32 T (// tmp313, current) N
+(.L97:) N
+(// main.cpp:350:         ) S
+(while) K
+( \(current\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 400]) S 32 T (// tmp314, current) N
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// tmp314,) N
+() S 8 T (bne) S 16 T (.L99) S 24 T () S 32 T (//,) N
+(// main.cpp:360:         search_text\(lines, search_str, cursor_x, cursor_y, scro) N
+(ll_offset, current_line\);) N
+() S 8 T (add) S 16 T (x5, sp, 168) S 32 T (// tmp315,,) N
+() S 8 T (add) S 16 T (x4, sp, 220) S 32 T (// tmp316,,) N
+() S 8 T (add) S 16 T (x3, sp, 224) S 32 T (// tmp317,,) N
+() S 8 T (add) S 16 T (x2, sp, 228) S 32 T (// tmp318,,) N
+() S 8 T (add) S 16 T (x1, sp, 136) S 32 T (// tmp319,,) N
+() S 8 T (add) S 16 T (x0, sp, 208) S 32 T (// tmp320,,) N
+() S 8 T (bl) S 16 T (_Z11search_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11cha) N
+(r_traitsIcESaIcEEERiS9_S9_RP4Node) S 40 T () S 48 T (//) N
+(// main.cpp:361:         move\(cursor_y, cursor_x\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.50_19, cursor_y) N
+() S 8 T (ldr) S 16 T (w1, [sp, 228]) S 32 T (// cursor_x.51_20, cursor_x) N
+(main.s) (Page 28/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (14/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (29-30) 15
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (bl) S 16 T (move) S 24 T () S 32 T (//) N
+(// main.cpp:363:         attron\(A_BOLD | A_REVERSE\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp322,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp321, tmp322,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.52_21, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 2359296) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_on) S 32 T () S 40 T (//) N
+(// main.cpp:364:         mvprintw\(LINES - 1, 0, CONTROLS\);) N
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp324,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp323, tmp324,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.53_22, LINES) N
+() S 8 T (sub) S 16 T (w3, w0, ) S
+(#1) c 32 T (// _23, LINES.53_22,) N
+() p 8 T (adrp) S 16 T (x0, CONTROLS) S 32 T (// tmp326,) N
+() S 8 T (add) S 16 T (x0, x0, :lo12:CONTROLS) S 40 T (// tmp325, tmp326,) N
+() S 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// CONTROLS.54_24, CONTROLS) N
+() S 8 T (mov) S 16 T (x2, x0) S 24 T (//, CONTROLS.54_24) N
+() S 8 T (mov) S 16 T (w1, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w0, w3) S 24 T (//, _23) N
+() S 8 T (bl) S 16 T (mvprintw) S 32 T () S 40 T (//) N
+(// main.cpp:365:         attroff\(A_BOLD | A_REVERSE\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp328,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp327, tmp328,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.55_25, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 2359296) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_off) S 32 T () S 40 T (//) N
+(// main.cpp:366:         move\(cursor_y, cursor_x\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.56_26, cursor_y) N
+() S 8 T (ldr) S 16 T (w1, [sp, 228]) S 32 T (// cursor_x.57_27, cursor_x) N
+() S 8 T (bl) S 16 T (move) S 24 T () S 32 T (//) N
+(// main.cpp:368:         ch = getch\(\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp330,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp329, tmp330,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.58_28, stdscr) N
+() S 8 T (bl) S 16 T (wgetch) S 24 T () S 32 T (//) N
+() S 8 T (str) S 16 T (w0, [sp, 392]) S 32 T (// _255, ch) N
+(// main.cpp:370:         ) S
+(switch) K
+( \(ch\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp331, ch) N
+() S 8 T (cmp) S 16 T (w0, 409) S 24 T (// tmp331,) N
+() S 8 T (beq) S 16 T (.L100) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp332, ch) N
+() S 8 T (cmp) S 16 T (w0, 409) S 24 T (// tmp332,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp333, ch) N
+() S 8 T (cmp) S 16 T (w0, 343) S 24 T (// tmp333,) N
+() S 8 T (beq) S 16 T (.L102) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp334, ch) N
+() S 8 T (cmp) S 16 T (w0, 343) S 24 T (// tmp334,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp335, ch) N
+() S 8 T (cmp) S 16 T (w0, 330) S 24 T (// tmp335,) N
+() S 8 T (beq) S 16 T (.L103) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp336, ch) N
+() S 8 T (cmp) S 16 T (w0, 330) S 24 T (// tmp336,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp337, ch) N
+() S 8 T (cmp) S 16 T (w0, 263) S 24 T (// tmp337,) N
+() S 8 T (beq) S 16 T (.L104) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp338, ch) N
+() S 8 T (cmp) S 16 T (w0, 263) S 24 T (// tmp338,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+(main.s) (Page 29/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp339, ch) N
+() S 8 T (cmp) S 16 T (w0, 261) S 24 T (// tmp339,) N
+() S 8 T (beq) S 16 T (.L105) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp340, ch) N
+() S 8 T (cmp) S 16 T (w0, 261) S 24 T (// tmp340,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp341, ch) N
+() S 8 T (cmp) S 16 T (w0, 260) S 24 T (// tmp341,) N
+() S 8 T (beq) S 16 T (.L106) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp342, ch) N
+() S 8 T (cmp) S 16 T (w0, 260) S 24 T (// tmp342,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp343, ch) N
+() S 8 T (cmp) S 16 T (w0, 259) S 24 T (// tmp343,) N
+() S 8 T (beq) S 16 T (.L107) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp344, ch) N
+() S 8 T (cmp) S 16 T (w0, 259) S 24 T (// tmp344,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp345, ch) N
+() S 8 T (cmp) S 16 T (w0, 258) S 24 T (// tmp345,) N
+() S 8 T (beq) S 16 T (.L108) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp346, ch) N
+() S 8 T (cmp) S 16 T (w0, 258) S 24 T (// tmp346,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp347, ch) N
+() S 8 T (cmp) S 16 T (w0, 127) S 24 T (// tmp347,) N
+() S 8 T (beq) S 16 T (.L104) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp348, ch) N
+() S 8 T (cmp) S 16 T (w0, 127) S 24 T (// tmp348,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp349, ch) N
+() S 8 T (cmp) S 16 T (w0, 24) S 24 T (// tmp349,) N
+() S 8 T (beq) S 16 T (.L109) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp350, ch) N
+() S 8 T (cmp) S 16 T (w0, 24) S 24 T (// tmp350,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp351, ch) N
+() S 8 T (cmp) S 16 T (w0, 23) S 24 T (// tmp351,) N
+() S 8 T (beq) S 16 T (.L110) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp352, ch) N
+() S 8 T (cmp) S 16 T (w0, 23) S 24 T (// tmp352,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp353, ch) N
+() S 8 T (cmp) S 16 T (w0, 20) S 24 T (// tmp353,) N
+() S 8 T (beq) S 16 T (.L111) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp354, ch) N
+() S 8 T (cmp) S 16 T (w0, 20) S 24 T (// tmp354,) N
+() S 8 T (bgt) S 16 T (.L101) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp355, ch) N
+() S 8 T (cmp) S 16 T (w0, 10) S 24 T (// tmp355,) N
+() S 8 T (beq) S 16 T (.L102) S 24 T () S 32 T (//,) N
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp356, ch) N
+() S 8 T (cmp) S 16 T (w0, 15) S 24 T (// tmp356,) N
+() S 8 T (beq) S 16 T (.L112) S 24 T () S 32 T (//,) N
+() S 8 T (b) S 16 T (.L101) S 24 T () S 32 T (//) N
+(.L100:) N
+(// main.cpp:374:             ) S
+(if) K
+( \(getmouse\(&event\) ) p
+(\272) sy
+( OK\)) p n
+() S 8 T (add) S 16 T (x0, sp, 80) S 32 T (// tmp357,,) N
+() S 8 T (bl) S 16 T (getmouse) S 32 T () S 40 T (//) N
+(// main.cpp:374:             ) S
+(if) K
+( \(getmouse\(&event\) ) p
+(\272) sy
+( OK\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// _29,) N
+() S 8 T (cset) S 16 T (w0, eq) S 24 T (// tmp359,) N
+(main.s) (Page 30/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (15/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (31-32) 16
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (and) S 16 T (w0, w0, 255) S 32 T (// retval.59_259, tmp358) N
+(// main.cpp:374:             ) S
+(if) K
+( \(getmouse\(&event\) ) p
+(\272) sy
+( OK\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// retval.59_259,) N
+() S 8 T (beq) S 16 T (.L142) S 24 T () S 32 T (//,) N
+(// main.cpp:376:                 handle_mouse\(event.x, event.y, cursor_x, cursor) N
+(_y, scroll_offset, lines\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 84]) S 32 T (// _30, event.x) N
+() S 8 T (ldr) S 16 T (w1, [sp, 88]) S 32 T (// _31, event.y) N
+() S 8 T (add) S 16 T (x5, sp, 208) S 32 T (// tmp360,,) N
+() S 8 T (add) S 16 T (x4, sp, 220) S 32 T (// tmp361,,) N
+() S 8 T (add) S 16 T (x3, sp, 224) S 32 T (// tmp362,,) N
+() S 8 T (add) S 16 T (x2, sp, 228) S 32 T (// tmp363,,) N
+() S 8 T (bl) S 16 T (_Z12handle_mouseiiRiS_S_R10LinkedList) S 56 T () S 64 T (//) N
+(// main.cpp:377:                 move\(cursor_y, cursor_x\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.60_32, cursor_y) N
+() S 8 T (ldr) S 16 T (w1, [sp, 228]) S 32 T (// cursor_x.61_33, cursor_x) N
+() S 8 T (bl) S 16 T (move) S 24 T () S 32 T (//) N
+(// main.cpp:379:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L142) S 24 T () S 32 T (//) N
+(.L110:) N
+(// main.cpp:381:             attron\(A_BOLD | A_REVERSE\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp365,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp364, tmp365,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.62_34, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 2359296) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_on) S 32 T () S 40 T (//) N
+(// main.cpp:382:             search_str = get_user_input\(") S
+(Search: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x0, sp, 288) S 32 T (// tmp366,,) N
+() S 8 T (mov) S 16 T (x8, x0) S 24 T (//, tmp366) N
+() S 8 T (adrp) S 16 T (x0, .LC5) S 32 T (// tmp367,) N
+() S 8 T (add) S 16 T (x0, x0, :lo12:.LC5) S 40 T (//, tmp367,) N
+() S 8 T (bl) S 16 T (_Z14get_user_inputB5cxx11PKc) S 48 T () S 56 T (//) N
+(// main.cpp:382:             search_str = get_user_input\(") S
+(Search: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x1, sp, 288) S 32 T (// tmp368,,) N
+() S 8 T (add) S 16 T (x0, sp, 136) S 32 T (// tmp369,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEaSEOS4_) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:382:             search_str = get_user_input\(") S
+(Search: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x0, sp, 288) S 32 T (// tmp370,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:383:             attroff\(A_BOLD | A_REVERSE\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp372,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp371, tmp372,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.63_35, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 2359296) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_off) S 32 T () S 40 T (//) N
+(// main.cpp:384:             search_text\(lines, search_str, cursor_x, cursor_y, ) N
+(scroll_offset, current_line\);) N
+() S 8 T (add) S 16 T (x5, sp, 168) S 32 T (// tmp373,,) N
+() S 8 T (add) S 16 T (x4, sp, 220) S 32 T (// tmp374,,) N
+() S 8 T (add) S 16 T (x3, sp, 224) S 32 T (// tmp375,,) N
+() S 8 T (add) S 16 T (x2, sp, 228) S 32 T (// tmp376,,) N
+() S 8 T (add) S 16 T (x1, sp, 136) S 32 T (// tmp377,,) N
+() S 8 T (add) S 16 T (x0, sp, 208) S 32 T (// tmp378,,) N
+() S 8 T (bl) S 16 T (_Z11search_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11cha) N
+(r_traitsIcESaIcEEERiS9_S9_RP4Node) S 40 T () S 48 T (//) N
+(// main.cpp:385:             move\(cursor_y, cursor_x\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.64_36, cursor_y) N
+() S 8 T (ldr) S 16 T (w1, [sp, 228]) S 32 T (// cursor_x.65_37, cursor_x) N
+(main.s) (Page 31/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (bl) S 16 T (move) S 24 T () S 32 T (//) N
+(// main.cpp:386:             refresh\(\);) N
+() S 8 T (bl) S 16 T (refresh) S 24 T () S 32 T (//) N
+(// main.cpp:387:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L114) S 24 T () S 32 T (//) N
+(.L111:) N
+(// main.cpp:389:             attron\(A_BOLD | A_REVERSE\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp380,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp379, tmp380,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.66_38, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 2359296) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_on) S 32 T () S 40 T (//) N
+(// main.cpp:390:             search_str = get_user_input\(") S
+(Search for: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x0, sp, 320) S 32 T (// tmp381,,) N
+() S 8 T (mov) S 16 T (x8, x0) S 24 T (//, tmp381) N
+() S 8 T (adrp) S 16 T (x0, .LC6) S 32 T (// tmp382,) N
+() S 8 T (add) S 16 T (x0, x0, :lo12:.LC6) S 40 T (//, tmp382,) N
+() S 8 T (bl) S 16 T (_Z14get_user_inputB5cxx11PKc) S 48 T () S 56 T (//) N
+(// main.cpp:390:             search_str = get_user_input\(") S
+(Search for: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x1, sp, 320) S 32 T (// tmp383,,) N
+() S 8 T (add) S 16 T (x0, sp, 136) S 32 T (// tmp384,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEaSEOS4_) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:390:             search_str = get_user_input\(") S
+(Search for: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x0, sp, 320) S 32 T (// tmp385,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:391:             replace_str = get_user_input\(") S
+(Replace with: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x0, sp, 352) S 32 T (// tmp386,,) N
+() S 8 T (mov) S 16 T (x8, x0) S 24 T (//, tmp386) N
+() S 8 T (adrp) S 16 T (x0, .LC7) S 32 T (// tmp387,) N
+() S 8 T (add) S 16 T (x0, x0, :lo12:.LC7) S 40 T (//, tmp387,) N
+() S 8 T (bl) S 16 T (_Z14get_user_inputB5cxx11PKc) S 48 T () S 56 T (//) N
+(// main.cpp:391:             replace_str = get_user_input\(") S
+(Replace with: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x1, sp, 352) S 32 T (// tmp388,,) N
+() S 8 T (add) S 16 T (x0, sp, 104) S 32 T (// tmp389,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEaSEOS4_) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:391:             replace_str = get_user_input\(") S
+(Replace with: ) str
+("\);) p n
+() S 8 T (add) S 16 T (x0, sp, 352) S 32 T (// tmp390,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:392:             attroff\(A_BOLD | A_REVERSE\);) N
+() S 8 T (adrp) S 16 T (x0, :got:stdscr) S 32 T (// tmp392,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:stdscr]) c 48 T (// tmp391, tmp392,) N
+() p 8 T (ldr) S 16 T (x0, [x0]) S 32 T (// stdscr.67_39, stdscr) N
+() S 8 T (mov) S 16 T (x2, 0) S 24 T (//,) N
+() S 8 T (mov) S 16 T (w1, 2359296) S 32 T (//,) N
+() S 8 T (bl) S 16 T (wattr_off) S 32 T () S 40 T (//) N
+(// main.cpp:393:             replace_text\(lines, search_str, replace_str\);) N
+() S 8 T (add) S 16 T (x2, sp, 104) S 32 T (// tmp393,,) N
+() S 8 T (add) S 16 T (x1, sp, 136) S 32 T (// tmp394,,) N
+() S 8 T (add) S 16 T (x0, sp, 208) S 32 T (// tmp395,,) N
+() S 8 T (bl) S 16 T (_Z12replace_textR10LinkedListRKNSt7__cxx1112basic_stringIcSt11ch) N
+(ar_traitsIcESaIcEEES8_) S 24 T () S 32 T (//) N
+(// main.cpp:394:             refresh\(\);) N
+() S 8 T (bl) S 16 T (refresh) S 24 T () S 32 T (//) N
+(// main.cpp:395:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L114) S 24 T () S 32 T (//) N
+(.L109:) N
+(// main.cpp:397:             list_clear\(lines\);) N
+(main.s) (Page 32/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (16/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (33-34) 17
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (add) S 16 T (x0, sp, 208) S 32 T (// tmp396,,) N
+() S 8 T (bl) S 16 T (_Z10list_clearR10LinkedList) S 48 T () S 56 T (//) N
+(// main.cpp:398:             endwin\(\);) N
+() S 8 T (bl) S 16 T (endwin) S 24 T () S 32 T (//) N
+(// main.cpp:399:             ) S
+(return) K
+( 0;) p n
+() S 8 T (mov) S 16 T (w19, 0) S 24 T (// _302,) N
+(// main.cpp:512: }) N
+() S 8 T (add) S 16 T (x0, sp, 104) S 32 T (// tmp397,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (add) S 16 T (x0, sp, 136) S 32 T (// tmp398,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (add) S 16 T (x0, sp, 176) S 32 T (// tmp399,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (mov) S 16 T (w0, w19) S 24 T (// <retval>, _302) N
+() S 8 T (b) S 16 T (.L141) S 24 T () S 32 T (//) N
+(.L112:) N
+(// main.cpp:401:             save_file\(filename.c_str\(\), lines\);) N
+() S 8 T (add) S 16 T (x0, sp, 176) S 32 T (// tmp400,,) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE5c_strEv) S 80 T () N
+() S 0 T (//) N
+() S 8 T (mov) S 16 T (x2, x0) S 24 T (// _40,) N
+() S 8 T (add) S 16 T (x0, sp, 208) S 32 T (// tmp401,,) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, tmp401) N
+() S 8 T (mov) S 16 T (x0, x2) S 24 T (//, _40) N
+() S 8 T (bl) S 16 T (_Z9save_filePKcRK10LinkedList) S 48 T () S 56 T (//) N
+(// main.cpp:402:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L114) S 24 T () S 32 T (//) N
+(.L103:) N
+(// main.cpp:404:             ) S
+(if) K
+( \(cursor_x < static_cast<int>\(current_line) p
+(\256) sy
+(line.) p n
+(size\(\)\)\)) N
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.69_41, current_line) N
+(// main.cpp:404:             ) S
+(if) K
+( \(cursor_x < static_cast<int>\(current_line) p
+(\256) sy
+(line.) p n
+(size\(\)\)\)) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4sizeEv) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:404:             ) S
+(if) K
+( \(cursor_x < static_cast<int>\(current_line) p
+(\256) sy
+(line.) p n
+(size\(\)\)\)) N
+() S 8 T (mov) S 16 T (w1, w0) S 24 T (// _44, _43) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.70_45, cursor_x) N
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// _44, cursor_x.70_45) N
+() S 8 T (cset) S 16 T (w0, gt) S 24 T (// tmp403,) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// retval.68_263, tmp402) N
+(// main.cpp:404:             ) S
+(if) K
+( \(cursor_x < static_cast<int>\(current_line) p
+(\256) sy
+(line.) p n
+(size\(\)\)\)) N
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// retval.68_263,) N
+() S 8 T (beq) S 16 T (.L116) S 24 T () S 32 T (//,) N
+(// main.cpp:406:                 current_line) S
+(\256) sy
+(line.erase\(cursor_x, 1\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.71_46, current_line) N
+(// main.cpp:406:                 current_line) S
+(\256) sy
+(line.erase\(cursor_x, 1\);) p n
+() S 8 T (mov) S 16 T (x3, x0) S 24 T (// _47, current_line.71_46) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.72_48, cursor_x) N
+() S 8 T (sxtw) S 16 T (x0, w0) S 24 T (// _49, cursor_x.72_48) N
+() S 8 T (mov) S 16 T (x2, 1) S 24 T (//,) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, _49) N
+() S 8 T (mov) S 16 T (x0, x3) S 24 T (//, _47) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE5eraseEmm) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:414:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L143) S 24 T () S 32 T (//) N
+(main.s) (Page 33/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(.L116:) p n
+(// main.cpp:408:             ) S
+(else) K
+( ) p
+(if) K
+( \(current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.73_50, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _51, current_line.73_50) S
+(\256) sy
+(next) K n
+(// main.cpp:408:             ) p
+(else) K
+( ) p
+(if) K
+( \(current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// _51,) N
+() S 8 T (beq) S 16 T (.L143) S 24 T () S 32 T (//,) N
+(// main.cpp:410:                 current_line) S
+(\256) sy
+(line.append\(current_line) p
+(\256) sy
+(next) K
+(\256) sy
+(li) p n
+(ne\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.74_52, current_line) N
+(// main.cpp:410:                 current_line) S
+(\256) sy
+(line.append\(current_line) p
+(\256) sy
+(next) K
+(\256) sy
+(li) p n
+(ne\);) N
+() S 8 T (mov) S 16 T (x2, x0) S 24 T (// _53, current_line.74_52) N
+(// main.cpp:410:                 current_line) S
+(\256) sy
+(line.append\(current_line) p
+(\256) sy
+(next) K
+(\256) sy
+(li) p n
+(ne\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.75_54, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _55, current_line.75_54) S
+(\256) sy
+(next) K n
+(// main.cpp:410:                 current_line) p
+(\256) sy
+(line.append\(current_line) p
+(\256) sy
+(next) K
+(\256) sy
+(li) p n
+(ne\);) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, _56) N
+() S 8 T (mov) S 16 T (x0, x2) S 24 T (//, _53) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendERKS) N
+(4_) S 8 T () S 16 T (//) N
+(// main.cpp:411:                 list_erase_) S
+(next) K
+(\(current_line\);) p n
+() S 8 T (add) S 16 T (x0, sp, 168) S 32 T (// tmp404,,) N
+() S 8 T (bl) S 16 T (_Z15list_erase_nextRP4Node) S 48 T () S 56 T (//) N
+(// main.cpp:412:                 nodes--;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 232]) S 32 T (// nodes.76_57, nodes) N
+() S 8 T (sub) S 16 T (x0, x0, ) S
+(#1) c 32 T (// _58, nodes.76_57,) N
+() p 8 T (str) S 16 T (x0, [sp, 232]) S 32 T (// _58, nodes) N
+(// main.cpp:414:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L143) S 24 T () S 32 T (//) N
+(.L104:) N
+(// main.cpp:417:             ) S
+(if) K
+( \(cursor_x ) p
+(\272) sy
+( 0 && cursor_y > 3\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.77_59, cursor_x) N
+(// main.cpp:417:             ) S
+(if) K
+( \(cursor_x ) p
+(\272) sy
+( 0 && cursor_y > 3\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// cursor_x.77_59,) N
+() S 8 T (bne) S 16 T (.L118) S 24 T () S 32 T (//,) N
+(// main.cpp:417:             ) S
+(if) K
+( \(cursor_x ) p
+(\272) sy
+( 0 && cursor_y > 3\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.78_60, cursor_y) N
+(// main.cpp:417:             ) S
+(if) K
+( \(cursor_x ) p
+(\272) sy
+( 0 && cursor_y > 3\)) p n
+() S 8 T (cmp) S 16 T (w0, 3) S 24 T (// cursor_y.78_60,) N
+() S 8 T (ble) S 16 T (.L118) S 24 T () S 32 T (//,) N
+(// main.cpp:419:                 Node *prev = list_advance\(lines.head, cursor_y ) N
+(- 4 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (x2, [sp, 208]) S 32 T (// _61, lines.head) N
+(// main.cpp:419:                 Node *prev = list_advance\(lines.head, cursor_y ) N
+(- 4 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.79_62, cursor_y) N
+() S 8 T (sub) S 16 T (w1, w0, ) S
+(#4) c 32 T (// _63, cursor_y.79_62,) N
+(// main.cpp:419:                 Node *prev = list_advance\(lines.head, cursor_y ) p n
+(- 4 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 220]) S 32 T (// scroll_offset.80_64, scroll_offset) N
+() S 8 T (add) S 16 T (w0, w1, w0) S 32 T (// _65, _63, scroll_offset.80_64) N
+() S 8 T (mov) S 16 T (w1, w0) S 24 T (//, _65) N
+() S 8 T (mov) S 16 T (x0, x2) S 24 T (//, _61) N
+() S 8 T (bl) S 16 T (_Z12list_advanceP4Nodei) S 40 T () S 48 T (//) N
+(// main.cpp:419:                 Node *prev = list_advance\(lines.head, cursor_y ) N
+(- 4 + scroll_offset\);) N
+() S 8 T (str) S 16 T (x0, [sp, 72]) S 32 T (// _66, prev) N
+(// main.cpp:420:                 prev) S
+(\256) sy
+(line.append\(current_line) p
+(\256) sy
+(line\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 72]) S 32 T (// prev.81_67, prev) N
+(main.s) (Page 34/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (17/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (35-36) 18
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// main.cpp:420:                 prev) p
+(\256) sy
+(line.append\(current_line) p
+(\256) sy
+(line\);) p n
+() S 8 T (mov) S 16 T (x2, x0) S 24 T (// _68, prev.81_67) N
+(// main.cpp:420:                 prev) S
+(\256) sy
+(line.append\(current_line) p
+(\256) sy
+(line\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.82_69, current_line) N
+(// main.cpp:420:                 prev) S
+(\256) sy
+(line.append\(current_line) p
+(\256) sy
+(line\);) p n
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, _70) N
+() S 8 T (mov) S 16 T (x0, x2) S 24 T (//, _68) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6appendERKS) N
+(4_) S 8 T () S 16 T (//) N
+(// main.cpp:421:                 list_erase_) S
+(next) K
+(\(prev\);) p n
+() S 8 T (add) S 16 T (x0, sp, 72) S 32 T (// tmp405,,) N
+() S 8 T (bl) S 16 T (_Z15list_erase_nextRP4Node) S 48 T () S 56 T (//) N
+(// main.cpp:422:                 nodes--;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 232]) S 32 T (// nodes.83_71, nodes) N
+() S 8 T (sub) S 16 T (x0, x0, ) S
+(#1) c 32 T (// _72, nodes.83_71,) N
+() p 8 T (str) S 16 T (x0, [sp, 232]) S 32 T (// _72, nodes) N
+(// main.cpp:423:                 cursor_x = prev) S
+(\256) sy
+(line.length\(\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 72]) S 32 T (// prev.84_73, prev) N
+(// main.cpp:423:                 cursor_x = prev) S
+(\256) sy
+(line.length\(\);) p n
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6lengthEv) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:423:                 cursor_x = prev) S
+(\256) sy
+(line.length\(\);) p n
+() S 8 T (str) S 16 T (w0, [sp, 228]) S 32 T (// _76, cursor_x) N
+(// main.cpp:424:                 cursor_y--;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.85_77, cursor_y) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _78, cursor_y.85_77,) N
+() p 8 T (str) S 16 T (w0, [sp, 224]) S 32 T (// _78, cursor_y) N
+(// main.cpp:425:             }) N
+() S 8 T (nop) S 16 T () N
+(// main.cpp:431:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L144) S 24 T () S 32 T (//) N
+(.L118:) N
+(// main.cpp:426:             ) S
+(else) K
+( ) p
+(if) K
+( \(cursor_x > 0\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.86_79, cursor_x) N
+(// main.cpp:426:             ) S
+(else) K
+( ) p
+(if) K
+( \(cursor_x > 0\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// cursor_x.86_79,) N
+() S 8 T (ble) S 16 T (.L144) S 24 T () S 32 T (//,) N
+(// main.cpp:428:                 current_line) S
+(\256) sy
+(line.erase\(cursor_x - 1, 1\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.87_80, current_line) N
+(// main.cpp:428:                 current_line) S
+(\256) sy
+(line.erase\(cursor_x - 1, 1\);) p n
+() S 8 T (mov) S 16 T (x3, x0) S 24 T (// _81, current_line.87_80) N
+(// main.cpp:428:                 current_line) S
+(\256) sy
+(line.erase\(cursor_x - 1, 1\);) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.88_82, cursor_x) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _83, cursor_x.88_82,) N
+(// main.cpp:428:                 current_line) p
+(\256) sy
+(line.erase\(cursor_x - 1, 1\);) p n
+() S 8 T (sxtw) S 16 T (x0, w0) S 24 T (// _84, _83) N
+() S 8 T (mov) S 16 T (x2, 1) S 24 T (//,) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, _84) N
+() S 8 T (mov) S 16 T (x0, x3) S 24 T (//, _81) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE5eraseEmm) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:429:                 cursor_x--;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.89_85, cursor_x) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _86, cursor_x.89_85,) N
+() p 8 T (str) S 16 T (w0, [sp, 228]) S 32 T (// _86, cursor_x) N
+(// main.cpp:431:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L144) S 24 T () S 32 T (//) N
+(.L102:) N
+(// main.cpp:435:             memory += sizeof\(Node\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 240]) S 32 T (// memory.90_87, memory) N
+() S 8 T (add) S 16 T (x0, x0, 40) S 32 T (// _88, memory.90_87,) N
+() S 8 T (str) S 16 T (x0, [sp, 240]) S 32 T (// _88, memory) N
+(main.s) (Page 35/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// main.cpp:436:             nodes++;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 232]) S 32 T (// nodes.91_89, nodes) N
+() S 8 T (add) S 16 T (x0, x0, 1) S 32 T (// _90, nodes.91_89,) N
+() S 8 T (str) S 16 T (x0, [sp, 232]) S 32 T (// _90, nodes) N
+(// main.cpp:437:             std::string new_line = current_line) S
+(\256) sy
+(line.substr\(cu) p n
+(rsor_x\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.92_91, current_line) N
+(// main.cpp:437:             std::string new_line = current_line) S
+(\256) sy
+(line.substr\(cu) p n
+(rsor_x\);) N
+() S 8 T (mov) S 16 T (x3, x0) S 24 T (// _92, current_line.92_91) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.93_93, cursor_x) N
+() S 8 T (sxtw) S 16 T (x0, w0) S 24 T (// _94, cursor_x.93_93) N
+() S 8 T (add) S 16 T (x1, sp, 40) S 32 T (// tmp406,,) N
+() S 8 T (mov) S 16 T (x8, x1) S 24 T (//, tmp406) N
+() S 8 T (mov) S 16 T (x2, -1) S 24 T (//,) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, _94) N
+() S 8 T (mov) S 16 T (x0, x3) S 24 T (//, _92) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6substrEmm) N
+() S 0 T () S 8 T (//) N
+(.LEHE17:) N
+(// main.cpp:438:             current_line) S
+(\256) sy
+(line.erase\(cursor_x\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.94_95, current_line) N
+(// main.cpp:438:             current_line) S
+(\256) sy
+(line.erase\(cursor_x\);) p n
+() S 8 T (mov) S 16 T (x3, x0) S 24 T (// _96, current_line.94_95) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.95_97, cursor_x) N
+() S 8 T (sxtw) S 16 T (x0, w0) S 24 T (// _98, cursor_x.95_97) N
+() S 8 T (mov) S 16 T (x2, -1) S 24 T (//,) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, _98) N
+() S 8 T (mov) S 16 T (x0, x3) S 24 T (//, _96) N
+(.LEHB18:) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE5eraseEmm) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:439:             Node *new_node = make_node\(new_line\);) N
+() S 8 T (add) S 16 T (x0, sp, 40) S 32 T (// tmp407,,) N
+() S 8 T (bl) S 16 T (_Z9make_nodeRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcE) N
+(EE) S 8 T () S 16 T (//) N
+(.LEHE18:) N
+() S 8 T (str) S 16 T (x0, [sp, 384]) S 32 T (// _345, new_node) N
+(// main.cpp:440:             new_node) S
+(\256) sy
+(next) K
+( = current_line) p
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.96_99, current_line) N
+() S 8 T (ldr) S 16 T (x1, [x0, 32]) S 32 T (// _100, current_line.96_99) S
+(\256) sy
+(next) K n
+(// main.cpp:440:             new_node) p
+(\256) sy
+(next) K
+( = current_line) p
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 384]) S 32 T (// tmp408, new_node) N
+() S 8 T (str) S 16 T (x1, [x0, 32]) S 32 T (// _100, new_node_346) S
+(\256) sy
+(next) K n
+(// main.cpp:441:             current_line) p
+(\256) sy
+(next) K
+( = new_node;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.97_101, current_line) N
+(// main.cpp:441:             current_line) S
+(\256) sy
+(next) K
+( = new_node;) p n
+() S 8 T (ldr) S 16 T (x1, [sp, 384]) S 32 T (// tmp409, new_node) N
+() S 8 T (str) S 16 T (x1, [x0, 32]) S 32 T (// tmp409, current_line.97_101) S
+(\256) sy
+(next) K n
+(// main.cpp:443:             cursor_x = 0;) p n
+() S 8 T (str) S 16 T (wzr, [sp, 228]) S 32 T (//, cursor_x) N
+(// main.cpp:444:             cursor_y++;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.98_102, cursor_y) N
+() S 8 T (add) S 16 T (w0, w0, 1) S 32 T (// _103, cursor_y.98_102,) N
+() S 8 T (str) S 16 T (w0, [sp, 224]) S 32 T (// _103, cursor_y) N
+(// main.cpp:445:             ) S
+(if) K
+( \(cursor_y ) p
+(\263) sy
+( LINES - 1\)) p n
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp411,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp410, tmp411,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.99_104, LINES) N
+() S 8 T (sub) S 16 T (w1, w0, ) S
+(#1) c 32 T (// _105, LINES.99_104,) N
+(// main.cpp:445:             ) p
+(if) K
+( \(cursor_y ) p
+(\263) sy
+( LINES - 1\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.100_106, cursor_y) N
+(main.s) (Page 36/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (18/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (37-38) 19
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// main.cpp:445:             ) p
+(if) K
+( \(cursor_y ) p
+(\263) sy
+( LINES - 1\)) p n
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// _105, cursor_y.100_106) N
+() S 8 T (bgt) S 16 T (.L120) S 24 T () S 32 T (//,) N
+(// main.cpp:447:                 cursor_y--;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.101_107, cursor_y) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _108, cursor_y.101_107,) N
+() p 8 T (str) S 16 T (w0, [sp, 224]) S 32 T (// _108, cursor_y) N
+(// main.cpp:448:                 scroll_offset++;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 220]) S 32 T (// scroll_offset.102_109, scroll_offset) N
+() S 8 T (add) S 16 T (w0, w0, 1) S 32 T (// _110, scroll_offset.102_109,) N
+() S 8 T (str) S 16 T (w0, [sp, 220]) S 32 T (// _110, scroll_offset) N
+(.L120:) N
+(// main.cpp:450:             current_line = new_node;) N
+() S 8 T (ldr) S 16 T (x0, [sp, 384]) S 32 T (// tmp412, new_node) N
+() S 8 T (str) S 16 T (x0, [sp, 168]) S 32 T (// tmp412, current_line) N
+(// main.cpp:451:             ) S
+(break) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+(// main.cpp:452:         }) N
+() S 8 T (add) S 16 T (x0, sp, 40) S 32 T (// tmp413,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (b) S 16 T (.L130) S 24 T () S 32 T (//) N
+(.L107:) N
+(// main.cpp:454:             ) S
+(if) K
+( \(cursor_y > 3\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.103_111, cursor_y) N
+(// main.cpp:454:             ) S
+(if) K
+( \(cursor_y > 3\)) p n
+() S 8 T (cmp) S 16 T (w0, 3) S 24 T (// cursor_y.103_111,) N
+() S 8 T (ble) S 16 T (.L121) S 24 T () S 32 T (//,) N
+(// main.cpp:456:                 cursor_y--;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.104_112, cursor_y) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _113, cursor_y.104_112,) N
+() p 8 T (str) S 16 T (w0, [sp, 224]) S 32 T (// _113, cursor_y) N
+() S 8 T (b) S 16 T (.L122) S 24 T () S 32 T (//) N
+(.L121:) N
+(// main.cpp:458:             ) S
+(else) K
+( ) p
+(if) K
+( \(scroll_offset > 0\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 220]) S 32 T (// scroll_offset.105_114, scroll_offset) N
+(// main.cpp:458:             ) S
+(else) K
+( ) p
+(if) K
+( \(scroll_offset > 0\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// scroll_offset.105_114,) N
+() S 8 T (ble) S 16 T (.L122) S 24 T () S 32 T (//,) N
+(// main.cpp:460:                 scroll_offset--;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 220]) S 32 T (// scroll_offset.106_115, scroll_offset) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _116, scroll_offset.106_115,) N
+() p 8 T (str) S 16 T (w0, [sp, 220]) S 32 T (// _116, scroll_offset) N
+(.L122:) N
+(// main.cpp:462:             current_line = list_advance\(lines.head, cursor_y - ) N
+(3 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (x2, [sp, 208]) S 32 T (// _117, lines.head) N
+(// main.cpp:462:             current_line = list_advance\(lines.head, cursor_y - ) N
+(3 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.107_118, cursor_y) N
+() S 8 T (sub) S 16 T (w1, w0, ) S
+(#3) c 32 T (// _119, cursor_y.107_118,) N
+(// main.cpp:462:             current_line = list_advance\(lines.head, cursor_y - ) p n
+(3 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 220]) S 32 T (// scroll_offset.108_120, scroll_offset) N
+() S 8 T (add) S 16 T (w0, w1, w0) S 32 T (// _121, _119, scroll_offset.108_120) N
+() S 8 T (mov) S 16 T (w1, w0) S 24 T (//, _121) N
+() S 8 T (mov) S 16 T (x0, x2) S 24 T (//, _117) N
+() S 8 T (bl) S 16 T (_Z12list_advanceP4Nodei) S 40 T () S 48 T (//) N
+(// main.cpp:462:             current_line = list_advance\(lines.head, cursor_y - ) N
+(3 + scroll_offset\);) N
+() S 8 T (str) S 16 T (x0, [sp, 168]) S 32 T (// _122, current_line) N
+(// main.cpp:463:             ) S
+(break) K
+(;) p n
+(main.s) (Page 37/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (b) S 16 T (.L114) S 24 T () S 32 T (//) N
+(.L108:) N
+(// main.cpp:465:             ) S
+(if) K
+( \(cursor_y < LINES - 2 && current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (adrp) S 16 T (x0, :got:LINES) S 32 T (// tmp415,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:LINES]) c 48 T (// tmp414, tmp415,) N
+() p 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// LINES.109_123, LINES) N
+() S 8 T (sub) S 16 T (w1, w0, ) S
+(#2) c 32 T (// _124, LINES.109_123,) N
+(// main.cpp:465:             ) p
+(if) K
+( \(cursor_y < LINES - 2 && current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.110_125, cursor_y) N
+(// main.cpp:465:             ) S
+(if) K
+( \(cursor_y < LINES - 2 && current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// _124, cursor_y.110_125) N
+() S 8 T (ble) S 16 T (.L123) S 24 T () S 32 T (//,) N
+(// main.cpp:465:             ) S
+(if) K
+( \(cursor_y < LINES - 2 && current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.111_126, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _127, current_line.111_126) S
+(\256) sy
+(next) K n
+(// main.cpp:465:             ) p
+(if) K
+( \(cursor_y < LINES - 2 && current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// _127,) N
+() S 8 T (beq) S 16 T (.L123) S 24 T () S 32 T (//,) N
+(// main.cpp:467:                 cursor_y++;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.112_128, cursor_y) N
+() S 8 T (add) S 16 T (w0, w0, 1) S 32 T (// _129, cursor_y.112_128,) N
+() S 8 T (str) S 16 T (w0, [sp, 224]) S 32 T (// _129, cursor_y) N
+(// main.cpp:468:                 current_line = current_line) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.113_130, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _131, current_line.113_130) S
+(\256) sy
+(next) K n
+(// main.cpp:468:                 current_line = current_line) p
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (str) S 16 T (x0, [sp, 168]) S 32 T (// _131, current_line) N
+(// main.cpp:475:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L145) S 24 T () S 32 T (//) N
+(.L123:) N
+(// main.cpp:470:             ) S
+(else) K
+( ) p
+(if) K
+( \(current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.114_132, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _133, current_line.114_132) S
+(\256) sy
+(next) K n
+(// main.cpp:470:             ) p
+(else) K
+( ) p
+(if) K
+( \(current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// _133,) N
+() S 8 T (beq) S 16 T (.L145) S 24 T () S 32 T (//,) N
+(// main.cpp:472:                 scroll_offset++;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 220]) S 32 T (// scroll_offset.115_134, scroll_offset) N
+() S 8 T (add) S 16 T (w0, w0, 1) S 32 T (// _135, scroll_offset.115_134,) N
+() S 8 T (str) S 16 T (w0, [sp, 220]) S 32 T (// _135, scroll_offset) N
+(// main.cpp:473:                 current_line = current_line) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.116_136, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _137, current_line.116_136) S
+(\256) sy
+(next) K n
+(// main.cpp:473:                 current_line = current_line) p
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (str) S 16 T (x0, [sp, 168]) S 32 T (// _137, current_line) N
+(// main.cpp:475:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L145) S 24 T () S 32 T (//) N
+(.L106:) N
+(// main.cpp:477:             ) S
+(if) K
+( \(cursor_x > 0\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.117_138, cursor_x) N
+(// main.cpp:477:             ) S
+(if) K
+( \(cursor_x > 0\)) p n
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// cursor_x.117_138,) N
+() S 8 T (ble) S 16 T (.L125) S 24 T () S 32 T (//,) N
+(// main.cpp:479:                 cursor_x--;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.118_139, cursor_x) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _140, cursor_x.118_139,) N
+() p 8 T (str) S 16 T (w0, [sp, 228]) S 32 T (// _140, cursor_x) N
+(// main.cpp:487:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L146) S 24 T () S 32 T (//) N
+(.L125:) N
+(// main.cpp:481:             ) S
+(else) K
+( ) p
+(if) K
+( \(cursor_y > 3\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.119_141, cursor_y) N
+(main.s) (Page 38/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (19/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (39-40) 20
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// main.cpp:481:             ) p
+(else) K
+( ) p
+(if) K
+( \(cursor_y > 3\)) p n
+() S 8 T (cmp) S 16 T (w0, 3) S 24 T (// cursor_y.119_141,) N
+() S 8 T (ble) S 16 T (.L146) S 24 T () S 32 T (//,) N
+(// main.cpp:483:                 cursor_y--;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.120_142, cursor_y) N
+() S 8 T (sub) S 16 T (w0, w0, ) S
+(#1) c 32 T (// _143, cursor_y.120_142,) N
+() p 8 T (str) S 16 T (w0, [sp, 224]) S 32 T (// _143, cursor_y) N
+(// main.cpp:484:                 current_line = list_advance\(lines.head, cursor_) N
+(y - 3 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (x2, [sp, 208]) S 32 T (// _144, lines.head) N
+(// main.cpp:484:                 current_line = list_advance\(lines.head, cursor_) N
+(y - 3 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.121_145, cursor_y) N
+() S 8 T (sub) S 16 T (w1, w0, ) S
+(#3) c 32 T (// _146, cursor_y.121_145,) N
+(// main.cpp:484:                 current_line = list_advance\(lines.head, cursor_) p n
+(y - 3 + scroll_offset\);) N
+() S 8 T (ldr) S 16 T (w0, [sp, 220]) S 32 T (// scroll_offset.122_147, scroll_offset) N
+() S 8 T (add) S 16 T (w0, w1, w0) S 32 T (// _148, _146, scroll_offset.122_147) N
+() S 8 T (mov) S 16 T (w1, w0) S 24 T (//, _148) N
+() S 8 T (mov) S 16 T (x0, x2) S 24 T (//, _144) N
+() S 8 T (bl) S 16 T (_Z12list_advanceP4Nodei) S 40 T () S 48 T (//) N
+(// main.cpp:484:                 current_line = list_advance\(lines.head, cursor_) N
+(y - 3 + scroll_offset\);) N
+() S 8 T (str) S 16 T (x0, [sp, 168]) S 32 T (// _149, current_line) N
+(// main.cpp:485:                 cursor_x = current_line) S
+(\256) sy
+(line.size\(\);) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.123_150, current_line) N
+(// main.cpp:485:                 cursor_x = current_line) S
+(\256) sy
+(line.size\(\);) p n
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4sizeEv) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:485:                 cursor_x = current_line) S
+(\256) sy
+(line.size\(\);) p n
+() S 8 T (str) S 16 T (w0, [sp, 228]) S 32 T (// _153, cursor_x) N
+(// main.cpp:487:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L146) S 24 T () S 32 T (//) N
+(.L105:) N
+(// main.cpp:489:             ) S
+(if) K
+( \(cursor_x < static_cast<int>\(current_line) p
+(\256) sy
+(line.) p n
+(size\(\)\)\)) N
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.125_154, current_line) N
+(// main.cpp:489:             ) S
+(if) K
+( \(cursor_x < static_cast<int>\(current_line) p
+(\256) sy
+(line.) p n
+(size\(\)\)\)) N
+() S 8 T (bl) S 16 T (_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4sizeEv) S 80 T () N
+() S 0 T (//) N
+(// main.cpp:489:             ) S
+(if) K
+( \(cursor_x < static_cast<int>\(current_line) p
+(\256) sy
+(line.) p n
+(size\(\)\)\)) N
+() S 8 T (mov) S 16 T (w1, w0) S 24 T (// _157, _156) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.126_158, cursor_x) N
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// _157, cursor_x.126_158) N
+() S 8 T (cset) S 16 T (w0, gt) S 24 T (// tmp417,) N
+() S 8 T (and) S 16 T (w0, w0, 255) S 32 T (// retval.124_269, tmp416) N
+(// main.cpp:489:             ) S
+(if) K
+( \(cursor_x < static_cast<int>\(current_line) p
+(\256) sy
+(line.) p n
+(size\(\)\)\)) N
+() S 8 T (cmp) S 16 T (w0, 0) S 24 T (// retval.124_269,) N
+() S 8 T (beq) S 16 T (.L127) S 24 T () S 32 T (//,) N
+(// main.cpp:491:                 cursor_x++;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.127_159, cursor_x) N
+() S 8 T (add) S 16 T (w0, w0, 1) S 32 T (// _160, cursor_x.127_159,) N
+() S 8 T (str) S 16 T (w0, [sp, 228]) S 32 T (// _160, cursor_x) N
+(// main.cpp:499:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L147) S 24 T () S 32 T (//) N
+(.L127:) N
+(// main.cpp:493:             ) S
+(else) K
+( ) p
+(if) K
+( \(current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.128_161, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _162, current_line.128_161) S
+(\256) sy
+(next) K n
+(main.s) (Page 39/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// main.cpp:493:             ) p
+(else) K
+( ) p
+(if) K
+( \(current_line) p
+(\256) sy
+(next) K
+(\)) p n
+() S 8 T (cmp) S 16 T (x0, 0) S 24 T (// _162,) N
+() S 8 T (beq) S 16 T (.L147) S 24 T () S 32 T (//,) N
+(// main.cpp:495:                 cursor_y++;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 224]) S 32 T (// cursor_y.129_163, cursor_y) N
+() S 8 T (add) S 16 T (w0, w0, 1) S 32 T (// _164, cursor_y.129_163,) N
+() S 8 T (str) S 16 T (w0, [sp, 224]) S 32 T (// _164, cursor_y) N
+(// main.cpp:496:                 cursor_x = 0;) N
+() S 8 T (str) S 16 T (wzr, [sp, 228]) S 32 T (//, cursor_x) N
+(// main.cpp:497:                 current_line = current_line) S
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.130_165, current_line) N
+() S 8 T (ldr) S 16 T (x0, [x0, 32]) S 32 T (// _166, current_line.130_165) S
+(\256) sy
+(next) K n
+(// main.cpp:497:                 current_line = current_line) p
+(\256) sy
+(next) K
+(;) p n
+() S 8 T (str) S 16 T (x0, [sp, 168]) S 32 T (// _166, current_line) N
+(// main.cpp:499:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L147) S 24 T () S 32 T (//) N
+(.L101:) N
+(// main.cpp:501:             ) S
+(if) K
+( \(ch ) p
+(\263) sy
+( 32 && ch ) p
+(\243) sy
+( 126\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp418, ch) N
+() S 8 T (cmp) S 16 T (w0, 31) S 24 T (// tmp418,) N
+() S 8 T (ble) S 16 T (.L148) S 24 T () S 32 T (//,) N
+(// main.cpp:501:             ) S
+(if) K
+( \(ch ) p
+(\263) sy
+( 32 && ch ) p
+(\243) sy
+( 126\)) p n
+() S 8 T (ldr) S 16 T (w0, [sp, 392]) S 32 T (// tmp419, ch) N
+() S 8 T (cmp) S 16 T (w0, 126) S 24 T (// tmp419,) N
+() S 8 T (bgt) S 16 T (.L148) S 24 T () S 32 T (//,) N
+(// main.cpp:503:                 current_line) S
+(\256) sy
+(line.insert\(cursor_x, 1, static_c) p n
+(ast<char>\(ch\)\);) N
+() S 8 T (ldr) S 16 T (x0, [sp, 168]) S 32 T (// current_line.131_167, current_line) N
+(// main.cpp:503:                 current_line) S
+(\256) sy
+(line.insert\(cursor_x, 1, static_c) p n
+(ast<char>\(ch\)\);) N
+() S 8 T (mov) S 16 T (x4, x0) S 24 T (// _168, current_line.131_167) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.132_169, cursor_x) N
+() S 8 T (sxtw) S 16 T (x0, w0) S 24 T (// _170, cursor_x.132_169) N
+() S 8 T (ldr) S 16 T (w1, [sp, 392]) S 32 T (// tmp420, ch) N
+() S 8 T (and) S 16 T (w1, w1, 255) S 32 T (// _171, tmp420) N
+() S 8 T (mov) S 16 T (w3, w1) S 24 T (//, _171) N
+() S 8 T (mov) S 16 T (x2, 1) S 24 T (//,) N
+() S 8 T (mov) S 16 T (x1, x0) S 24 T (//, _170) N
+() S 8 T (mov) S 16 T (x0, x4) S 24 T (//, _168) N
+(.LEHB19:) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6insertEmmc) N
+() S 0 T () S 8 T (//) N
+(.LEHE19:) N
+(// main.cpp:504:                 cursor_x++;) N
+() S 8 T (ldr) S 16 T (w0, [sp, 228]) S 32 T (// cursor_x.133_172, cursor_x) N
+() S 8 T (add) S 16 T (w0, w0, 1) S 32 T (// _173, cursor_x.133_172,) N
+() S 8 T (str) S 16 T (w0, [sp, 228]) S 32 T (// _173, cursor_x) N
+(// main.cpp:506:             ) S
+(break) K
+(;) p n
+() S 8 T (b) S 16 T (.L148) S 24 T () S 32 T (//) N
+(.L142:) N
+(// main.cpp:379:             ) S
+(break) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+() S 8 T (b) S 16 T (.L130) S 24 T () S 32 T (//) N
+(.L143:) N
+(// main.cpp:414:             ) S
+(break) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+() S 8 T (b) S 16 T (.L130) S 24 T () S 32 T (//) N
+(.L144:) N
+(// main.cpp:431:             ) S
+(break) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+() S 8 T (b) S 16 T (.L130) S 24 T () S 32 T (//) N
+(.L145:) N
+(main.s) (Page 40/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (20/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (41-42) 21
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// main.cpp:475:             ) p
+(break) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+() S 8 T (b) S 16 T (.L130) S 24 T () S 32 T (//) N
+(.L146:) N
+(// main.cpp:487:             ) S
+(break) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+() S 8 T (b) S 16 T (.L130) S 24 T () S 32 T (//) N
+(.L147:) N
+(// main.cpp:499:             ) S
+(break) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+() S 8 T (b) S 16 T (.L130) S 24 T () S 32 T (//) N
+(.L148:) N
+(// main.cpp:506:             ) S
+(break) K
+(;) p n
+() S 8 T (nop) S 16 T () N
+(.L114:) N
+(// main.cpp:508:     }) N
+() S 8 T (b) S 16 T (.L130) S 24 T () S 32 T (//) N
+(.L138:) N
+(// main.cpp:320:         list_push_back\(lines, ""\);) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp424,) N
+() S 8 T (add) S 16 T (x0, sp, 248) S 32 T (// tmp422,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (b) S 16 T (.L132) S 24 T () S 32 T (//) N
+(.L137:) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp423,) N
+(.L132:) N
+(// main.cpp:320:         list_push_back\(lines, ""\);) N
+() S 8 T (add) S 16 T (x0, sp, 280) S 32 T (// tmp427,,) N
+() S 8 T (bl) S 16 T (_ZNSaIcED1Ev) S 32 T () S 40 T (//) N
+() S 8 T (b) S 16 T (.L133) S 24 T () S 32 T (//) N
+(.L140:) N
+(// main.cpp:452:         }) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp432,) N
+() S 8 T (add) S 16 T (x0, sp, 40) S 32 T (// tmp430,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (b) S 16 T (.L135) S 24 T () S 32 T (//) N
+(.L139:) N
+(// main.cpp:512: }) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp431,) N
+(.L135:) N
+() S 8 T (add) S 16 T (x0, sp, 104) S 32 T (// tmp435,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (add) S 16 T (x0, sp, 136) S 32 T (// tmp438,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (b) S 16 T (.L133) S 24 T () S 32 T (//) N
+(.L136:) N
+() S 8 T (mov) S 16 T (x19, x0) S 24 T (// tmp428,) N
+(.L133:) N
+() S 8 T (add) S 16 T (x0, sp, 176) S 32 T (// tmp439,,) N
+() S 8 T (bl) S 16 T (_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEED1Ev) S 80 T () N
+() S 0 T (//) N
+() S 8 T (mov) S 16 T (x0, x19) S 24 T (// D.49583, tmp428) N
+(.LEHB20:) N
+() S 8 T (bl) S 16 T (_Unwind_Resume) S 32 T () S 40 T (//) N
+(.LEHE20:) N
+(.L141:) N
+() S 8 T (ldp) S 16 T (x19, x30, [sp], 416) S 40 T (//,,,) N
+() S 8 T (.cfi_restore 30) N
+(main.s) (Page 41/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (.cfi_restore 19) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1681:) N
+() S 8 T (.section) S 24 T (.gcc_except_table) N
+(.LLSDA1681:) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0xff) N
+() S 8 T (.byte) S 16 T (0x1) N
+() S 8 T (.uleb128 .LLSDACSE1681-.LLSDACSB1681) N
+(.LLSDACSB1681:) N
+() S 8 T (.uleb128 .LEHB13-.LFB1681) N
+() S 8 T (.uleb128 .LEHE13-.LEHB13) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB14-.LFB1681) N
+() S 8 T (.uleb128 .LEHE14-.LEHB14) N
+() S 8 T (.uleb128 .L136-.LFB1681) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB15-.LFB1681) N
+() S 8 T (.uleb128 .LEHE15-.LEHB15) N
+() S 8 T (.uleb128 .L137-.LFB1681) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB16-.LFB1681) N
+() S 8 T (.uleb128 .LEHE16-.LEHB16) N
+() S 8 T (.uleb128 .L138-.LFB1681) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB17-.LFB1681) N
+() S 8 T (.uleb128 .LEHE17-.LEHB17) N
+() S 8 T (.uleb128 .L139-.LFB1681) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB18-.LFB1681) N
+() S 8 T (.uleb128 .LEHE18-.LEHB18) N
+() S 8 T (.uleb128 .L140-.LFB1681) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB19-.LFB1681) N
+() S 8 T (.uleb128 .LEHE19-.LEHB19) N
+() S 8 T (.uleb128 .L139-.LFB1681) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 .LEHB20-.LFB1681) N
+() S 8 T (.uleb128 .LEHE20-.LEHB20) N
+() S 8 T (.uleb128 0) N
+() S 8 T (.uleb128 0) N
+(.LLSDACSE1681:) N
+() S 8 T (.text) N
+() S 8 T (.size) S 16 T (main, .-main) N
+() S 8 T (.section) S 24 T (.text._ZSt3minIiERKT_S2_S2_,") S
+(axG) str
+(",@progbits,_ZSt3minIiER) p n
+(KT_S2_S2_,comdat) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.weak) S 16 T (_ZSt3minIiERKT_S2_S2_) N
+() S 8 T (.type) S 16 T (_ZSt3minIiERKT_S2_S2_, %) S
+(function) K n
+(_ZSt3minIiERKT_S2_S2_:) p n
+(.LFB1936:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (sub) S 16 T (sp, sp, ) S
+(#16) c 32 T (//,,) N
+() p 8 T (.cfi_def_cfa_offset 16) N
+() S 8 T (str) S 16 T (x0, [sp, 8]) S 32 T (// __a, __a) N
+() S 8 T (str) S 16 T (x1, [sp]) S 32 T (// __b, __b) N
+(// /usr/include/c++/11/bits/stl_algobase.h:235:       ) S
+(if) K
+( \(__b < __a\)) p n
+() S 8 T (ldr) S 16 T (x0, [sp]) S 32 T (// tmp96, __b) N
+() S 8 T (ldr) S 16 T (w1, [x0]) S 32 T (// _1, *__b_5\(D\)) N
+(main.s) (Page 42/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (21/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (43-44) 22
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (ldr) S 16 T (x0, [sp, 8]) S 32 T (// tmp97, __a) N
+() S 8 T (ldr) S 16 T (w0, [x0]) S 32 T (// _2, *__a_6\(D\)) N
+(// /usr/include/c++/11/bits/stl_algobase.h:235:       ) S
+(if) K
+( \(__b < __a\)) p n
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// _1, _2) N
+() S 8 T (bge) S 16 T (.L150) S 24 T () S 32 T (//,) N
+(// /usr/include/c++/11/bits/stl_algobase.h:236: ) S 56 T () S
+(return) K
+( __b;) p n
+() S 8 T (ldr) S 16 T (x0, [sp]) S 32 T (// _3, __b) N
+() S 8 T (b) S 16 T (.L151) S 24 T () S 32 T (//) N
+(.L150:) N
+(// /usr/include/c++/11/bits/stl_algobase.h:237:       ) S
+(return) K
+( __a;) p n
+() S 8 T (ldr) S 16 T (x0, [sp, 8]) S 32 T (// _3, __a) N
+(.L151:) N
+(// /usr/include/c++/11/bits/stl_algobase.h:238:     }) N
+() S 8 T (add) S 16 T (sp, sp, 16) S 32 T (//,,) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE1936:) N
+() S 8 T (.size) S 16 T (_ZSt3minIiERKT_S2_S2_, .-_ZSt3minIiERKT_S2_S2_) N
+() S 8 T (.weak) S 16 T (_ZTISt9bad_alloc) N
+() S 8 T (.section) S 24 T (.data.rel.ro._ZTISt9bad_alloc,") S
+(awG) str
+(",@progbits,_ZTISt9ba) p n
+(d_alloc,comdat) N
+() S 8 T (.align) S 16 T (3) N
+() S 8 T (.type) S 16 T (_ZTISt9bad_alloc, %object) N
+() S 8 T (.size) S 16 T (_ZTISt9bad_alloc, 24) N
+(_ZTISt9bad_alloc:) N
+(// <anonymous>:) N
+(// <anonymous>:) N
+() S 8 T (.xword) S 16 T (_ZTVN10__cxxabiv120__si_class_type_infoE+16) N
+(// <anonymous>:) N
+() S 8 T (.xword) S 16 T (_ZTSSt9bad_alloc) N
+(// <anonymous>:) N
+() S 8 T (.xword) S 16 T (_ZTISt9exception) N
+() S 8 T (.weak) S 16 T (_ZTSSt9bad_alloc) N
+() S 8 T (.section) S 24 T (.rodata._ZTSSt9bad_alloc,") S
+(aG) str
+(",@progbits,_ZTSSt9bad_alloc) p n
+(,comdat) N
+() S 8 T (.align) S 16 T (3) N
+() S 8 T (.type) S 16 T (_ZTSSt9bad_alloc, %object) N
+() S 8 T (.size) S 16 T (_ZTSSt9bad_alloc, 13) N
+(_ZTSSt9bad_alloc:) N
+() S 8 T (.string) S 16 T (") S
+(St9bad_alloc) str
+(") p n
+() S 8 T (.text) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.type) S 16 T (_Z41__static_initialization_and_destruction_0ii, %) S
+(function) K n
+(_Z41__static_initialization_and_destruction_0ii:) p n
+(.LFB2129:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -32]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 32) N
+() S 8 T (.cfi_offset 30, -32) N
+() S 8 T (str) S 16 T (w0, [sp, 28]) S 32 T (// __initialize_p, __initialize_p) N
+() S 8 T (str) S 16 T (w1, [sp, 24]) S 32 T (// __priority, __priority) N
+(// main.cpp:512: }) N
+() S 8 T (ldr) S 16 T (w0, [sp, 28]) S 32 T (// tmp92, __initialize_p) N
+() S 8 T (cmp) S 16 T (w0, 1) S 24 T (// tmp92,) N
+() S 8 T (bne) S 16 T (.L154) S 24 T () S 32 T (//,) N
+(// main.cpp:512: }) N
+() S 8 T (ldr) S 16 T (w1, [sp, 24]) S 32 T (// tmp93, __priority) N
+() S 8 T (mov) S 16 T (w0, 65535) S 32 T (// tmp94,) N
+() S 8 T (cmp) S 16 T (w1, w0) S 24 T (// tmp93, tmp94) N
+() S 8 T (bne) S 16 T (.L154) S 24 T () S 32 T (//,) N
+(// /usr/include/c++/11/iostream:74:   static ios_base::Init __ioinit;) N
+(main.s) (Page 43/45) (Apr 19, 23 2:02) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (adrp) S 16 T (x0, _ZStL8__ioinit) S 40 T (// tmp95,) N
+() S 8 T (add) S 16 T (x0, x0, :lo12:_ZStL8__ioinit) S 48 T (//, tmp95,) N
+() S 8 T (bl) S 16 T (_ZNSt8ios_base4InitC1Ev) S 40 T () S 48 T (//) N
+() S 8 T (adrp) S 16 T (x0, __dso_handle) S 40 T (// tmp96,) N
+() S 8 T (add) S 16 T (x2, x0, :lo12:__dso_handle) S 48 T (//, tmp96,) N
+() S 8 T (adrp) S 16 T (x0, _ZStL8__ioinit) S 40 T (// tmp97,) N
+() S 8 T (add) S 16 T (x1, x0, :lo12:_ZStL8__ioinit) S 48 T (//, tmp97,) N
+() S 8 T (adrp) S 16 T (x0, :got:_ZNSt8ios_base4InitD1Ev) S 56 T (// tmp98,) N
+() S 8 T (ldr) S 16 T (x0, [x0, ) S
+(#:got_lo12:_ZNSt8ios_base4InitD1Ev]) c 64 T (//, tmp98,) N
+() p 8 T (bl) S 16 T (__cxa_atexit) S 32 T () S 40 T (//) N
+(.L154:) N
+(// main.cpp:512: }) N
+() S 8 T (nop) S 16 T () N
+() S 8 T (ldr) S 16 T (x30, [sp], 32) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE2129:) N
+() S 8 T (.size) S 16 T (_Z41__static_initialization_and_destruction_0ii, .-_Z41__static_) N
+(initialization_and_destruction_0ii) N
+() S 8 T (.weak) S 16 T (_ZTISt9exception) N
+() S 8 T (.section) S 24 T (.data.rel.ro._ZTISt9exception,") S
+(awG) str
+(",@progbits,_ZTISt9ex) p n
+(ception,comdat) N
+() S 8 T (.align) S 16 T (3) N
+() S 8 T (.type) S 16 T (_ZTISt9exception, %object) N
+() S 8 T (.size) S 16 T (_ZTISt9exception, 16) N
+(_ZTISt9exception:) N
+(// <anonymous>:) N
+(// <anonymous>:) N
+() S 8 T (.xword) S 16 T (_ZTVN10__cxxabiv117__class_type_infoE+16) N
+(// <anonymous>:) N
+() S 8 T (.xword) S 16 T (_ZTSSt9exception) N
+() S 8 T (.weak) S 16 T (_ZTSSt9exception) N
+() S 8 T (.section) S 24 T (.rodata._ZTSSt9exception,") S
+(aG) str
+(",@progbits,_ZTSSt9exception) p n
+(,comdat) N
+() S 8 T (.align) S 16 T (3) N
+() S 8 T (.type) S 16 T (_ZTSSt9exception, %object) N
+() S 8 T (.size) S 16 T (_ZTSSt9exception, 13) N
+(_ZTSSt9exception:) N
+() S 8 T (.string) S 16 T (") S
+(St9exception) str
+(") p n
+() S 8 T (.text) N
+() S 8 T (.align) S 16 T (2) N
+() S 8 T (.type) S 16 T (_GLOBAL__sub_I_CONTROLS, %) S
+(function) K n
+(_GLOBAL__sub_I_CONTROLS:) p n
+(.LFB2130:) N
+() S 8 T (.cfi_startproc) N
+() S 8 T (str) S 16 T (x30, [sp, -16]!) S 32 T (//,) N
+() S 8 T (.cfi_def_cfa_offset 16) N
+() S 8 T (.cfi_offset 30, -16) N
+(// main.cpp:512: }) N
+() S 8 T (mov) S 16 T (w1, 65535) S 32 T (//,) N
+() S 8 T (mov) S 16 T (w0, 1) S 24 T (//,) N
+() S 8 T (bl) S 16 T (_Z41__static_initialization_and_destruction_0ii) S 64 T () S 72 T (//) N
+() S 8 T (ldr) S 16 T (x30, [sp], 16) S 32 T (//,) N
+() S 8 T (.cfi_restore 30) N
+() S 8 T (.cfi_def_cfa_offset 0) N
+() S 8 T (ret) S 16 T () N
+() S 8 T (.cfi_endproc) N
+(.LFE2130:) N
+() S 8 T (.size) S 16 T (_GLOBAL__sub_I_CONTROLS, .-_GLOBAL__sub_I_CONTROLS) N
+() S 8 T (.section) S 24 T (.init_array,") S
+(aw) str
+(") p n
+(main.s) (Page 44/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (22/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (45) 23
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (.align) S 16 T (3) N
+() S 8 T (.xword) S 16 T (_GLOBAL__sub_I_CONTROLS) N
+() S 8 T (.hidden) S 16 T (DW.ref.__gxx_personality_v0) N
+() S 8 T (.weak) S 16 T (DW.ref.__gxx_personality_v0) N
+() S 8 T (.section) S 24 T (.data.rel.local.DW.ref.__gxx_personality_v0,") S
+(awG) str
+(",@prog) p n
+(bits,DW.ref.__gxx_personality_v0,comdat) N
+() S 8 T (.align) S 16 T (3) N
+() S 8 T (.type) S 16 T (DW.ref.__gxx_personality_v0, %object) N
+() S 8 T (.size) S 16 T (DW.ref.__gxx_personality_v0, 8) N
+(DW.ref.__gxx_personality_v0:) N
+() S 8 T (.xword) S 16 T (__gxx_personality_v0) N
+() S 8 T (.hidden) S 16 T (__dso_handle) N
+() S 8 T (.ident) S 16 T (") S
+(GCC: \(Ubuntu 11.3.0-1ubuntu1~22.04\) 11.3.0) str
+(") p n
+() S 8 T (.section) S 24 T (.note.GNU-stack,"",@progbits) N
+(main.s) (Page 45/45) (Apr 19, 23 2:02) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (23/23) (Wednesday April 19, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

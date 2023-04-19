@@ -1,4 +1,4 @@
-CXXFLAGS=-std=c++11 -Wall -Wa,-a,-ad -fno-rtti -fomit-frame-pointer -fno-stack-protector
+CXXFLAGS=-std=c++11 -Wall -fomit-frame-pointer -fno-stack-protector -fPIC
 LDFLAGS=-s
 LDLIBS=-lncurses
 
@@ -7,7 +7,7 @@ OBJS=$(SRCS:.cpp=.o)
 ASMS=$(SRCS:.cpp=.s)
 EXEC=main
 
-all: $(EXEC) $(ASMS) split_asm
+all: $(EXEC) $(ASMS) 
 
 $(EXEC): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
@@ -24,10 +24,7 @@ $(EXEC): $(OBJS)
 %.s: %.o
 	objdump -d $< > $@
 
-split_asm: main.s
-	python3 split_asm.py main.s main.cpp
-
 clean:
-	rm -rf $(OBJS) $(ASMS) $(EXEC) ./subroutines
+	rm -rf $(OBJS) $(ASMS) $(EXEC)
 
-.PHONY: all clean split_asm
+.PHONY: all clean
