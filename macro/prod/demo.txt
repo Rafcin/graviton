@@ -1,4 +1,11 @@
 Segmentation Fault
 This is a seg fault test if fail enter enter
 Hi
+
+o-o-o-o-o-x
+1010101001000011
+1010100101
+1001000101010010
+1001010010
+
 olleH World
