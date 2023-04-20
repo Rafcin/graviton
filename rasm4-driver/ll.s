@@ -278,8 +278,9 @@ strcpy:
         mov x1, #1024  // setting a theoretical max string value, can be adjusted accordingly
         mov x19, x0     // storing a copy of x0 into x19
         bl String_length   // calling length to fulfill malloc's parameter of requested bytes
-        //add x0, x0, #1
+        add x0, x0, #1
         mov x21, x0     // move length into x21
+        sub x21, x21, #1
         bl  malloc      // call malloc
         mov x20, #0     // setting variable to 0 for loop count
 strcpyLoop:

@@ -151,7 +151,7 @@ _start:
 saveFile:
         str lr, [sp, #-16]!
 
-        ldr x1,=szFile
+        ldr x1,=szDefOut
         mov x0, #AT_FDCWD
         mov x8, #56
         mov x2, #W
@@ -165,45 +165,46 @@ saveFile:
         cmp w0, #0
         b.le invalidFile
 
-        ldr x15,=headPtr
-        ldr x15,[x15]
-        ldr x2,=currNode
-        str x15,[x2]
-        ldr x2,=currNode
+        ldr x0,=headPtr
+        ldr x0,[x0]
+        ldr x20,=currNode
+        str x0,[x20]
 
-    writeLoop:
-        cmp x2, #0
+    writeLoop: 
+        cmp x20, #0
         b.eq closeFile
-        mov x1, x0 // file descriptor
+
+        
         ldr x0,=currNode
         ldr x0,[x0]
-        stp x1, x2, [sp, #-16]!
-        stp x3, x4, [sp, #-16]!
+        ldr x1,=nextNode
+        str x0,[x1]
+        ldr x0,[x0, #0]
         bl String_length
-        ldp x3, x4, [sp], 16
-        ldp x1, x2, [sp], 16
         mov x2, x0
         ldr x0,=iFD
-        ldrb w0, [x0]
-        ldr x1,=currNode
+        ldrb w0,[x0]
+
+        ldr x1,=nextNode
         ldr x1,[x1]
+        ldr x1,[x1, #0]
 
-        ldr x8, #64
+        mov x8, #64
         svc 0
-        cmp w0, #0
-        b.le invalidFile
-        //ldr x1,=iFD
-        //strb w0,[x1]
-        ldr x3,=currNode
-        add x2, x2, #8
-        cmp x2, #0
+
+        ldr x0,=currNode
+        ldr x1,=nextNode
+        ldr x1,[x1]
+        add x1, x1, #8
+        cmp x1, #0
         b.eq closeFile
-        ldr x2,[x2]
-        str x2,[x3]
-        ldr x2,=currNode
+        ldr x1,[x1]
+        cmp x1, #0
+        b.eq closeFile
+        str x1,[x0]
+
         b writeLoop
-
-
+    
 closeFile:
         mov x1, #0
         mov x8, #57
@@ -216,7 +217,6 @@ invalidFile:
 saveExit:
         ldr lr, [sp], 16
         ret 
-
 
 deleteNode:
         ldr x0,=szDelNode
