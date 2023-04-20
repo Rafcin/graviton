@@ -8,3 +8,9 @@ ld -lc ll.o ./obj/*.o
 
 as -g addString.s -o addString.o
 ld -lc addString.o ll.o ./obj/*.o
+
+rm output.txt
+rm output2.txt
+
+touch output.txt
+touch output2.txt

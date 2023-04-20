@@ -203,7 +203,7 @@ exitEnd:
 saveFile:
         str lr, [sp, #-16]!
 
-        ldr x1,=szDefOut
+        ldr x1,=szFile
         mov x0, #AT_FDCWD
         mov x8, #56
         mov x2, #W
@@ -333,11 +333,12 @@ usage:
             findBytes:
                 cmp x0, #0
                 b.eq printBytes
+                add x20, x20, #1
                 add x21, x21, #16
+                ldr x0,=currNode
                 ldr x0,[x0]
+                ldr x0,[x0, #0]
                 bl String_length
-                add x0, x0, #1
-                add x21, x21, x0
 
                 ldr x1,=currNode
                 ldr x1,[x1]
@@ -358,9 +359,13 @@ usage:
             ldr x0,=numBytes
             bl putstring
 
+            
             mov x0, x20
             ldr x1,=numNodes
             bl int64asc
+
+            ldr x0,=szData3
+            bl putstring
 
             ldr x0,=numNodes
             bl putstring
