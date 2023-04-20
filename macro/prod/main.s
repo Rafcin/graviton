@@ -406,57 +406,58 @@ basic_string_check_ret7:
 	add	x0, x1, w0, sxth #2   // Add x1, w0 (sign-extended half-word element) * 4 to x0.
 	br	x0              // Branch to the address held in x0.
 
+// Avoid mem issues
 .Lrtx32:
-	.section	.rodata        // Switch to the read-only data section.
+	.section	.rodata     // Switch to the read-only data section.
 	.align	0               // Align to the next power-of-2 bytes boundary.
 	.align	2               // Align to next 2^2=4 bytes boundary.
 .L32:
-	.2byte	(.L36 - .Lrtx32) / 4       // Store the relative offset, divided by 4, between labels '.L36' and '.Lrtx32' as a 16-bit value.
-	.2byte	(.L35 - .Lrtx32) / 4       // Same as above, for labels '.L35' and '.Lrtx32'.
-	.2byte	(.L34 - .Lrtx32) / 4       // Same as above, for labels '.L34' and '.Lrtx32'.
-	.2byte	(.L33 - .Lrtx32) / 4       // Same as above, for labels '.L33' and '.Lrtx32'.
+	.2byte	(main_ui_inter_handle_keydown - .Lrtx32) / 4       // Store the relative offset, divided by 4, between labels 'main_ui_inter_handle_keydown' and '.Lrtx32' as a 16-bit value.
+	.2byte	(main_ui_inter_handle_keyup_cmp - .Lrtx32) / 4       // Same as above, for labels 'main_ui_inter_handle_keyup_cmp' and '.Lrtx32'.
+	.2byte	(main_ui_inter_handle_key_advance - .Lrtx32) / 4       // Same as above, for labels 'main_ui_inter_handle_key_advance' and '.Lrtx32'.
+	.2byte	(main_ui_inter_handle_key_advance_check - .Lrtx32) / 4       // Same as above, for labels 'main_ui_inter_handle_key_advance_check' and '.Lrtx32'.
 	.2byte	(main_ui_inter_can_print_chr - .Lrtx32) / 4       // Same as above, for labels 'main_ui_inter_can_print_chr' and '.Lrtx32'.
-	.2byte	(.L31 - .Lrtx32) / 4       // Same as above, for labels '.L31' and '.Lrtx32'.
+	.2byte	(main_ui_inter_advance_key_bkspc - .Lrtx32) / 4       // Same as above, for labels 'main_ui_inter_advance_key_bkspc' and '.Lrtx32'.
 	.section	.text.startup // Switch to the startup text section.
 basic_string_check_ret9:
 	sub	w1, w0, #10         // Subtract 10 from w0, store the result in w1.
 	cmp	w1, 14            // Compare the value in w1 to 14.
 	bhi	main_ui_inter_can_print_chr             // Branch to label 'main_ui_inter_can_print_chr' if the value is greater than 14.
-	adrp	x0, .L38         // Load the address of '.L38' into x0.
-	add	x0, x0, :lo12:.L38 // Add the lower 12 bits of the address offset of '.L38' to x0.
+	adrp	x0, main_ui_inter_chr_table         // Load the address of 'main_ui_inter_chr_table' into x0.
+	add	x0, x0, :lo12:main_ui_inter_chr_table // Add the lower 12 bits of the address offset of 'main_ui_inter_chr_table' to x0.
 	ldrh	w0, [x0,w1,uxtw #1] // Load the halfword value stored in memory at address (x0 + 2 * w1) into w0.
-	adr	x1, .Lrtx38      // Load the address of '.Lrtx38' into x1.
+	adr	x1, main_ui_inter_chr_ro      // Load the address of 'main_ui_inter_chr_ro' into x1.
 	add	x0, x1, w0, sxth #2   // Add x1, w0 (sign-extended half-word element) * 4 to x0.
 	br	x0              // Branch to the address held in x0.
 
-.Lrtx38:
+main_ui_inter_chr_ro:
 	.section	.rodata        // Switch to the read-only data section.
 	.align	0               // Align to the next power-of-2 bytes boundary.
 	.align	2               // Align to next 2^2=4 bytes boundary.
-.L38:
-	.2byte	(.L42 - .Lrtx38) / 4       // Store the relative offset, divided by 4, between labels '.L42' and '.Lrtx38' as a 16-bit value.
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(.L41 - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(.L40 - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(main_ui_inter_can_print_chr - .Lrtx38) / 4
-	.2byte	(.L39 - .Lrtx38) / 4
-	.2byte	(.L37 - .Lrtx38) / 4       // Same as above, for labels '.L37' and '.Lrtx38'.
+main_ui_inter_chr_table:
+	.2byte	(main_ui_inter_handle_enter_key - main_ui_inter_chr_ro) / 4       // Store the relative offset, divided by 4, between labels 'main_ui_inter_handle_enter_key' and 'main_ui_inter_chr_ro' as a 16-bit value.
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_save_changes - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_search_and_replc_text - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_can_print_chr - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_search_text - main_ui_inter_chr_ro) / 4
+	.2byte	(main_ui_inter_stk - main_ui_inter_chr_ro) / 4       // Same as above, for labels 'main_ui_inter_stk' and 'main_ui_inter_chr_ro'.
 	.section	.text.startup // Switch to the startup text section.
 basic_string_check_ret8:
 	cmp	w0, 127           // Compare the value in w0 to 127.
 	bne	main_ui_inter_can_print_chr             // Branch to label 'main_ui_inter_can_print_chr' if the value is not equal to 127.
-.L31:
+main_ui_inter_advance_key_bkspc:
 	ldr	w21, [sp, 116]   // Load the value at memory address (sp + 116) into w21.
 	cmp	w21, 0           // Compare the value in w21 to 0.
-	cbnz	w21, .L49 // Compare & branch if w21 is not zero, branch to .L49
+	cbnz	w21, main_ui_inter_erase // Compare & branch if w21 is not zero, branch to main_ui_inter_erase
 	ldr	w1, [sp, 120] // Load w1 with the value at the memory address (sp + 120)
 	cmp	w1, 3 // Compare w1 with 3
 	ble	main_ui_inter_window_stp // Branch if less than or equal to main_ui_inter_window_stp
@@ -468,23 +469,25 @@ basic_string_check_ret8:
 	b	basic_string_str_and_jmp1 // Unconditionally branch to basic_string_str_and_jmp1
 basic_string_check_ret6:
 	cmp	w0, 343 // Compare w0 with 343
-	beq	.L42 // Branch if equal to .L42
+	beq	main_ui_inter_handle_enter_key // Branch if equal to main_ui_inter_handle_enter_key
 	cmp	w0, 409 // Compare w0 with 409
-	beq	.L43 // Branch if equal to .L43
+	beq	main_ui_inter_handle_mouse_click // Branch if equal to main_ui_inter_handle_mouse_click
 	cmp	w0, 330 // Compare w0 with 330
 	bne	main_ui_inter_can_print_chr // Branch if not equal to main_ui_inter_can_print_chr
 	ldr	x25, [sp, 152] // Load x25 with the value at the memory address (sp + 152)
 	ldr	w21, [sp, 116] // Load w21 with the value at the memory address (sp + 116)
 	ldr	x0, [x25, 8] // Load x0 with the value at the offset 8 of x25
 	cmp	w21, w0 // Compare w21 and w0
-	bge	.L48 // Branch if greater than or equal to .L48
+	bge	main_ui_inter_erase_next_frm_list // Branch if greater than or equal to main_ui_inter_erase_next_frm_list
 	sxtw	x21, w21 // Sign extend w21 and store the result in x21
 	adrp	x2, erase_str // Load the address of erase_str into x2
 	mov	x1, x21 // Move x21 into x1
 	add	x2, x2, :lo12:erase_str // Add the 12-bit signed address offset of erase_str to x2
 	bl	basic_string_check.isra.0 // Call the basic_string_check.isra.0 function with x1 and x2 as arguments
 	b	basic_string_str_and_jmp2 // Unconditionally branch to basic_string_str_and_jmp2
-.L43:
+// THIS IS NOW BROKEN, I DID NOT CALC MOUSE POS CORRECTRLY
+// L
+main_ui_inter_handle_mouse_click:
 	add	x0, sp, 160 // Add x0 with the value at the memory address (sp + 160)
 	bl	getmouse // Call the getmouse function
 	cbnz	w0, main_ui_inter_window_stp // Compare & branch if w0 is not zero, branch to main_ui_inter_window_stp
@@ -497,7 +500,7 @@ basic_string_check_ret6:
 	ldp	w1, w0, [sp, 116] // Load w1 and w0 with the values at the memory address (sp + 116)
 	bl	move // Call the move function
 	b	main_ui_inter_window_stp // Unconditionally branch to main_ui_inter_window_stp
-.L39:
+main_ui_inter_search_text:
 	ldr	x0, [x19, #:got_lo12:stdscr] // Load x0 with the value at the memory address (x19's GOT entry + 12-bit signed offset stdscr)
 	mov	x2, 0 // Move 0 into x2
 	mov	w1, 2359296 // Load w1 with the constant 2359296
@@ -529,7 +532,7 @@ basic_string_check_ret6:
 	ldp	w1, w0, [sp, 116] // Load w1 and w0 with the values at the memory address (sp + 116)
 	bl	move // Call the move function
 	b	basic_string_check1 // Unconditionally branch to basic_string_check1
-.L40:
+main_ui_inter_search_and_replc_text:
 	ldr	x0, [x19, #:got_lo12:stdscr] // Load x0 with the value at the memory address (x19's GOT entry + 12-bit signed offset stdscr)
 	mov	x2, 0 // Move 0 into x2
 	mov	w1, 2359296 // Load w1 with the constant 2359296
@@ -570,7 +573,7 @@ basic_string_check_ret6:
 basic_string_check1:
 	bl	refresh // Call the refresh function
 	b	main_ui_inter_window_stp // Unconditionally branch to main_ui_inter_window_stp
-.L37:
+main_ui_inter_stk:
 	mov	x0, x20 // Move x20 into x0
 	bl	list_clear // Call the list_clear function with x0 as argument
 	bl	endwin // Call the endwin function
@@ -586,9 +589,9 @@ basic_string_check1:
 	ldr	x1, [x0] // Load x1 with the value at the memory address x0
 	subs	x2, x2, x1 // Subtract x1 from x2 and store the result in x2
 	mov	x1, 0 // Move 0 into x1
-	beq	.L61 // Branch if equal (zero flag set) to .L61
+	beq	main_ui_preserve // Branch if equal (zero flag set) to main_ui_preserve
 	bl	__stack_chk_fail // Call the __stack_chk_fail function
-.L41:
+main_ui_inter_save_changes:
 	ldr	x0, [sp, 184] // Load x0 with the value at the memory address (sp + 184)
 	mov	x1, x20 // Move x20 into x1
 	bl	save_file // Call the save_file function with x0 and x1 as arguments
@@ -601,7 +604,7 @@ basic_string_str_and_jmp2:
 	csinc	x2, x2, xzr, eq // Conditional select increment if equal flag set (x2 = x2 + 1 if x2 == xzr)
 	bl	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE8_M_eraseEmm // Call the _ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE8_M_eraseEmm function with x0, x1, x2 as arguments
 	b	main_ui_inter_window_stp // Unconditionally branch to main_ui_inter_window_stp
-.L48:
+main_ui_inter_erase_next_frm_list:
 	ldr	x0, [x25, 32] // Load x0 with the value at the offset 32 of x25
 	cbz	x0, main_ui_inter_window_stp // Compare & branch if x0 is zero, branch to main_ui_inter_window_stp
 	ldp	x1, x2, [x0] // Load x1 and x2 with the values at the memory address x0
@@ -631,7 +634,7 @@ basic_string_str_and_jmp1:
 	sub	w0, w0, #1 // Subtract 1 from w0
 	str	w0, [sp, 120] // Store w0 at the memory address (sp + 120)
 	b	main_ui_inter_window_stp // Unconditionally branch to main_ui_inter_window_stp
-.L49:
+main_ui_inter_erase:
 	ble	main_ui_inter_window_stp // Branch if less than or equal to main_ui_inter_window_stp
 	ldr	x24, [sp, 152] // Load x24 with the value at the memory address (sp + 152)
 	sub	w21, w21, #1 // Subtract 1 from w21
@@ -653,7 +656,7 @@ basic_string_check2:
 basic_string_check5:
 	str	w0, [sp, 116] // Store w0 at the memory address (sp + 116)
 	b	main_ui_inter_window_stp // Unconditionally branch to main_ui_inter_window_stp
-.L42:
+main_ui_inter_handle_enter_key:
 	adrp	x0, :got:NODE_MEMORY_SIZE       // Load the memory address of the global symbol NODE_MEMORY_SIZE into x0
 	add	x21, sp, 344                   // Add 344 to the stack pointer (sp) and store the result in x21
 	mov	x8, x21                         // Move the value from x21 to x8
@@ -670,21 +673,21 @@ basic_string_check5:
 	str	x0, [sp, 136]                  // Store the incremented value of x0 at address sp + 136
 	ldr	x0, [sp, 152]                  // Load value at sp + 152 into x0
 	bl	_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE6substrEmm // Call member function basic_string::substr
-.LEHE3:
+main_ui_inter_handle_enter_key_erase:
 	ldr	x25, [sp, 152]                 // Load the value at sp + 152 into x25
 	adrp	x2, erase_str                 // Load the memory address containing erase_str into x2
 	ldrsw	x24, [sp, 116]                // Load the value at address sp + 116 and sign-extend it to a 64-bit value in x24
 	add	x2, x2, :lo12:erase_str        // Add the lower 12 bits of the offset for erase_str to x2
 	ldr	x0, [x25, 8]                   // Load the value at x25 + 8 into x0
 	mov	x1, x24                         // Move the value in x24 into x1
-.LEHB4:
+main_ui_inter_handle_enter_key_alloc:
 	bl	basic_string_check.isra.0        // Call basic_string_check.isra.0 function
 	ldr	x0, [x25]                      // Load the value at the address pointed to by x25 into x0
 	str	x24, [x25, 8]                  // Store the value of x24 at address x25 + 8
 	strb	wzr, [x0, x24]                 // Store zero (wzr) as a byte at x0 + x24
 	mov	x0, x21                         // Move the value in x21 into x0
 	bl	make_node                      // Call make_node function
-.LEHE4:
+main_ui_inter_handle_enter_key_getlns:
 	ldr	x1, [sp, 152]                  // Load the value at sp + 152 into x1
 	ldr	x2, [x1, 32]                   // Load the value at x1 + 32 into x2
 	str	x2, [x0, 32]                   // Store the value of x2 at address x0 + 32
@@ -696,41 +699,41 @@ basic_string_check5:
 	stp	wzr, w3, [sp, 116]             // Store the pair of values (wzr, w3) at address sp + 116
 	sub	w1, w1, #1                     // Decrement w1 by 1
 	cmp	w3, w1                         // Compare w3 and w1
-	blt	.L50                            // Branch to label .L50 if w3 is less than w1 (signed comparison)
+	blt	main_ui_inter_handle_enter_key_end                            // Branch to label main_ui_inter_handle_enter_key_end if w3 is less than w1 (signed comparison)
 
 	ldr	w1, [sp, 124]                  // Load the value at sp + 124 into w1
 	add	w1, w1, 1                      // Increment w1 by 1
 	stp	w2, w1, [sp, 120]              // Store the pair of values (w2, w1) at address sp + 120
 
-.L50:
+main_ui_inter_handle_enter_key_end:
 	str	x0, [sp, 152]                  // Store the value of x0 at address sp + 152
 	mov	x0, x21                         // Move the value in x21 into x0
 	bl	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv // Call basic_string::_M_dispose function
 	b	main_ui_inter_window_stp                            // Branch to label main_ui_inter_window_stp
 
-.L35:
+main_ui_inter_handle_keyup_cmp:
 	ldp	w1, w0, [sp, 120]              // Load the pair of values at sp + 120 into w1 and w0
 	cmp	w1, 3                          // Compare w1 and 3
-	ble	.L51                            // Branch to label .L51 if w1 is less than or equal to 3 (signed comparison)
+	ble	main_ui_inter_handle_keyup_end                           // Branch to label main_ui_inter_handle_keyup_end if w1 is less than or equal to 3 (signed comparison)
 	sub	w1, w1, #1                     // Decrement w1 by 1
 	str	w1, [sp, 120]                  // Store the decremented value of w1 at address sp + 120
-.L52:
+main_ui_inter_handle_keyup_ldr:
 	ldp	w0, w1, [sp, 120]              // Load the pair of values at sp + 120 into w0 and w1
 	sub	w0, w0, #3                     // Subtract 3 from w0
 	add	w1, w0, w1                     // Add w0 and w1, store the result in w1
 	ldr	x0, [sp, 144]                  // Load the value at sp + 144 into x0
-.LEHB5:
+main_ui_inter_handle_keyup_advnc:
 	bl	list_advance                    // Call list_advance function
 	b	basic_string_check3                           // Branch to label basic_string_check3
 
-.L51:
+main_ui_inter_handle_keyup_end:
 	cmp	w0, 0                          // Compare w0 and 0
-	ble	.L52                            // Branch to label .L52 if w0 is less than or equal to 0 (signed comparison)
+	ble	main_ui_inter_handle_keyup_ldr                            // Branch to label main_ui_inter_handle_keyup_ldr if w0 is less than or equal to 0 (signed comparison)
 	sub	w0, w0, #1                     // Decrement w0 by 1
 	str	w0, [sp, 124]                  // Store the decremented value of w0 at address sp + 124
-	b	.L52                            // Branch to label .L52
+	b	main_ui_inter_handle_keyup_ldr                            // Branch to label main_ui_inter_handle_keyup_ldr
 
-.L36:
+main_ui_inter_handle_keydown:
 	ldr	x2, [x22, #:got_lo12:LINES]   // Load the lower 12 bits from an entry in the GOT corresponding to LINES
 	ldr	x0, [sp, 152]                  // Load the value at sp + 152 into x0
 	ldr	w2, [x2]                       // Load the value at the address pointed to by x2 into w2
@@ -738,7 +741,7 @@ basic_string_check5:
 	sub	w2, w2, #2                     // Subtract 2 from w2
 	ldr	x0, [x0, 32]                   // Load the value at x0 + 32 into x0
 	cmp	w2, w1                         // Compare w2 and w1
-	ble	.L53                            // Branch to label .L53 if w2 is less than or equal to w1 (signed comparison)
+	ble	main_ui_inter_handle_keydown_end                            // Branch to label main_ui_inter_handle_keydown_end if w2 is less than or equal to w1 (signed comparison)
 	cbz	x0, main_ui_inter_window_stp                        // Compare x0 with zero, branch to label main_ui_inter_window_stp if equal
 
 	add	w1, w1, 1                      // Increment w1 by 1
@@ -747,14 +750,14 @@ basic_string_check3:
 	str	x0, [sp, 152]                  // Store the value of x0 at address sp + 152
 	b	main_ui_inter_window_stp                            // Branch to label main_ui_inter_window_stp
 
-.L53:
+main_ui_inter_handle_keydown_end:
 	cbz	x0, main_ui_inter_window_stp                        // Compare x0 with zero, branch to label main_ui_inter_window_stp if equal
 	ldr	w1, [sp, 124]                  // Load the value at sp + 124 into w1
 	add	w1, w1, 1                      // Increment w1 by 1
 	str	w1, [sp, 124]                  // Store the incremented value of w1 at address sp + 124
 	b	basic_string_check3                           // Branch to label basic_string_check3
 
-.L34:
+main_ui_inter_handle_key_advance:
 	ldr	w0, [sp, 116]                  // Load the value at sp + 116 into w0
 	cmp	w0, 0                          // Compare w0 and 0
 	bgt	basic_string_check2                          // Branch to label basic_string_check2 if w0 is greater than 0 (signed comparison)
@@ -771,16 +774,16 @@ basic_string_check3:
 	str	x0, [sp, 152]
 	ldr	x0, [x0, 8]
 	b	basic_string_check5
-.L33:
+main_ui_inter_handle_key_advance_check:
 	ldr	x1, [sp, 152]
 	ldr	w0, [sp, 116]
 	ldr	x2, [x1, 8]
 	cmp	w0, w2
-	bge	.L55
+	bge	main_ui_inter_handle_key_window
 basic_string_check4:
 	add	w0, w0, 1
 	b	basic_string_check5
-.L55:
+main_ui_inter_handle_key_window:
 	ldr	x1, [x1, 32]
 	cbz	x1, main_ui_inter_window_stp
 	ldr	w0, [sp, 120]
@@ -795,37 +798,37 @@ basic_string_str_and_jmp0:
 	mov	x3, 1
 	mov	x2, 0
 	bl	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE14_M_replace_auxEmmmc
-.LEHE5:
+main_ui_inter_handle_key_bs_chk:
 	ldr	w0, [sp, 116]
 	b	basic_string_check4
-.L63:
+main_ui_inter_handle_key_bs_chk_mov:
 	mov	x19, x0
 	mov	x0, x21
 basic_string_check6:
 	bl	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv
-.L58:
+main_ui_inter_handle_key_bs_str_disp:
 	mov	x0, x23
 	bl	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv
 	mov	x0, x19
-.LEHB6:
+main_ui_inter_handle_key_unwind:
 	bl	_Unwind_Resume
-.LEHE6:
-.L65:
+main_ui_str_dipose:
+main_ui_str_dipose_ev:
 	mov	x19, x0
 	mov	x0, x21
 	bl	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv
-.L60:
+main_ui_str_dipose_check:
 	add	x0, sp, 248
 	bl	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv
 	add	x0, sp, 216
 	b	basic_string_check6
-.L64:
+main_ui_str_dipose_mov_and_check:
 	mov	x19, x0
-	b	.L60
-.L62:
+	b	main_ui_str_dipose_check
+main_ui_str_dipose_mov_check_disp:
 	mov	x19, x0
-	b	.L58
-.L61:
+	b	main_ui_inter_handle_key_bs_str_disp
+main_ui_preserve:
 	mov	w0, 0
 	ldp	x19, x20, [sp, 16]
 	ldp	x21, x22, [sp, 32]
@@ -847,26 +850,26 @@ main_uleb_table:
 	.uleb128 0
 	.uleb128 main_not_lines_pushback-main_start
 	.uleb128 main_str_check-main_not_lines_pushback
-	.uleb128 .L63-main_start
+	.uleb128 main_ui_inter_handle_key_bs_chk_mov-main_start
 	.uleb128 0
 	.uleb128 main_ui_inter_opn_file-main_start
 	.uleb128 main_ui_inter_str_check-main_ui_inter_opn_file
-	.uleb128 .L62-main_start
+	.uleb128 main_ui_str_dipose_mov_check_disp-main_start
 	.uleb128 0
 	.uleb128 main_ui_inter_check_colors-main_start
-	.uleb128 .LEHE3-main_ui_inter_check_colors
-	.uleb128 .L64-main_start
+	.uleb128 main_ui_inter_handle_enter_key_erase-main_ui_inter_check_colors
+	.uleb128 main_ui_str_dipose_mov_and_check-main_start
 	.uleb128 0
-	.uleb128 .LEHB4-main_start
-	.uleb128 .LEHE4-.LEHB4
-	.uleb128 .L65-main_start
+	.uleb128 main_ui_inter_handle_enter_key_alloc-main_start
+	.uleb128 main_ui_inter_handle_enter_key_getlns-main_ui_inter_handle_enter_key_alloc
+	.uleb128 main_ui_str_dipose_ev-main_start
 	.uleb128 0
-	.uleb128 .LEHB5-main_start
-	.uleb128 .LEHE5-.LEHB5
-	.uleb128 .L64-main_start
+	.uleb128 main_ui_inter_handle_keyup_advnc-main_start
+	.uleb128 main_ui_inter_handle_key_bs_chk-main_ui_inter_handle_keyup_advnc
+	.uleb128 main_ui_str_dipose_mov_and_check-main_start
 	.uleb128 0
-	.uleb128 .LEHB6-main_start
-	.uleb128 .LEHE6-.LEHB6
+	.uleb128 main_ui_inter_handle_key_unwind-main_start
+	.uleb128 main_ui_str_dipose-main_ui_inter_handle_key_unwind
 	.uleb128 0
 	.uleb128 0
 main_end:
