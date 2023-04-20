@@ -1,5 +1,5 @@
-#ifndef TEXT_EDITOR_H
-#define TEXT_EDITOR_H
+#ifndef SEARCH_H
+#define SEARCH_H
 
 #include <curses.h>
 #include <string>
@@ -9,4 +9,4 @@ void highlight_search(size_t found_pos, size_t search_length, int y);
 void search_text(LinkedList &lines, const std::string &search_str, int &cursor_x, int &cursor_y, int &scroll_offset, Node *&current_line);
 void replace_text(LinkedList &lines, const std::string &search_str, const std::string &replace_str);
 
-#endif // TEXT_EDITOR_H
+#endif // SEARCH_H

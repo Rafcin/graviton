@@ -4,8 +4,16 @@
 #include <fstream>
 #include "./lib/linked_list/linked_list.h"
 #include "./lib/text_editor/text_editor.h"
+#include "./lib/save_file/save_file.h"
+#include "./lib/open_file/open_file.h"
+#include "./lib/search/search.h"
 
 const char *CONTROLS = "^X:Exit  ^O:Save  ^W:Search  ^T:Replace";
+const char *NAME = "WordPerfect-Resurrected";
+const char *SEARCH = "Search: ";
+const char *SEARCHFOR = "Search for: ";
+const char *REPLACEWITH = "Replace with: ";
+int NODE_MEMORY_SIZE = sizeof(Node);
 
 /* @Name: main
  * @Description: The main function that runs the text editor.
@@ -66,7 +74,7 @@ int main(int argc, char *argv[])
 
         // Display the title bar
         attron(A_REVERSE);
-        mvprintw(0, 0, "Macro");
+        mvprintw(0, 0, NAME);
         attroff(A_REVERSE);
 
         display_memory_info(memory, nodes); // Display memory usage
@@ -111,7 +119,7 @@ int main(int argc, char *argv[])
             break;
         case 23: // Ctrl+W (search)
             attron(A_BOLD | A_REVERSE);
-            search_str = get_user_input("Search: ");
+            search_str = get_user_input(SEARCH);
             attroff(A_BOLD | A_REVERSE);
             search_text(lines, search_str, cursor_x, cursor_y, scroll_offset, current_line);
             move(cursor_y, cursor_x);
@@ -119,8 +127,8 @@ int main(int argc, char *argv[])
             break;
         case 20: // Ctrl+T (replace)
             attron(A_BOLD | A_REVERSE);
-            search_str = get_user_input("Search for: ");
-            replace_str = get_user_input("Replace with: ");
+            search_str = get_user_input(SEARCHFOR);
+            replace_str = get_user_input(REPLACEWITH);
             attroff(A_BOLD | A_REVERSE);
             replace_text(lines, search_str, replace_str);
             refresh();
@@ -164,7 +172,7 @@ int main(int argc, char *argv[])
         case KEY_ENTER:
         case 10: // Enter key
         {
-            memory += sizeof(Node);
+            memory += NODE_MEMORY_SIZE;
             nodes++;
             std::string new_line = current_line->line.substr(cursor_x);
             current_line->line.erase(cursor_x);
@@ -230,7 +238,7 @@ int main(int argc, char *argv[])
             }
             break;
         default:
-            if (ch >= 32 && ch <= 126)
+            if (isprint(ch))
             { // Printable characters
                 current_line->line.insert(cursor_x, 1, static_cast<char>(ch));
                 cursor_x++;

@@ -18,55 +18,6 @@ void display_memory_info(size_t memory, size_t nodes)
     attroff(A_BOLD);                                                                            // Turn off bold text attribute
 }
 
-/* @Name: open_file
- * @Description: Reads a file and creates a linked list of its lines, along with tracking the memory and node counts.
- * @Parameters:
- *     - filename: The name of the file to read.
- *     - lines: The linked list to store the lines in.
- *     - memory: A reference to a size_t variable to store the memory usage in bytes.
- *     - nodes: A reference to a size_t variable to store the number of nodes in the list.
- */
-void open_file(const char *filename, LinkedList &lines, size_t &memory, size_t &nodes)
-{
-    std::ifstream infile(filename); // Open the file for reading
-    if (!infile.is_open())          // Check if the file was successfully opened
-    {
-        return; // If not, return without doing anything
-    }
-
-    std::string line;
-    while (std::getline(infile, line)) // Read each line of the file
-    {
-        Node *new_node = list_push_back(lines, line);                  // Add the line to the linked list
-        memory += new_node->line.size() * sizeof(char) + sizeof(Node); // Update the memory count
-        nodes++;                                                       // Update the node count
-    }
-    infile.close(); // Close the file
-}
-
-/* @Name: save_file
- * @Description: Writes the contents of a linked list to a file.
- * @Parameters:
- *     - filename: The name of the file to write to.
- *     - lines: The linked list containing the lines to write.
- */
-void save_file(const char *filename, const LinkedList &lines)
-{
-    std::ofstream outfile(filename); // Open the file for writing
-    if (!outfile.is_open())          // Check if the file was successfully opened
-    {
-        return; // If not, return without doing anything
-    }
-
-    Node *current = lines.head;
-    while (current)
-    {
-        outfile << current->line << '\n'; // Write each line to the file
-        current = current->next;
-    }
-    outfile.close(); // Close the file
-}
-
 /* @Name: get_user_input
  * @Description: Gets a string input from the user.
  * @Parameters:

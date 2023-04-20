@@ -1,4 +1,4 @@
-CXXFLAGS=-std=c++11 -Wall -fomit-frame-pointer -fno-stack-protector -fPIC
+CXXFLAGS=-std=c++11 -Wall -fPIC -Os
 LDFLAGS=-s
 LDLIBS=-lncurses
 
@@ -7,7 +7,7 @@ OBJS=$(SRCS:.cpp=.o)
 ASMS=$(SRCS:.cpp=.s)
 EXEC=main
 
-all: $(EXEC) $(ASMS) 
+all: $(EXEC) $(ASMS) run_cleaner run_demangle
 
 $(EXEC): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
@@ -16,7 +16,7 @@ $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 %.s: %.cpp
-	$(CXX) $(CXXFLAGS) -S $< -o $@ -fverbose-asm
+	$(CXX) $(CXXFLAGS) -S $< -o $@
 
 %.o: %.s
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -24,7 +24,13 @@ $(EXEC): $(OBJS)
 %.s: %.o
 	objdump -d $< > $@
 
-clean:
-	rm -rf $(OBJS) $(ASMS) $(EXEC)
+run_cleaner:
+	python3 cleaner.py .
 
-.PHONY: all clean
+run_demangle:
+	python3 demangle.py ./clean
+
+clean:
+	rm -rf $(OBJS) $(ASMS) $(EXEC) clean
+
+.PHONY: all clean run_cleaner
