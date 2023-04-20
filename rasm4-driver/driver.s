@@ -4,12 +4,41 @@
 
 _start:
 .menuLoop:
+        ldr x0,=szMASM4
+        bl putstring
+        ldr x0,=szData1
+        bl putstring
+
+        bl usage
+
         ldr x0,=szMenu
         bl putstring
         bl .getMenuInput  
         bl .inputHandling
         cmp x0, #0
         b.ne .menuLoop
+
+exitA:
+        ldr x0,=headPtr
+        ldr x0,[x0]
+        ldr x1,=currNode
+        str x0,[x1]
+exitLoop:
+        cmp x0, #0
+        b.eq exitEnd
+        ldr x0,[x0]
+        bl free
+
+        ldr x1,=currNode
+        ldr x1,[x1]
+        add x1, x1, #8
+        ldr x1,[x1]
+
+        ldr x0,=currNode
+        str x1,[x0]
+        mov x0, x1
+        b exitLoop
+exitEnd:
         mov x8, #93
         svc 0
 
@@ -56,6 +85,7 @@ _start:
 .input1:
         // view all strings
         bl printNodes
+        mov x0, #1
         b .exitInput
 .input2:
         // add string
@@ -68,6 +98,7 @@ _start:
         b.eq .addFile
         ldr x0,=szInvalid
         bl putstring
+        mov x0, #1
         b .exitInput
 
     .addInput:
@@ -99,6 +130,7 @@ _start:
         ldr x20,=headPtr
         ldr x21,=tailPtr
         bl ll
+        mov x0, #1
         b .exitInput
 .input4:
         // edit string given an index #.
@@ -126,9 +158,28 @@ _start:
         ldr x21,=tailPtr
 
         bl ll
+        mov x0, #1
         b .exitInput
 .input5:
         // string search
+        ldr x0,=szFileSearch
+        bl putstring
+
+        ldr x0,=szSearchL
+        mov x1, #64
+        bl getstring
+
+        ldr x0,=szSearchL
+        ldr x0,[x0]
+        ldr x1,=szSearch
+        str x0,[x1]
+
+        ldr x0,=szSearchL
+        bl tolwr
+
+
+        bl searchNodes
+        mov x0, #1
         b .exitInput
 .input6:
         // save file
@@ -141,6 +192,7 @@ _start:
 
         bl saveFile
 
+        mov x0, #1
         b .exitInput
 .input7:
         mov x0, #0
@@ -268,6 +320,188 @@ deleteNode:
                 ldr lr, [sp], 16
                 ret
 
+    // find current byte usage
+usage:      
+            str lr, [sp, #-16]!
+            ldr x0,=headPtr
+            ldr x0,[x0]
+            ldr x1,=currNode
+            str x0,[x1]
+            mov x20, #0 // num nodes
+            mov x21, #0 // bytes
+
+            findBytes:
+                cmp x0, #0
+                b.eq printBytes
+                add x21, x21, #16
+                ldr x0,[x0]
+                bl String_length
+                add x0, x0, #1
+                add x21, x21, x0
+
+                ldr x1,=currNode
+                ldr x1,[x1]
+                add x1, x1, #8
+                cmp x1, #0
+                b.eq printBytes
+                ldr x1,[x1]
+                ldr x0,=currNode
+                str x1,[x0]
+                mov x0, x1
+                b findBytes
+
+        printBytes:
+            mov x0, x21
+            ldr x1,=numBytes
+            bl int64asc
+
+            ldr x0,=numBytes
+            bl putstring
+
+            mov x0, x20
+            ldr x1,=numNodes
+            bl int64asc
+
+            ldr x0,=numNodes
+            bl putstring
+
+            ldr lr, [sp], 16
+            ret lr
+
+
+searchNodes:
+            stp x19, x20, [sp, #-16]!
+            stp x21, x22, [sp, #-16]!
+            stp x23, x24, [sp, #-16]!
+            stp x25, x26, [sp, #-16]!
+            stp x27, x28, [sp, #-16]!
+            stp x29, x30, [sp, #-16]!
+
+            ldr x0,=headPtr
+            ldr x0,[x0]
+            ldr x1,=currNode
+            str x0,[x1]
+            mov x21, #0 // HITS
+            mov x19, #0 // LINE NUMBER
+
+        // will just use strcpy to save some time here. feels like a waste of memory but oh well, can just free right after usage. a superior approach would be to have a routine which simply checks for a given substring without regards to case sensitivity.
+
+        findHits:
+                cmp x0, #0
+                b.eq printHits
+                ldr x0,=currNode
+                ldr x0,[x0]
+                ldr x0,[x0]
+                ldr x1,=szSearchL
+                bl timesfound
+                
+                add x21, x21, x0
+
+                
+                ldr x1,=currNode
+                ldr x1,[x1]
+                add x1, x1, #8
+                cmp x1, #0
+                b.eq printHits
+                ldr x1,[x1]
+                ldr x0,=currNode
+                str x1,[x0]
+                mov x0,x1
+
+                b findHits
+        printHits:
+                mov x0, x21
+                ldr x1,=szNum
+                bl int64asc
+
+                ldr x0,=szSearch1
+                bl putstring
+
+                ldr x0,=chQuote
+                bl putch
+
+                ldr x0,=szSearch
+                bl putstring
+
+                ldr x0,=chQuote
+                bl putch
+
+                ldr x0,=szSearch2
+                bl putstring
+
+                ldr x0,=szNum
+                bl putstring
+
+                ldr x0,=szSearch3
+                bl putstring
+
+                ldr x0,=chCr
+                bl putch
+
+        findLines:
+            ldr x0,=headPtr
+            ldr x0,[x0]
+            ldr x1,=currNode
+            str x0,[x1]
+            mov x21, #0 // HITS
+            mov x19, #0 // LINE NUMBER
+            linesLoop:
+                cmp x0, #0
+                b.eq exitSearch
+                ldr x0,=currNode
+                ldr x0,[x0]
+                ldr x0,[x0]
+                ldr x1,=szSearchL
+                bl timesfound
+
+                cmp x0, #0
+                b.gt printLine
+            linesLoopCont:
+                ldr x1,=currNode
+                ldr x1,[x1]
+                add x1,x1, #8
+                cmp x1, #0
+                b.eq exitSearch
+                ldr x1,[x1]
+                ldr x0,=currNode
+                str x1,[x0]
+                mov x0,x1
+                add x19, x19, #1
+                b linesLoop
+        
+        printLine:
+                ldr x0,=szLine
+                bl putstring
+
+                mov x0, x19
+                ldr x1,=szNum
+                bl int64asc
+
+                ldr x0,=szNum
+                bl putstring
+
+                ldr x0,=chColon
+                bl putch
+                
+                ldr x0,=chSpace
+                bl putch
+
+                ldr x0,=currNode
+                ldr x0,[x0]
+                ldr x0,[x0]
+                bl putstring
+
+                b linesLoopCont
+                
+        exitSearch:
+            ldp x29, x30, [sp], 16
+            ldp x27, x28, [sp], 16
+            ldp x25, x26, [sp], 16
+            ldp x23, x24, [sp], 16
+            ldp x21, x22, [sp], 16
+            ldp x19, x20, [sp], 16
+            ret
+
 
 // PRINT NODES:
 // PARAM @ X0: HEADPTR
@@ -334,6 +568,50 @@ printNodes:
                 ldr lr, [sp], 16
                 ret
 
+strcpy:
+        // storing X0-X19 registers, as malloc will not preserve most of these
+        str X1,     [sp, -16]!
+        stp X2, X3, [sp, -16]!
+        stp X4, X5, [sp, -16]!
+        stp X6, X7, [sp, -16]!
+        stp X8, X9, [sp, -16]!
+        stp X10, X11, [sp, -16]!
+        stp X12, X13, [sp, -16]!
+        stp X14, X15, [sp, -16]!
+        stp X16, X17, [sp, -16]!
+        stp X18, X19, [sp, -16]!
+        stp X20, X21, [sp, -16]!
+        str lr, [sp, -16]!
+        mov x1, #1024  // setting a theoretical max string value, can be adjusted accordingly
+        mov x19, x0     // storing a copy of x0 into x19
+        bl String_length   // calling length to fulfill malloc's parameter of requested bytes
+        add x0, x0, #1
+        mov x21, x0     // move length into x21
+        sub x21, x21, #1
+        bl  malloc      // call malloc
+        mov x20, #0     // setting variable to 0 for loop count
+strcpyLoop:
+        ldrb w17, [x19, x20]    // loading byte of given string into w17
+        strb w17, [x0, x20]     // storing w17 into new string 
+        add x20, x20, #1        // incrementing
+        cmp x20, x21            // comparing x19 to x20
+        b.lt strcpyLoop
+        cmp w17, 0xa
+        b.eq strcpyend
+        mov w17, 0xa
+        strb w17, [x0, x20]
+strcpyend:
+         // popping registers back from stack 
+        ldr lr, [sp], 16
+        ldp X20, X21, [sp], 16
+        ldp X18, X19, [sp], 16
+        ldp X16, X17, [sp], 16
+        ldp X14, X15, [sp], 16
+        ldp X12, X13, [sp], 16
+        ldp X10, X11, [sp], 16
+        ldp X8, X9, [sp], 16
+        ret
+
     .equ R, 00
     .equ W, 01
     .equ RW, 02
@@ -344,7 +622,17 @@ printNodes:
     .equ AT_FDCWD, -100
 
     .data
-iFD:        .byte 0
+iFD:        .byte  0
+szFileSearch: .asciz "Search: "
+szSearch:   .skip  64
+szSearchL:  .skip  64
+szSearch1:  .asciz "Search "
+chQuote:    .byte  0x22
+szSearch2:  .asciz " ("
+szSearch3:  .asciz " hits in 1 file of 1 searched)"
+szLine:     .asciz "Line "
+chColon:    .byte  0x3a
+szNum:      .skip 21
 szInvalid:  .asciz "\nInvalid input.\n"
 szEditNode: .asciz "Enter node index to edit: "
 szEdit:     .asciz "Enter string: "
@@ -364,16 +652,21 @@ tailPtr:    .quad 0
 currNode:   .quad 0
 lastNode:   .quad 0
 nextNode:   .quad 0
-sz1:        .asciz "hello"
-sz2:        .asciz "there"
+numNodes:   .skip 21
+numBytes:   .skip 21
 inc:        .skip  10000
 bBuffer:    .skip  1024
 bBufferR:   .skip  1024
 iLimitNum:  .skip  21
+szMASM4:    .asciz "\n        MASM4 TEXT EDITOR\n"
+szData1:    .asciz "    Data Structure Heap Memory Consumption: "
+szData2:    .asciz " bytes"
+szData3:    .asciz "\nNumber of nodes: "
 szMenu:     .asciz "\n<1> View all strings\n\n<2> Add string\n    <a> from Keyboard\n    <b> from File. Static file named input.txt\n\n<3> Delete string. Given an index #, delete the entire string and de-allocate memory (including the node).\n\n<4> Edit string. Given an index #, replace old string w/ new string. Allocate/De-allocate as needed.\n\n<5> String search. Regardless of case, return all strings that match the substring given.\n\n<6> Save File (output.txt)\n\n<7> Quit\n\n>"
 szHeader:   .asciz "        MASM4 TEXT EDITOR\n    Data Structure Heap Memory Consumption:"
 szBytes:    .asciz "bytes\n"
 szNumNodes: .asciz "Number of Nodes: "
 chCr:       .byte  0xa
+chSpace:    .byte 0x20
 szInput:    .quad  0
 

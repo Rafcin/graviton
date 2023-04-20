@@ -1,5 +1,7 @@
+as -g timesfound.s -o timesfound.o
+ld timesfound.o ./obj/String_length.o
 as -g driver.s -o driver.o
-ld -lc driver.o ll.o addString.o ./obj/*.o -o driver
+ld -lc driver.o timesfound.o ll.o addString.o ./obj/*.o -o driver
 
 as -g ll.s -o ll.o
 ld -lc ll.o ./obj/*.o
