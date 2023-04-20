@@ -11,7 +11,7 @@
 		mov	x20, x0                 // Move the input string `line` address to x20
 		mov	x0, 40                  // Move the size of Node (40 bytes) to x0 to be used as an argument for malloc
 		bl	malloc                  // Call malloc to allocate memory for Node
-		cbnz	x0, .L2             // If the result of malloc (x0) is not zero, jump to .L2
+		cbnz	x0, make_node_rec_al             // If the result of malloc (x0) is not zero, jump to make_node_rec_al
 		mov	x0, 8                   // Move 8 to x0 to be used as an argument for __cxa_allocate_exception
 		bl	__cxa_allocate_exception // Call __cxa_allocate_exception to allocate memory for an exception object
 		adrp	x1, :got:_ZTVSt9bad_alloc // Load the address of the global offset table (GOT) entry for the vtable of std::bad_alloc into x1
@@ -23,7 +23,7 @@
 		adrp	x1, :got:_ZTISt9bad_alloc // Load the address of the GOT entry for the typeinfo of std::bad_alloc into x1
 		ldr	x1, [x1, #:got_lo12:_ZTISt9bad_alloc] // Load the actual typeinfo address of std::bad_alloc into x1
 		bl	__cxa_throw             // Call __cxa_throw to throw the std::bad_alloc exception
-	.L2:                            // Local label .L2
+	make_node_rec_al:               // Local label make_node_rec_al
 		mov	x19, x0                 // Move the allocated memory address for the new node to x19
 		mov	x1, x20                 // Move the input string `line` address to x1
 		bl	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC1ERKS4_ // Call the string copy constructor with input string `line`
@@ -64,18 +64,18 @@
 		mov	x0, x1                  // Move input string `line` address to x0
 		bl	make_node // Call make_node function with input string `line`
 		ldr	x1, [x19]               // Load the head of the LinkedList into x1
-		cbnz	x1, .L7             // If x1 (head) is not zero, jump to .L7
+		cbnz	x1, list_push_back_load             // If x1 (head) is not zero, jump to list_push_back_load
 		str	x0, [x19]               // Store the new node address as head of the LinkedList
-	.L6:                            // Local label .L6
+	list_push_back_ret:             // Local label list_push_back_ret
 		ldr	x19, [sp, 16]           // Load x19 from the stack
 		ldp	x29, x30, [sp], 32      // Load x29 (FP) and x30 (LR) from the stack, and update the stack pointer
 		ret                         // Return from the function
-	.L7:                            // Local label .L7
+	list_push_back_load:                            // Local label list_push_back_load
 		mov	x2, x1                  // Move the head of the LinkedList to x2
 		ldr	x1, [x1, 32]            // Load the next pointer of the current node into x1
-		cbnz	x1, .L7             // If x1 (next pointer) is not zero, jump to .L7
+		cbnz	x1, list_push_back_load             // If x1 (next pointer) is not zero, jump to list_push_back_load
 		str	x0, [x2, 32]            // Store the new node address as the next pointer of the last node
-		b	.L6                     // Jump to .L6
+		b	list_push_back_ret      // Jump to list_push_back_ret
 	list_push_back_end:             // Local label for function end
 		.size	list_push_back, .-list_push_back // Set the size of list_push_back function in the symbol table
 		.align	2                   // Align at 2-byte boundary
@@ -86,11 +86,11 @@
 	list_erase_next_start:          // Local label for function begin
 		ldr	x1, [x0]                // Load the input node address to x1
 		ldr	x0, [x1, 32]            // Load the next pointer of the input node into x0
-		cbz	x0, .L12                // If x0 (next pointer) is zero, jump to .L12
+		cbz	x0, list_erase_next_ret                // If x0 (next pointer) is zero, jump to list_erase_next_ret
 		ldr	x2, [x0, 32]            // Load the next pointer of the next node into x2
 		str	x2, [x1, 32]            // Update the next pointer of the input node to skip over the next node
 		b	destroy_node            // Branch to destroy_node function to deallocate the memory of the next node
-	.L12:                           // Local label .L12
+	list_erase_next_ret:                           // Local label list_erase_next_ret
 		ret                         // Return from the function
 	list_erase_next_end:            // Local label for function end
 		.size	list_erase_next, .-list_erase_next // Set the size of list_erase_next function in the symbol table
@@ -104,17 +104,17 @@
 		stp	x19, x20, [sp, 16]      // Store x19 and x20 on the stack
 		mov	x19, x0                 // Move the input LinkedList address to x19
 		ldr	x0, [x0]                // Load the head of the LinkedList into x0
-	.L15:                           // Local label .L15
-		cbnz	x0, .L16            // If x0 (head) is not zero, jump to .L16
+	list_clear_ret:                 // Local label list_clear_ret
+		cbnz	x0, list_clear_destroy            // If x0 (head) is not zero, jump to list_clear_destroy
 		str	xzr, [x19]              // Set the head of the LinkedList to null (zero)
 		ldp	x19, x20, [sp, 16]      // Load x19 and x20 from the stack
 		ldp	x29, x30, [sp], 32      // Load x29 (FP) and x30 (LR) from the stack, and update the stack pointer
 		ret                         // Return from the function
-	.L16:                           // Local label .L16
+	list_clear_destroy:                           // Local label list_clear_destroy
 		ldr	x20, [x0, 32]           // Load the next pointer of the current node into x20
 		bl	destroy_node  // Call destroy_node function to deallocate the memory of the current node
 		mov	x0, x20                 // Move the next pointer to x0
-		b	.L15                    // Jump to .L15
+		b	list_clear_ret                    // Jump to list_clear_ret
 	list_clear_end:                 // Local label for function end
 		.size	list_clear, .-list_clear // Set the size of list_clear function in the symbol table
 		.align	2                   // Align at 2-byte boundary
@@ -125,13 +125,13 @@
 	list_size_start:                // Local label for function begin
 		ldr	x1, [x0]                // Load the head of the LinkedList into x1
 		mov	x0, 0                   // Initialize the list size counter to 0
-	.L19:                           // Local label .L19
-		cbnz	x1, .L20            // If x1 (head) is not zero, jump to .L20
+	list_size_make_node:            // Local label list_size_make_node
+		cbnz	x1, make_node_rec_al0            // If x1 (head) is not zero, jump to make_node_rec_al0
 		ret                         // Return from the function
-	.L20:                           // Local label .L20
+	make_node_rec_al0:              // Local label make_node_rec_al0
 		add	x0, x0, 1               // Increment the list size counter
 		ldr	x1, [x1, 32]            // Load the next pointer of the current node into x1
-		b	.L19                    // Jump to .L19
+		b	list_size_make_node                    // Jump to list_size_make_node
 	list_size_end:                  // Local label for function end
 		.size	list_size, .-list_size // Set the size of list_size function in the symbol table
 		.align	2                   // Align at 2-byte boundary
@@ -140,14 +140,14 @@
 
 	list_advance:                   // Function label
 	list_advance_start:             // Local label for function begin
-	.L23:                           // Local label .L23
+	make_node_rec_al3:              // Local label make_node_rec_al3
 		cmp	w1, 0                   // Compare the input integer (w1) with 0
-		ble	.L21                    // If w1 is less than or equal to 0, jump to .L21
+		ble	make_node_rec_al1       // If w1 is less than or equal to 0, jump to make_node_rec_al1
 		sub	w1, w1, #1              // Decrement w1 by 1
-		cbz	x0, .L21                // If x0 (input node) is zero, jump to .L21
+		cbz	x0, make_node_rec_al1                // If x0 (input node) is zero, jump to make_node_rec_al1
 		ldr	x0, [x0, 32]            // Load the next pointer of the current node into x0
-		b	.L23                    // Jump to .L23
-	.L21:                           // Local label .L21
+		b	make_node_rec_al3       // Jump to make_node_rec_al3
+	make_node_rec_al1:              // Local label make_node_rec_al1
 		ret                         // Return from the function
 	list_advance_end:               // Local label for function end
 		.size	list_advance, .-list_advance // Set the size of list_advance function in the symbol table
