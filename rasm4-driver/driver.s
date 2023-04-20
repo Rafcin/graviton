@@ -3,41 +3,61 @@
     .text
 
 _start:
+// Start of a loop that displays a menu to the user and allows them to select an option.
 .menuLoop:
-        ldr x0,=szMASM4
-        bl putstring
-        ldr x0,=szData1
-        bl putstring
+    // Load the memory address of a string constant into register x0 and call putstring to display it.
+    ldr x0,=szMASM4
+    bl putstring
+    // Load the memory address of another string constant into register x0 and call putstring to display it.
+    ldr x0,=szData1
+    bl putstring
 
-        bl usage
+    // Call the usage function to display the current usage of the program.
+    bl usage
 
-        ldr x0,=szMenu
-        bl putstring
-        bl .getMenuInput  
-        bl .inputHandling
-        cmp x0, #0
-        b.ne .menuLoop
+    // Load the memory address of the menu string constant into register x0 and call putstring to display it.
+    ldr x0,=szMenu
+    bl putstring
+    // Call the getMenuInput function to get user input for the menu selection and store the result in x0.
+    bl .getMenuInput  
+    // Call the inputHandling function to handle the user input.
+    bl .inputHandling
+    // Compare the result of the input handling to 0, and branch to the .menuLoop label if it's not equal to 0.
+    cmp x0, #0
+    b.ne .menuLoop
 
+// This label marks the end of the program's execution.
 exitA:
-        ldr x0,=headPtr
-        ldr x0,[x0]
-        ldr x1,=currNode
-        str x0,[x1]
+    // Load the memory address of the headPtr variable into register x0, load its value into x0, and store the value in currNode.
+    ldr x0,=headPtr
+    ldr x0,[x0]
+    ldr x1,=currNode
+    str x0,[x1]
+
+// Start of a loop that frees memory allocated for the linked list.
 exitLoop:
-        cmp x0, #0
-        b.eq exitEnd
-        ldr x0,[x0]
-        bl free
+    // Compare the value in x0 to 0, and branch to exitEnd if it's equal to 0.
+    cmp x0, #0
+    b.eq exitEnd
+    // Load the value pointed to by x0 into x0, and call the free function to free the memory.
+    ldr x0,[x0]
+    bl free
 
-        ldr x1,=currNode
-        ldr x1,[x1]
-        add x1, x1, #8
-        ldr x1,[x1]
+    // Load the value pointed to by currNode into x1, add 8 to it to get the next node's address, and load the value pointed to by that address into x1.
+    ldr x1,=currNode
+    ldr x1,[x1]
+    add x1, x1, #8
+    ldr x1,[x1]
 
-        ldr x0,=currNode
-        str x1,[x0]
-        mov x0, x1
-        b exitLoop
+    // Store the value in x1 into currNode, and set x0 to the value in x1 to prepare for the next iteration of the loop.
+    ldr x0,=currNode
+    str x1,[x0]
+    mov x0, x1
+    // Branch back to the start of the exitLoop.
+    b exitLoop
+
+// This label marks the end of the program's execution.
+
 exitEnd:
         mov x8, #93
         svc 0
@@ -200,6 +220,9 @@ exitEnd:
         ldr lr, [sp], #16
         ret lr
 
+
+// SUBROUTINE:
+// SAVES TO A FILE THE CURRENT NODES POINTED TO BY THE HEAD.
 saveFile:
         str lr, [sp, #-16]!
 
@@ -222,6 +245,7 @@ saveFile:
         ldr x20,=currNode
         str x0,[x20]
 
+        // LOOP PERFORMS WRITING IN FILE REQUESTED BY USER
     writeLoop: 
         cmp x20, #0
         b.eq closeFile
@@ -257,19 +281,25 @@ saveFile:
 
         b writeLoop
     
+    // CLOSE THE FILE
 closeFile:
         mov x1, #0
         mov x8, #57
         svc 0
         b saveExit
+    // INVALID FILE, TELL USER
 invalidFile:
         ldr x0,=szInvalid
         bl putstring
         b saveExit
+    // return the lr
 saveExit:
         ldr lr, [sp], 16
         ret 
 
+
+    // SUBROUTINE:
+    // DELETE NODE AT REQUESTED INDEX
 deleteNode:
         ldr x0,=szDelNode
         bl ascint64
@@ -339,6 +369,7 @@ usage:
                 ldr x0,[x0]
                 ldr x0,[x0, #0]
                 bl String_length
+                add x21, x0, x21
 
                 ldr x1,=currNode
                 ldr x1,[x1]
@@ -352,12 +383,16 @@ usage:
                 b findBytes
 
         printBytes:
-            mov x0, x21
-            ldr x1,=numBytes
-            bl int64asc
+                ldr x0,=chCr
+                bl putch
+                ldr x0,=szUsage1
+                bl putstring
+                mov x0, x21
+                ldr x1,=numBytes
+                bl int64asc
 
-            ldr x0,=numBytes
-            bl putstring
+                ldr x0,=numBytes
+                bl putstring
 
             
             mov x0, x20
@@ -663,14 +698,15 @@ inc:        .skip  10000
 bBuffer:    .skip  1024
 bBufferR:   .skip  1024
 iLimitNum:  .skip  21
-szMASM4:    .asciz "\n        MASM4 TEXT EDITOR\n"
-szData1:    .asciz "    Data Structure Heap Memory Consumption: "
+szMASM4:    .asciz "\n       RASM4 TEXT EDITOR"
+szUsage1:   .asciz "Data structure Heap Memory Consumption: "
+szData1:    .asciz " "
 szData2:    .asciz " bytes"
-szData3:    .asciz "\nNumber of nodes: "
-szMenu:     .asciz "\n<1> View all strings\n\n<2> Add string\n    <a> from Keyboard\n    <b> from File. Static file named input.txt\n\n<3> Delete string. Given an index #, delete the entire string and de-allocate memory (including the node).\n\n<4> Edit string. Given an index #, replace old string w/ new string. Allocate/De-allocate as needed.\n\n<5> String search. Regardless of case, return all strings that match the substring given.\n\n<6> Save File (output.txt)\n\n<7> Quit\n\n>"
-szHeader:   .asciz "        MASM4 TEXT EDITOR\n    Data Structure Heap Memory Consumption:"
+szData3:    .asciz "\n    Number of nodes: "
+szMenu:     .asciz "\n<1> View all strings\n\n<2> Add string\n    <a> from Keyboard\n    <b> from File\n\n<3> Delete string. Given an index #, delete the entire string and de-allocate memory (including the node).\n\n<4> Edit string. Given an index #, replace old string w/ new string. Allocate/De-allocate as needed.\n\n<5> String search. Regardless of case, return all strings that match the substring given.\n\n<6> Save File\n\n<7> Quit\n\n>"
+szHeader:   .asciz "        MASM4 TEXT EDITOR\n"
 szBytes:    .asciz "bytes\n"
-szNumNodes: .asciz "Number of Nodes: "
+szNumNodes: .asciz "    Number of Nodes: "
 chCr:       .byte  0xa
 chSpace:    .byte 0x20
 szInput:    .quad  0
