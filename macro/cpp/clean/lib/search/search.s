@@ -41,13 +41,13 @@ pos_str:
 		str	x25, [sp, 64]
 		// Call function wattr_on
 		bl	wattr_on
-	.L2:
+	highlight_search_wattr_style_off:
 		// Load the value at x20 into x0
 		ldr	x0, [x20]
 		// Compare x21 with x23
 		cmp	x21, x23
-		// Branch if not equal to .L5
-		bne	.L5
+		// Branch if not equal to highlight_search_winch
+		bne	highlight_search_winch
 		// Load x19 and x20 from the stack
 		ldp	x19, x20, [sp, 16]
 		// Move 0 to x2
@@ -65,7 +65,7 @@ pos_str:
 
 		// Call function wattr_off
 		b	wattr_off
-	.L5:
+	highlight_search_winch:
 		// Add w21 and w24 and store the result in w25
 		add	w25, w21, w24
 		// Move x22 to w1
@@ -78,15 +78,15 @@ pos_str:
 		mov	w19, w0
 		// Compare the return value with 1
 		cmn	w0, #1
-		// Branch if equal to .L3
-		beq	.L3
+		// Branch if equal to highlight_search_waddch
+		beq	highlight_search_waddch
 		// Load the value at x20 into x0
 		ldr	x0, [x20]
 		// Call function winch
 		bl	winch
 		// Move return value to w19
 		mov	w19, w0
-	.L3:
+	highlight_search_waddch:
 		// Load the value at x20 into x0
 		ldr	x0, [x20]
 		// Move x25 to w2
@@ -97,8 +97,8 @@ pos_str:
 		bl	wmove
 		// Compare the return value with 1
 		cmn	w0, #1
-		// Branch if equal to .L4
-		beq	.L4
+		// Branch if equal to highlight_search_style_high_off
+		beq	highlight_search_style_high_off
 		// Load the value at x20 into x0
 		ldr	x0, [x20]
 		// AND w19 with 255 and store the result in w19
@@ -107,11 +107,11 @@ pos_str:
 		orr	w1, w19, 256
 		// Call function waddch
 		bl	waddch
-	.L4:
+	highlight_search_style_high_off:
 		// Add 1 to x21
 		add	x21, x21, 1
-		// Branch to .L2
-		b	.L2
+		// Branch to highlight_search_wattr_style_off
+		b	highlight_search_wattr_style_off
 	highlight_search_end:
 		// Set the size of the function highlight_search
 		.size	highlight_search, .-highlight_search
@@ -143,8 +143,8 @@ pos_str:
 
 		// Store x2 on the stack at sp+112
 		str	x2, [sp, 112]
-		// Compare x0 with 0; If x0 == 0, branch to .L11
-		cbz	x0, .L11
+		// Compare x0 with 0; If x0 == 0, branch to search_text_ret
+		cbz	x0, search_text_ret
 		// Load the value at sp+96 into x0
 		ldr	x0, [sp, 96]
 		// Load the address of LINES into x24
@@ -165,10 +165,10 @@ pos_str:
 		mov	w7, 1
 		// Move 3 to x25
 		mov	x25, 3
-	.L13:
-		// Compare x20 with 0; If x20 != 0, branch to .L20
-		cbnz	x20, .L20
-	.L11:
+	search_text_cbnz_hglt:
+		// Compare x20 with 0; If x20 != 0, branch to highlight_search_wattr_style_off0
+		cbnz	x20, highlight_search_wattr_style_off0
+	search_text_ret:
 		// Load x19 and x20 from the stack
 		ldp	x19, x20, [sp, 16]
 		// Load x21 and x22 from the stack
@@ -184,12 +184,12 @@ pos_str:
 
 		// Return from the function
 		ret
-	.L20:
+	highlight_search_wattr_style_off0:
 		// Load the value at x24+:got_lo12:LINES into x26
 		ldr	x26, [x24, #:got_lo12:LINES]
 		// Move 0 to x2
 		mov	x2, 0
-	.L14:
+	search_text_highlight_blk:
 		// Move x28 to x1
 		mov	x1, x28
 		// Move x20 to x0
@@ -204,16 +204,16 @@ pos_str:
 		mov	x22, x0
 		// Compare x0 with 1
 		cmn	x0, #1
-		// If x0 != 1, branch to .L19
-		bne	.L19
+		// If x0 != 1, branch to search_text_advance
+		bne	search_text_advance
 		add	x23, x23, 1
 		// Load the value at x20+32 into x20
 		ldr	x20, [x20, 32]
-		// Branch to .L13
-		b	.L13
-	.L19:
-		// If w7 != 0, branch to .L16
-		cbz	w7, .L16
+		// Branch to search_text_cbnz_hglt
+		b	search_text_cbnz_hglt
+	search_text_advance:
+		// If w7 != 0, branch to search_text_blk
+		cbz	w7, search_text_blk
 		// Load the value at x2 into x0
 		ldr	x0, [sp, 112]
 		// Move 3 to w1
@@ -252,8 +252,8 @@ pos_str:
 		sub	w2, w1, #1
 		// Compare w0 with w2
 		cmp	w0, w2
-		// Branch if less than to .L16
-		blt	.L16
+		// Branch if less than to search_text_blk
+		blt	search_text_blk
 		// Subtract 1 from w1 and store the result in w1
 		sub	w1, w1, #2
 		// Subtract w1 from w0 and store the result in w0
@@ -270,7 +270,7 @@ pos_str:
 		sub	w0, w0, #2
 		// Store w0 into memory location pointed to by x19
 		str	w0, [x19]
-	.L16:
+	search_text_blk:
 		// Load the value at x21 into w2
 		ldr	w2, [x21]
 		// Subtract x25 from w2, sign-extend result, and store the result in x0
@@ -279,16 +279,16 @@ pos_str:
 		add	x0, x0, x23
 		// Compare x0 with 2
 		cmp	x0, 2
-		// Branch if less than or equal to .L18
-		bls	.L18
+		// Branch if less than or equal to search_text_add_hghlt
+		bls	search_text_add_hghlt
 		// Load the value at x27 into w1
 		ldr	w1, [x27]
 		// Subtract 1 from w1 and store the result in w1
 		sub	w1, w1, #1
 		// Compare x0 with w1, sign-extend result
 		cmp	x0, w1, sxtw
-		// Branch if carry set to .L18
-		bcs	.L18
+		// Branch if carry set to search_text_add_hghlt
+		bcs	search_text_add_hghlt
 		// Load the value at x28+8 into x1
 		ldr	x1, [x28, 8]
 		// Subtract w25 from w2 and store the result in w2
@@ -299,15 +299,15 @@ pos_str:
 		mov	x0, x22
 		// Call function highlight_search
 		bl	highlight_search
-	.L18:
+	search_text_add_hghlt:
 		// Load the value at x28+8 into x2
 		ldr	x2, [x28, 8]
 		// Move 0 to w7
 		mov	w7, 0
 		// Add x22 and x2 and store the result in x2
 		add	x2, x22, x2
-		// Branch to .L14
-		b	.L14
+		// Branch to search_text_highlight_blk
+		b	search_text_highlight_blk
 	search_text_end:
 		// Set the size of the function search_text
 		.size	search_text, .-search_text
@@ -324,35 +324,35 @@ pos_str:
 			mov	x20, x1
 			ldr	x1, [x1, 8]
 			str	x21, [sp, 32]
-			cbz	x1, .L23
+			cbz	x1, highlight_search_wattr_style_off3
 			ldr	x19, [x0]
 			mov	x21, x2
-		.L26:
-			cbnz	x19, .L29
-		.L23:
+		highlight_search_wattr_style_off6:
+			cbnz	x19, highlight_search_wattr_style_off9
+		highlight_search_wattr_style_off3:
 			ldp	x19, x20, [sp, 16]
 			ldr	x21, [sp, 32]
 			ldp	x29, x30, [sp], 48
 			ret
-		.L29:
+		highlight_search_wattr_style_off9:
 			mov	x1, x20
 			mov	x0, x19
 			mov	x2, 0
 			bl	_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE4findERKS4_m
 			cmn	x0, #1
-			beq	.L27
+			beq	highlight_search_wattr_style_off7
 			ldr	x3, [x19, 8]
 			ldp	x5, x4, [x21]
 			ldr	x1, [x20, 8]
 			cmp	x0, x3
-			bls	.L28
+			bls	highlight_search_wattr_style_off8
 			mov	x2, x0
 			adrp	x1, bs_str
 			adrp	x0, pos_str
 			add	x1, x1, :lo12:bs_str
 			add	x0, x0, :lo12:pos_str
 			bl	_ZSt24__throw_out_of_range_fmtPKcz
-		.L28:
+		highlight_search_wattr_style_off8:
 			sub	x2, x3, x0
 			mov	x3, x5
 			cmp	x2, x1
@@ -363,9 +363,9 @@ pos_str:
 			ldr	x21, [sp, 32]
 			ldp	x29, x30, [sp], 48
 			b	_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_replaceEmmPKcm
-		.L27:
+		highlight_search_wattr_style_off7:
 			ldr	x19, [x19, 32]
-			b	.L26
+			b	highlight_search_wattr_style_off6
 		replace_text_end:
 			.size	replace_text, .-replace_text
 		

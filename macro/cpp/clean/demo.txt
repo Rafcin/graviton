@@ -1,2 +1,4 @@
 Segmentation Fault
+This is a seg fault test if fail enter enter
+Hi
 olleH World
