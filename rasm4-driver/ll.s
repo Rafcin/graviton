@@ -4,8 +4,11 @@
 
     .global ll
     .data
-newNode:  .quad   0
+szInvalidNode: .asciz "Invalid node entered.\n"
+newNode:     .quad   0
+nextNode:    .quad 0
 currentNode: .quad 0
+prevNode:    .quad 0
 node_size:
     .quad 16    // size of a node in bytes
 null:
@@ -16,10 +19,11 @@ ll:
         stp x3, x4, [sp, -16]!      // copy of x3 and x4 
         stp x19, x20, [sp, -16]!    // copy of x19 and x20        
         stp x21, x1, [sp, -16]!      // copy of head and data
+        stp x9, x8, [sp, -16]!
         //ldr x0, [x0] 
-        // x1: head
-        // x2: tail
-        // x3: data
+        // x19: data
+        // x20: head
+        // x21: tail
         mov x10, x19
         mov x11, x20
         mov x12, x21
@@ -28,10 +32,16 @@ ll:
         mov x20, x12
         mov x21, x10
 
-
+        cmp x9, #2 // delete node
+        b.eq deleteNode
+        
         mov x0, x21
         bl strcpy
         mov x21, x0
+
+        ldp x9, x8, [sp], 16
+        cmp x9, #1 // edit node
+        b.eq editNode
 
         mov x0, 16
         bl malloc
@@ -79,6 +89,168 @@ addBack:
         str x1,[x0]
         b .exit
 
+
+deleteNode:
+        ldp x9, x8, [sp], 16
+        cmp x8, #0 
+        b.lt .failedEdit
+        b.eq .deleteHead
+        mov x0, x19
+        mov x4, #0
+        cmp x0, #0
+        b.eq .failedEdit
+        ldr x0,[x0]
+        ldr x1,=prevNode
+        str x0,[x1]
+            .traverseDel:
+                add x4, x4, #1
+                ldr x1,=prevNode
+                ldr x1,[x1]
+                cmp x1, #0
+                b.eq .failedEdit
+                add x1, x1, #8
+                cmp x4, x8
+                b.eq .foundDel
+                cmp x1, #0
+                b.eq .failedEdit
+                ldr x1,[x1]
+                ldr x2,=prevNode
+                str x1,[x2]
+                b .traverseDel
+        .foundDel:
+            //cmp x1, #0
+            //b.eq .deleteTail
+            ldr x1,=prevNode
+            ldr x1,[x1]
+            add x1, x1, #8
+            ldr x1,[x1]
+            cmp x1, #0
+            b.eq .failedEdit
+            ldr x3,=currentNode
+            str x1,[x3]
+
+            ldr x1,=prevNode
+            ldr x3,=currentNode
+            ldr x1,[x1]
+            ldr x3,[x3]
+            add x3,x3, #8
+            ldr x3,[x3]
+            //ldr x3,[x3]
+            //ldr x1,=prevNode
+            str x3, [x1, #8]
+
+            mov x3, #0
+            ldr x0,=currentNode
+            ldr x0,[x0]
+            str x3,[x0, #8]
+            ldr x0,[x0, #0]
+            bl free
+            ldr x0,=currentNode
+            ldr x0,[x0]
+            bl free
+
+            ldr x0,=prevNode
+            ldr x0,[x0]
+            add x0, x0, #8
+            ldr x0,[x0]
+            cmp x0, #0
+            b.ne .checkNext
+
+            ldr x0,=prevNode
+            ldr x0,[x0]
+            str x0,[x20]
+            b .exitEdit
+            .checkNext:
+            ldr x0,=prevNode
+            ldr x0,[x0]
+            add x0, x0, #8
+            ldr x0,[x0]
+            add x0, x0, #8
+            ldr x0,[x0]
+            cmp x0, #0
+            b.ne .exitEdit
+
+            ldr x0,=prevNode
+            ldr x0,[x0]
+            add x0, x0, #8
+            ldr x0,[x0]
+            str x0,[x20]
+            b .exitEdit
+        .deleteHead:
+            mov x0, x19
+            ldr x0,[x0]
+            cmp x0, #0
+            b.eq .failedEdit
+            ldr x1,=currentNode
+            str x0,[x1]
+            add x0, x0, #8
+            ldr x0,[x0]
+            str x0, [x19]
+            
+            ldr x0,=currentNode
+            ldr x0,[x0]
+            mov x2, #0
+            str x2, [x0, #8]
+            
+            ldr x0,[x0]
+            bl free
+            ldr x0,=currentNode
+            ldr x0,[x0]
+            bl free
+
+            ldr x0,=prevNode
+            ldr x0,[x0]
+            add x0, x0, #8
+            cmp x0, #0
+            b.ne .exitEdit
+
+            ldr x0,=prevNode
+            ldr x0,[x0]
+            str x0,[x20]
+            b .exitEdit
+
+        .deleteTail:
+            b .exitEdit
+editNode:
+        cmp x8, #0
+        b.lt .failedEdit
+        mov x0, x19
+        ldr x0,[x0]
+        ldr x1,=currentNode
+        str x0,[x1]
+        mov x4, #-1
+            .traverse:
+                    cmp x0, #0
+                    b.eq .failedEdit
+                    add x4, x4, #1
+                    cmp x4, x8
+                    b.eq .found
+                    ldr x1,=currentNode
+                    ldr x1,[x1]
+                    ldr x2,=prevNode
+                    str x1,[x2]
+                    add x1, x1, #8
+                    ldr x1,[x1]
+                    cmp x1, #0
+                    b.eq .failedEdit
+                    ldr x0,=currentNode
+                    str x1,[x0]
+                    b .traverse
+        .failedEdit:
+            ldr x0,=szInvalidNode
+            bl putstring
+            b .exitEdit
+        .found: 
+            ldr x0,=currentNode
+            ldr x0,[x0, #0]
+            ldr x0,[x0]
+            bl free
+            ldr x0,=currentNode
+            ldr x0,[x0]
+            str x21,[x0, #0]
+        .exitEdit:
+            b .exit
+        
  // *******************************************
 
 /**

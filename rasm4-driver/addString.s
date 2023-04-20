@@ -42,6 +42,7 @@ addString:
             bl getstring
 
             ldr x19,=fileBuf
+            mov x9, #0
             bl ll
             b exit
 
@@ -90,6 +91,7 @@ addString:
                 //ldr x0,=fileBuf
                 //bl putstring
                 ldr x19,=fileBuf
+                mov x9, #0
                 bl ll
 
                 ldr x0,=iFD
