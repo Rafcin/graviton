@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: length.s
+%%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Apr 24 23:19:00 2023
+%%CreationDate: Tue Apr 25 08:04:01 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,81 +757,76 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/**) p n
-( * length - counts the number of characters ) S
-(in) K
-( a string) p n
-( * @param x0: pointer to the string to count) N
-( * @param x1: maximum number of characters to count) N
-( * @) S
-(return) K
-( x0: number of characters counted, including null terminator) p n
-( *) N
-( * This ) S
-(function) K
-( counts the number of characters ) p
-(in) K
-( a string pointed to by x0, u) p n
-(p) N
-( * to a maximum of x1 characters. The count includes the null terminator. If the) N
-( * string is longer than x1 characters, the ) S
-(function) K
-( stops counting at x1) p n
-( * characters.) N
-( *) N
-( * Registers used: x0, x1, x2, x3, w3) N
-( * Registers saved: x19-x30, lr) N
-( */) N
+(.section .data) p n
+(    .align 8) N
+(test_list:) N
+(    .quad 0            // head \(ptr\)        ) N
 () N
-(.text) N
-(.global length) N
-() N
-(// Entry point ) S
-(for) K
-( the `length` subroutine) p n
-(length:) N
-(    // Save the input string pointer) N
-(    mov x9, x0) N
-() N
-(    // Initialize the counter to zero) N
-(    mov x2, ) S
-(#0) c n
-() p n
-(// Top of the loop to count characters) N
-(top:) N
-(    // Load the ) S
+(    .align 8) N
+(ListNode:) N
+(    .quad 0            // value) N
+(    .quad 0            // ) S
 (next) K
-( byte of the string) p n
-(    ldrb w1, [x9, x2]) N
+( \(ptr\)        ) p n
 () N
-(    // Check ) S
-(if) K
-( the byte is the null terminator) p n
-(    cmp w1, ) S
+(    .align 8) N
+(print_node_format:) N
+(    .asciz ") S
+(%d\\n) str
+(") p n
+() N
+(.section .text) N
+(.global _start) N
+(_start:) N
+(    // Initialize the list) N
+(    ldr x0, =test_list) N
+(    bl linked_list_create) N
+() N
+(    // Append some elements to the list) N
+(    ldr x0, =test_list) N
+(    mov w1, ) S
+(#10) c n
+(    bl linked_list_append) p n
+() N
+(    ldr x0, =test_list) N
+(    mov w1, ) S
+(#20) c n
+(    bl linked_list_append) p n
+() N
+(    ldr x0, =test_list) N
+(    mov w1, ) S
+(#30) c n
+(    bl linked_list_append) p n
+() N
+(    // Print the list) N
+(    ldr x0, =test_list) N
+(    bl linked_list_print) N
+() N
+(    // Free the list) N
+(    ldr x0, =test_list) N
+(    bl linked_list_free) N
+() N
+(    // Print a message indicating the end of the program) N
+(    ldr x0, =end_message) N
+(    bl putstr) N
+() N
+(    // Exit the program) N
+(    mov x0, ) S
 (#0) c n
-() p n
-(    // If the byte is the null terminator, jump to the bottom of the loop) N
-(    b.eq bottom) N
+(    mov w8, ) p
+(#93) c n
+(    svc 0) p n
 () N
-(    // Increment the counter by one) N
-(    add x2, x2, ) S
-(#1) c n
-() p n
-(    // Jump back to the top of the loop) N
-(    b top) N
-() N
-(// Bottom of the loop to ) S
-(return) K
-( the length) p n
-(bottom:) N
-(    // Return the length of the string, including the null terminator) N
-(    mov x0, x2) N
-(    ret) N
-(length.s) (Page 1/1) (Apr 24, 23 23:18) title
+(end_message:) N
+(    .ascii ") S
+(Program finished.\\n) str
+(") p n
+(    .byte 0) N
+(main.s) (Page 1/1) (Apr 25, 23 8:03) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(length.s) (1/1) (Monday April 24, 2023) footer
+(main.s) (1/1) (Tuesday April 25, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

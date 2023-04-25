@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>linked_list.s</title>
+<link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body class="hl">
+<pre class="hl"><span class="hl com">/**</span>
+<span class="hl com"> * ListNode - The structure of a list node containing an integer value and a pointer to the next node</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * &#64;param value: The integer value in the node</span>
+<span class="hl com"> * &#64;param next:  Pointer to the next ListNode in the list</span>
+<span class="hl com"> */</span>
+<span class="hl ppc">.data</span>
+    <span class="hl ppc">.align 8</span>
+    ListNode<span class="hl opt">:</span>
+        <span class="hl ppc">.quad 0            // value</span>
+        <span class="hl ppc">.quad 0            // next (ptr)        </span>
+
+    <span class="hl ppc">.align 8</span>
+    ListNode_size<span class="hl opt">:</span>
+        <span class="hl ppc">.quad ListNode_end - ListNode</span>
+
+    <span class="hl ppc">.align 8</span>
+    ListNode_end<span class="hl opt">:</span>
+
+<span class="hl ppc">.text        </span>
+<span class="hl com">/**</span>
+<span class="hl com"> * linked_list_create - Creates an empty linked list</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * &#64;return x0: Pointer to the head node (NULL for an empty list)</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: none</span>
+<span class="hl com"> */</span>
+<span class="hl ppc">.global linked_list_create</span>
+    linked_list_create<span class="hl opt">:</span>
+        mov x0<span class="hl opt">,</span> <span class="hl slc">#0  // Initialize the head node as NULL (empty list)</span>
+        ret
+
+<span class="hl com">/**</span>
+<span class="hl com"> * linked_list_append - Appends an element to the end of the linked list</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * &#64;param x0: Pointer to the current head of the linked list</span>
+<span class="hl com"> * &#64;param w1: The integer value to be appended to the list</span>
+<span class="hl com"> * </span>
+<span class="hl com"> * &#64;return x0: Pointer to the new head of the linked list</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, x1, x2, x8, lr</span>
+<span class="hl com"> * Registers saved: lr</span>
+<span class="hl com"> */</span>
+<span class="hl ppc">.global linked_list_append</span>
+linked_list_append<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Save <span class="hl kwb">lr</span>
+    str <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
+
+    <span class="hl opt">//</span> Allocate memory for the new node <span class="hl kwa">and</span> store the value
+    ldr x2<span class="hl opt">, =</span>ListNode_size
+    <span class="hl kwa">bl</span> malloc
+    str w1<span class="hl opt">, [</span>x0<span class="hl opt">]</span>
+    <span class="hl opt">//</span> Initialize the <span class="hl str">&apos;next&apos;</span> field of the new node to NULL
+    str xzr<span class="hl opt">, [</span>x0<span class="hl opt">,</span> <span class="hl slc">#8]</span>
+    
+    <span class="hl opt">//</span> Debugging information
+    ldr x2<span class="hl opt">, =</span>print_node_format
+    <span class="hl kwa">bl</span> printf                <span class="hl opt">//</span> printf<span class="hl opt">(</span><span class="hl str">&quot;Append: new node=%p, head=%p</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">,</span> x0<span class="hl opt">,</span> x1<span class="hl opt">)</span>;
+
+    <span class="hl opt">//</span> Branch to handle special case when the head is NULL <span class="hl opt">(</span>i.e.<span class="hl opt">,</span> when list is empty<span class="hl opt">)</span>
+    cbz x0<span class="hl opt">,</span> empty_list
+    
+    <span class="hl opt">//</span> Traverse the list to find the last node
+    ldr x1<span class="hl opt">, [</span>x0<span class="hl opt">,</span> <span class="hl slc">#8]</span>
+    <span class="hl kwa">bl</span> printf                <span class="hl opt">//</span> printf<span class="hl opt">(</span><span class="hl str">&quot;Append: start traversal, node=%p, next=%p</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">,</span> x0<span class="hl opt">,</span> x1<span class="hl opt">)</span>;
+    cbz x1<span class="hl opt">,</span> insert_node
+traversal_loop<span class="hl opt">:</span>
+    mov x0<span class="hl opt">,</span> x1
+    ldr x1<span class="hl opt">, [</span>x0<span class="hl opt">,</span> <span class="hl slc">#8]</span>
+    <span class="hl kwa">bl</span> printf                <span class="hl opt">//</span> printf<span class="hl opt">(</span><span class="hl str">&quot;Append: next node=%p, next=%p</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">,</span> x0<span class="hl opt">,</span> x1<span class="hl opt">)</span>;
+    cbz x1<span class="hl opt">,</span> insert_node
+    <span class="hl kwa">b</span> traversal_loop
+
+insert_node<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Insert the new node <span class="hl kwa">and</span> update the <span class="hl str">&apos;next&apos;</span> pointer of the last node
+    <span class="hl kwa">bl</span> printf                <span class="hl opt">//</span> printf<span class="hl opt">(</span><span class="hl str">&quot;Append: inserting node=%p, next=%p</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">,</span> x0<span class="hl opt">,</span> x1<span class="hl opt">)</span>;
+    str x0<span class="hl opt">, [</span>x0<span class="hl opt">,</span> <span class="hl slc">#8]</span>
+    <span class="hl kwa">b</span> finished
+
+empty_list<span class="hl opt">:</span>
+    <span class="hl opt">//</span> For an empty list<span class="hl opt">,</span> the new node becomes the head
+    <span class="hl kwa">bl</span> printf                <span class="hl opt">//</span> printf<span class="hl opt">(</span><span class="hl str">&quot;Append: empty list, setting head=%p</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">,</span> x0<span class="hl opt">)</span>;
+    str xzr<span class="hl opt">, [</span>x0<span class="hl opt">,</span> <span class="hl slc">#8]</span>
+
+finished<span class="hl opt">:</span>
+    <span class="hl opt">//</span> Restore <span class="hl kwb">lr</span> <span class="hl kwa">and</span> return
+    ldr <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16</span>
+    ret
+
+<span class="hl com">/**</span>
+<span class="hl com"> * linked_list_print - Prints the elements of a linked list</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * &#64;param x0: Pointer to the head node of the linked list</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, w1, lr</span>
+<span class="hl com"> * Registers saved: lr</span>
+<span class="hl com"> */</span>
+<span class="hl ppc">.extern printf</span>
+<span class="hl ppc">.global linked_list_print</span>
+    linked_list_print<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Save <span class="hl kwb">lr</span>
+        str <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
+
+        <span class="hl opt">//</span> Traverse the list <span class="hl kwa">and</span> print each element
+        ldr x2<span class="hl opt">, =</span>print_node_format
+    print_loop<span class="hl opt">:</span>
+        cbz x0<span class="hl opt">,</span> done_print   <span class="hl opt">//</span> Exit loop if the end of the list is reached
+        ldr w1<span class="hl opt">, [</span>x0<span class="hl opt">]</span>
+        <span class="hl kwa">bl</span> printf            <span class="hl opt">//</span> printf<span class="hl opt">(</span><span class="hl str">&quot;%d</span><span class="hl esc">\n</span><span class="hl str">&quot;</span><span class="hl opt">,</span> w1<span class="hl opt">)</span>;;
+        ldr x0<span class="hl opt">, [</span>x0<span class="hl opt">,</span> <span class="hl slc">#8]</span>
+        <span class="hl kwa">b</span> print_loop
+
+    done_print<span class="hl opt">:</span>
+        ldr <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16</span>
+        ret
+
+data<span class="hl opt">:</span>
+    print_node_format<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;%d</span><span class="hl esc">\n</span><span class="hl pps">&quot;</span><span class="hl ppc"></span>
+
+<span class="hl com">/**</span>
+<span class="hl com"> * linked_list_free - Frees the memory allocated for the linked list</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * &#64;param x0: Pointer to the head node of the linked list</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, x1</span>
+<span class="hl com"> * Registers saved: none</span>
+<span class="hl com"> */</span>
+<span class="hl ppc">.global linked_list_free</span>
+    linked_list_free<span class="hl opt">:</span>
+        cbz x0<span class="hl opt">,</span> done_free    <span class="hl opt">//</span> Exit if the end of the list is reached
+        ldr x1<span class="hl opt">, [</span>x0<span class="hl opt">,</span> <span class="hl slc">#8]</span>
+        <span class="hl kwa">bl</span> free
+        mov x0<span class="hl opt">,</span> x1
+        <span class="hl kwa">b</span> linked_list_free
+
+    done_free<span class="hl opt">:</span>
+        ret
+</pre>
+</body>
+</html>
+<!--HTML generated by highlight 3.41, http://www.andre-simon.de/-->

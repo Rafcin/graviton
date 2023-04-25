@@ -1,12 +1,12 @@
 %!PS-Adobe-3.0
-%%Title: length.s
+%%Title: linked_list.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Apr 24 23:19:00 2023
+%%CreationDate: Tue Apr 25 08:00:37 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
-%%Pages: 1
+%%Pages: 2
 %%PageOrder: Ascend
 %%DocumentMedia: A4 595 842 0 () ()
 %%DocumentNeededResources: font Courier
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -758,80 +758,238 @@ llx lly 12 add translate
 /y0 y v get bfs th add sub store
 x0 y0 moveto
 (/**) p n
-( * length - counts the number of characters ) S
+( * ListNode - The structure of a list node containing an integer value and a poi) N
+(nter to the ) S
+(next) K
+( node) p n
+( *) N
+( * @param value: The integer value ) S
 (in) K
-( a string) p n
-( * @param x0: pointer to the string to count) N
-( * @param x1: maximum number of characters to count) N
+( the node) p n
+( * @param ) S
+(next) K
+(:  Pointer to the ) p
+(next) K
+( ListNode ) p
+(in) K
+( the list) p n
+( */) N
+(.data) N
+(    .align 8) N
+(    ListNode:) N
+(        .quad 0            // value) N
+(        .quad 0            // ) S
+(next) K
+( \(ptr\)        ) p n
+() N
+(    .align 8) N
+(    ListNode_size:) N
+(        .quad ListNode_end - ListNode) N
+() N
+(    .align 8) N
+(    ListNode_end:) N
+() N
+(.text        ) N
+(/**) N
+( * linked_list_create - Creates an empty linked list) N
+( *) N
 ( * @) S
 (return) K
-( x0: number of characters counted, including null terminator) p n
-( *) N
-( * This ) S
-(function) K
-( counts the number of characters ) p
-(in) K
-( a string pointed to by x0, u) p n
-(p) N
-( * to a maximum of x1 characters. The count includes the null terminator. If the) N
-( * string is longer than x1 characters, the ) S
-(function) K
-( stops counting at x1) p n
-( * characters.) N
-( *) N
-( * Registers used: x0, x1, x2, x3, w3) N
-( * Registers saved: x19-x30, lr) N
-( */) N
-() N
-(.text) N
-(.global length) N
-() N
-(// Entry point ) S
+( x0: Pointer to the head node \() p
+(NULL) K
+( ) p
 (for) K
-( the `length` subroutine) p n
-(length:) N
-(    // Save the input string pointer) N
-(    mov x9, x0) N
+( an empty list\)) p n
+( *) N
+( * Registers used: none) N
+( */) N
+(.global linked_list_create) N
+(    linked_list_create:) N
+(        mov x0, ) S
+(#0  // Initialize the head node as NULL \(empty list\)) c n
+(        ret) p n
 () N
-(    // Initialize the counter to zero) N
-(    mov x2, ) S
-(#0) c n
-() p n
-(// Top of the loop to count characters) N
-(top:) N
-(    // Load the ) S
-(next) K
-( byte of the string) p n
-(    ldrb w1, [x9, x2]) N
-() N
-(    // Check ) S
-(if) K
-( the byte is the null terminator) p n
-(    cmp w1, ) S
-(#0) c n
-() p n
-(    // If the byte is the null terminator, jump to the bottom of the loop) N
-(    b.eq bottom) N
-() N
-(    // Increment the counter by one) N
-(    add x2, x2, ) S
-(#1) c n
-() p n
-(    // Jump back to the top of the loop) N
-(    b top) N
-() N
-(// Bottom of the loop to ) S
+(/**) N
+( * linked_list_append - Appends an element to the end of the linked list) N
+( *) N
+( * @param x0: Pointer to the current head of the linked list) N
+( * @param w1: The integer value to be appended to the list) N
+( * ) N
+( * @) S
 (return) K
-( the length) p n
-(bottom:) N
-(    // Return the length of the string, including the null terminator) N
-(    mov x0, x2) N
-(    ret) N
-(length.s) (Page 1/1) (Apr 24, 23 23:18) title
+( x0: Pointer to the new head of the linked list) p n
+( *) N
+( * Registers used: x0, x1, x2, x8, lr) N
+( * Registers saved: lr) N
+( */) N
+(.global linked_list_append) N
+(linked_list_append:) N
+(    // Save lr) N
+(    str lr, [sp, ) S
+(#-16]!) c n
+() p n
+(    // Allocate memory ) S
+(for) K
+( the new node and store the value) p n
+(    ldr x2, =ListNode_size) N
+(    bl malloc) N
+(    str w1, [x0]) N
+(    // Initialize the ') S
+(next) K
+(' field of the new node to ) p
+(NULL) K n
+(    str xzr, [x0, ) p
+(#8]) c n
+(    ) p n
+(    // Debugging information) N
+(    ldr x2, =print_node_format) N
+(    bl printf                // printf\(") S
+(Append: new node=%p, head=%p\\n) str
+(", x0, x1\);) p n
+() N
+(    // Branch to handle special case when the head is ) S
+(NULL) K
+( \(i.e., when list is e) p n
+(mpty\)) N
+(linked_list.s) (Page 1/3) (Apr 25, 23 8:00) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(    cbz x0, empty_list) p n
+(    ) N
+(    // Traverse the list to find the last node) N
+(    ldr x1, [x0, ) S
+(#8]) c n
+(    bl printf                // printf\(") p
+(Append: start traversal, node=%p, next=%p\\n) str
+(", x0, x1) p n
+(\);) N
+(    cbz x1, insert_node) N
+(traversal_loop:) N
+(    mov x0, x1) N
+(    ldr x1, [x0, ) S
+(#8]) c n
+(    bl printf                // printf\(") p
+(Append: next node=%p, next=%p\\n) str
+(", x0, x1\);) p n
+(    cbz x1, insert_node) N
+(    b traversal_loop) N
+() N
+(insert_node:) N
+(    // Insert the new node and update the ') S
+(next) K
+(' pointer of the last node) p n
+(    bl printf                // printf\(") S
+(Append: inserting node=%p, next=%p\\n) str
+(", x0, x1\);) p n
+(    str x0, [x0, ) S
+(#8]) c n
+(    b finished) p n
+() N
+(empty_list:) N
+(    // For an empty list, the new node becomes the head) N
+(    bl printf                // printf\(") S
+(Append: empty list, setting head=%p\\n) str
+(", x0\);) p n
+(    str xzr, [x0, ) S
+(#8]) c n
+() p n
+(finished:) N
+(    // Restore lr and ) S
+(return) K n
+(    ldr lr, [sp], ) p
+(#16) c n
+(    ret) p n
+() N
+(/**) N
+( * linked_list_print - Prints the elements of a linked list) N
+( *) N
+( * @param x0: Pointer to the head node of the linked list) N
+( *) N
+( * Registers used: x0, w1, lr) N
+( * Registers saved: lr) N
+( */) N
+(.extern printf) N
+(.global linked_list_print) N
+(    linked_list_print:) N
+(        // Save lr) N
+(        str lr, [sp, ) S
+(#-16]!) c n
+() p n
+(        // Traverse the list and print each element) N
+(        ldr x2, =print_node_format) N
+(    print_loop:) N
+(        cbz x0, done_print   // Exit loop ) S
+(if) K
+( the end of the list is reached) p n
+(        ldr w1, [x0]) N
+(        bl printf            // printf\(") S
+(%d\\n) str
+(", w1\);;) p n
+(        ldr x0, [x0, ) S
+(#8]) c n
+(        b print_loop) p n
+() N
+(    done_print:) N
+(        ldr lr, [sp], ) S
+(#16) c n
+(        ret) p n
+() N
+(data:) N
+(    print_node_format: .asciz ") S
+(%d\\n) str
+(") p n
+() N
+(/**) N
+( * linked_list_free - Frees the memory allocated ) S
+(for) K
+( the linked list) p n
+(linked_list.s) (Page 2/3) (Apr 25, 23 8:00) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(length.s) (1/1) (Monday April 24, 2023) footer
+(linked_list.s) (1/2) (Tuesday April 25, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+( *) p n
+( * @param x0: Pointer to the head node of the linked list) N
+( *) N
+( * Registers used: x0, x1) N
+( * Registers saved: none) N
+( */) N
+(.global linked_list_free) N
+(    linked_list_free:) N
+(        cbz x0, done_free    // Exit ) S
+(if) K
+( the end of the list is reached) p n
+(        ldr x1, [x0, ) S
+(#8]) c n
+(        bl free) p n
+(        mov x0, x1) N
+(        b linked_list_free) N
+() N
+(    done_free:) N
+(        ret) N
+(linked_list.s) (Page 3/3) (Apr 25, 23 8:00) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(linked_list.s) (2/2) (Tuesday April 25, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

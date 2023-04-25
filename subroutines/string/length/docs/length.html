@@ -26,16 +26,16 @@
 
 <span class="hl opt">//</span> Entry point for the `length` subroutine
 length<span class="hl opt">:</span>
-    <span class="hl opt">//</span> Point to the first byte of the string to count
-    mov x7<span class="hl opt">,</span> x0
+    <span class="hl opt">//</span> Save the input string pointer
+    mov x9<span class="hl opt">,</span> x0
 
     <span class="hl opt">//</span> Initialize the counter to zero
     mov x2<span class="hl opt">,</span> <span class="hl slc">#0</span>
 
 <span class="hl opt">//</span> Top of the loop to count characters
 top<span class="hl opt">:</span>
-    <span class="hl opt">//</span> Load the next byte of the string <span class="hl kwa">and</span> update the pointer
-    ldrb w1<span class="hl opt">, [</span>x7<span class="hl opt">],</span> <span class="hl slc">#1</span>
+    <span class="hl opt">//</span> Load the next byte of the string
+    ldrb w1<span class="hl opt">, [</span>x9<span class="hl opt">,</span> x2<span class="hl opt">]</span>
 
     <span class="hl opt">//</span> Check if the byte is the null terminator
     <span class="hl kwa">cmp</span> w1<span class="hl opt">,</span> <span class="hl slc">#0</span>
@@ -53,54 +53,7 @@ top<span class="hl opt">:</span>
 bottom<span class="hl opt">:</span>
     <span class="hl opt">//</span> Return the length of the string<span class="hl opt">,</span> including the null terminator
     mov x0<span class="hl opt">,</span> x2
-    ret <span class="hl kwb">lr</span>
-
-<span class="hl opt">//</span> Entry point for the `substring` subroutine
-sbstr<span class="hl opt">:</span>
-    <span class="hl opt">//</span> Save the necessary registers on the stack
-    stp x0<span class="hl opt">,</span> x1<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
-
-    <span class="hl opt">//</span> Compute the length of the substring
-    <span class="hl kwa">sub</span> x0<span class="hl opt">,</span> x2<span class="hl opt">,</span> x1
-
-    <span class="hl opt">//</span> Save the length <span class="hl kwa">and</span> the original string pointer on the stack
-    stp x2<span class="hl opt">,</span> x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
-
-    <span class="hl opt">//</span> Call `malloc` to allocate memory for the substring
-    <span class="hl kwa">bl</span> malloc
-
-    <span class="hl opt">//</span> Restore the length <span class="hl kwa">and</span> the original string pointer from the stack
-    ldp x2<span class="hl opt">,</span> x5<span class="hl opt">, [</span>sp<span class="hl opt">],</span><span class="hl slc">#16</span>
-
-    <span class="hl opt">//</span> Restore the return address <span class="hl kwa">and</span> the start index of the substring from the stack
-    ldp x4<span class="hl opt">,</span> x1<span class="hl opt">, [</span>sp<span class="hl opt">],</span><span class="hl slc">#16</span>
-
-    <span class="hl opt">//</span> Save the pointer to the substring on the stack
-    str x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
-
-<span class="hl opt">//</span> End of the loop to copy characters from the original string to the substring
-end<span class="hl opt">:</span>
-    <span class="hl opt">//</span> Check if we<span class="hl str">&apos;ve copied the desired number of characters</span>
-<span class="hl str">    cmp x5, #0</span>
-<span class="hl str"></span>
-<span class="hl str">    // If we&apos;</span>ve copied all the characters<span class="hl opt">,</span> return from the subroutine
-    b.eq return
-
-    <span class="hl opt">//</span> Load the next byte from the original string <span class="hl kwa">and</span> store it in the substring
-    ldrb w6<span class="hl opt">, [</span>x4<span class="hl opt">],</span> <span class="hl slc">#1</span>
-    strb w6<span class="hl opt">, [</span>x0<span class="hl opt">],</span> <span class="hl slc">#1</span>
-
-    <span class="hl opt">//</span> Decrement the counter <span class="hl kwa">and</span> jump back to the top of the loop
-    <span class="hl kwa">sub</span> x5<span class="hl opt">,</span> x5<span class="hl opt">,</span> <span class="hl slc">#1</span>
-    <span class="hl kwa">b</span> end
-
-<span class="hl opt">//</span> Return from the `substring` subroutine
-return<span class="hl opt">:</span>
-    <span class="hl opt">//</span> Restore the pointer to the substring from the stack
-    ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16</span>
-
-    <span class="hl opt">//</span> Return the pointer to the substring
-    ret <span class="hl kwb">lr</span>
+    ret
 </pre>
 </body>
 </html>

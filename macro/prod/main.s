@@ -11,7 +11,7 @@ search_key:
 	.string	"Search: "
 	.global	NAME
 name_key:
-	.string	"WordPerfect-Resurrected"
+	.string	"WordPerfect-Resurrected | RASM4 Group 20"
 	.global	CONTROLS
 shortcuts_str:
 	.string	"^X:Exit  ^O:Save  ^W:Search  ^T:Replace"

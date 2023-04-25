@@ -3,7 +3,11 @@ dmi_label:
 	.string	"Heap Memory Consumption - %zu bytes | Number of Nodes - %zu" // Declare dmi_label string with memory consumption and node count format
 fmt_label: 
 	.string	"%s" // Declare fmt_label string with simple string format
-
+/**
+I hate assembly with a passion. I can't bring myself to ever write this again.
+I miss Typescript.
+-Raf after he lost his sanity 4/19/23 
+**/
 .text
 .align	2
 .global	display_memory_info

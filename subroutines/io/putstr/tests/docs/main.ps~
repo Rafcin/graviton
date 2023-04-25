@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: length.s
+%%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Apr 24 23:19:00 2023
+%%CreationDate: Wed Mar 15 20:00:37 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -757,81 +757,62 @@ llx lly 12 add translate
 /x0 x v get 3.362408 add sx cw mul add store
 /y0 y v get bfs th add sub store
 x0 y0 moveto
-(/**) p n
-( * length - counts the number of characters ) S
-(in) K
-( a string) p n
-( * @param x0: pointer to the string to count) N
-( * @param x1: maximum number of characters to count) N
-( * @) S
-(return) K
-( x0: number of characters counted, including null terminator) p n
-( *) N
-( * This ) S
-(function) K
-( counts the number of characters ) p
-(in) K
-( a string pointed to by x0, u) p n
-(p) N
-( * to a maximum of x1 characters. The count includes the null terminator. If the) N
-( * string is longer than x1 characters, the ) S
-(function) K
-( stops counting at x1) p n
-( * characters.) N
-( *) N
-( * Registers used: x0, x1, x2, x3, w3) N
-( * Registers saved: x19-x30, lr) N
+(/*) p n
+( * Test driver ) S
+(for) K
+( ") p
+(concat) str
+(") p n
 ( */) N
+(.data) N
+(    str1: .asciz ") S
+(Hello, ) str
+(") p n
+(    str2: .asciz ") S
+(world!) str
+(") p n
+(    out: .asciz ") S
+(Concatenated string - ) str
+(") p n
+(    nl: .asciz ") S
+(\\n) str
+(") p n
 () N
 (.text) N
-(.global length) N
-() N
-(// Entry point ) S
-(for) K
-( the `length` subroutine) p n
-(length:) N
-(    // Save the input string pointer) N
-(    mov x9, x0) N
-() N
-(    // Initialize the counter to zero) N
-(    mov x2, ) S
-(#0) c n
-() p n
-(// Top of the loop to count characters) N
-(top:) N
-(    // Load the ) S
-(next) K
-( byte of the string) p n
-(    ldrb w1, [x9, x2]) N
-() N
-(    // Check ) S
-(if) K
-( the byte is the null terminator) p n
-(    cmp w1, ) S
-(#0) c n
-() p n
-(    // If the byte is the null terminator, jump to the bottom of the loop) N
-(    b.eq bottom) N
-() N
-(    // Increment the counter by one) N
-(    add x2, x2, ) S
-(#1) c n
-() p n
-(    // Jump back to the top of the loop) N
-(    b top) N
-() N
-(// Bottom of the loop to ) S
-(return) K
-( the length) p n
-(bottom:) N
-(    // Return the length of the string, including the null terminator) N
-(    mov x0, x2) N
-(    ret) N
-(length.s) (Page 1/1) (Apr 24, 23 23:18) title
+(.global main) N
+(    main:) N
+(        //Load str 1) N
+(        ldr x0, =str1      ) N
+(        //Load str 2   ) N
+(        ldr x1, =str2) N
+(        //Concatenate 2 strings ) N
+(        bl  concat    ) N
+(        //Str adr   ) N
+(        str x0, [sp, ) S
+(#-16]!       ) c n
+(        //Print) p n
+(        bl putstring     ) N
+(        //Load adr       ) N
+(        ldr x0, [sp], ) S
+(#16) c n
+(        //Free) p n
+(        bl  free) N
+(        //Print newline) N
+(        ldr) S 16 T (x0,) S 24 T (=nl) N
+(        bl) S 16 T (putstring) N
+(        ) N
+(        // Setup the parameters to exit the program and then call Linux to do it) N
+(.) N
+(        mov) S 16 T (x0,) S 24 T () S
+(#0) c 32 T (// Sets return code to 0) N
+(        mov) p 16 T (x8,) S 24 T () S
+(#93) c 32 T (// Service command code 93 terminates) N
+(        svc) p 16 T (0) S 24 T (// Call linux to terminate the program) S
+(main.s) (Page 1/1) (Mar 15, 23 19:57) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(length.s) (1/1) (Monday April 24, 2023) footer
+(main.s) (1/1) (Wednesday March 15, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

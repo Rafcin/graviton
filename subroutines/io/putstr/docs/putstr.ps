@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Title: length.s
+%%Title: putstr.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Mon Apr 24 23:19:00 2023
+%%CreationDate: Tue Apr 25 07:33:20 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -758,80 +758,51 @@ llx lly 12 add translate
 /y0 y v get bfs th add sub store
 x0 y0 moveto
 (/**) p n
-( * length - counts the number of characters ) S
-(in) K
-( a string) p n
-( * @param x0: pointer to the string to count) N
-( * @param x1: maximum number of characters to count) N
-( * @) S
-(return) K
-( x0: number of characters counted, including null terminator) p n
+( * putstr - Prints a null-terminated string using write syscall) N
+( * ) N
+( * @param x0: Pointer to the null-terminated string) N
 ( *) N
-( * This ) S
-(function) K
-( counts the number of characters ) p
-(in) K
-( a string pointed to by x0, u) p n
-(p) N
-( * to a maximum of x1 characters. The count includes the null terminator. If the) N
-( * string is longer than x1 characters, the ) S
-(function) K
-( stops counting at x1) p n
-( * characters.) N
-( *) N
-( * Registers used: x0, x1, x2, x3, w3) N
-( * Registers saved: x19-x30, lr) N
+( * Registers used: x0, x2, x30, lr) N
+( * Registers saved: lr) N
 ( */) N
 () N
 (.text) N
-(.global length) N
-() N
-(// Entry point ) S
+(.global putstr) N
+(    putstr:) N
+(        // Save the link register) N
+(        str lr, [sp, ) S
+(#-16]!) c n
+() p n
+(        // Prepare parameters ) S
 (for) K
-( the `length` subroutine) p n
-(length:) N
-(    // Save the input string pointer) N
-(    mov x9, x0) N
-() N
-(    // Initialize the counter to zero) N
-(    mov x2, ) S
+( the `write` syscall) p n
+(        mov x2, ) S
 (#0) c n
-() p n
-(// Top of the loop to count characters) N
-(top:) N
-(    // Load the ) S
-(next) K
-( byte of the string) p n
-(    ldrb w1, [x9, x2]) N
-() N
-(    // Check ) S
-(if) K
-( the byte is the null terminator) p n
-(    cmp w1, ) S
-(#0) c n
-() p n
-(    // If the byte is the null terminator, jump to the bottom of the loop) N
-(    b.eq bottom) N
-() N
-(    // Increment the counter by one) N
-(    add x2, x2, ) S
+(        // Get the string length) p n
+(    loop:) N
+(        ldrb w1, [x0, x2]) N
+(        cbz w1, out) N
+(        add x2, x2, ) S
 (#1) c n
-() p n
-(    // Jump back to the top of the loop) N
-(    b top) N
-() N
-(// Bottom of the loop to ) S
-(return) K
-( the length) p n
-(bottom:) N
-(    // Return the length of the string, including the null terminator) N
-(    mov x0, x2) N
-(    ret) N
-(length.s) (Page 1/1) (Apr 24, 23 23:18) title
+(        b loop) p n
+(    out:) N
+(        mov x8, ) S
+(#64) c n
+(        mov x1, x0) p n
+(        mov w0, ) S
+(#1) c n
+(        svc 0) p n
+(        ) N
+(        // Restore the link register) N
+(        ldr lr, [sp], ) S
+(#16) c n
+(        ) p n
+(        ret) N
+(putstr.s) (Page 1/1) (Apr 25, 23 7:30) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(length.s) (1/1) (Monday April 24, 2023) footer
+(putstr.s) (1/1) (Tuesday April 25, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage
