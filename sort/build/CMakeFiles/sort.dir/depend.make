@@ -5,5 +5,3 @@ CMakeFiles/sort.dir/src/bubble/asm/asmbs.s.o: \
  ../src/bubble/asm/asmbs.s
 CMakeFiles/sort.dir/src/insertion/asm/asmis.s.o: \
  ../src/insertion/asm/asmis.s
-CMakeFiles/sort.dir/src/insertion/asm_exp/asmis_exp.s.o: \
- ../src/insertion/asm_exp/asmis_exp.s

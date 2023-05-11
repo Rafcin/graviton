@@ -10,7 +10,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_ASM
   "/home/ubuntu/graviton/sort/src/bubble/asm/asmbs.s" "/home/ubuntu/graviton/sort/build/CMakeFiles/sort.dir/src/bubble/asm/asmbs.s.o"
   "/home/ubuntu/graviton/sort/src/insertion/asm/asmis.s" "/home/ubuntu/graviton/sort/build/CMakeFiles/sort.dir/src/insertion/asm/asmis.s.o"
-  "/home/ubuntu/graviton/sort/src/insertion/asm_exp/asmis_exp.s" "/home/ubuntu/graviton/sort/build/CMakeFiles/sort.dir/src/insertion/asm_exp/asmis_exp.s.o"
   )
 set(CMAKE_ASM_COMPILER_ID "GNU")
 
