@@ -11,12 +11,14 @@
 #include <unistd.h>   // For access
 #include <thread>
 #include <sys/resource.h>
+#include <iomanip> // For std::setw
 
 #include "bubble/cpp/cppbs.h"
 #include "insertion/cpp/cppis.h"
 
 extern "C" void asmbs(int *arr, int length);
 extern "C" void asmis(int *arr, int length);
+extern "C" void asmis_exp(int *arr, int length);
 
 using namespace std;
 using namespace std::chrono;
@@ -68,16 +70,40 @@ void sort_and_measure(void (*sort_function)(int *, int), vector<int> &numbers)
     cout << "Sorting completed!\n";
 
     getrusage(RUSAGE_SELF, &usage2);
-    auto cpu_time_used = (usage2.ru_utime.tv_sec - usage.ru_utime.tv_sec) * 1e6 + (usage2.ru_utime.tv_usec - usage.ru_utime.tv_usec);
 
     auto duration = duration_cast<microseconds>(stop - start);
     double duration_sec = duration.count() / 1e6; // convert microseconds to seconds
 
-    cout << "Time taken: " << duration.count() << " microseconds (" << duration_sec << " seconds)\n";
-    cout << "CPU time used: " << cpu_time_used << " microseconds\n";
+    cout << setw(25) << "Time taken: " << setw(10) << duration.count() << " microseconds (" << duration_sec << " seconds)\n";
+
+    auto cpu_time_used = (usage2.ru_utime.tv_sec - usage.ru_utime.tv_sec) * 1e6 + (usage2.ru_utime.tv_usec - usage.ru_utime.tv_usec);
+    cout << setw(25) << "Total CPU time used: " << setw(10) << cpu_time_used << " microseconds\n";
+
+    auto user_cpu_time_used = (usage2.ru_utime.tv_sec - usage.ru_utime.tv_sec) * 1e6 + (usage2.ru_utime.tv_usec - usage.ru_utime.tv_usec);
+    cout << setw(25) << "User CPU time used: " << setw(10) << user_cpu_time_used << " microseconds\n";
+
+    auto system_cpu_time_used = (usage2.ru_stime.tv_sec - usage.ru_stime.tv_sec) * 1e6 + (usage2.ru_stime.tv_usec - usage.ru_stime.tv_usec);
+    cout << setw(25) << "System CPU time used: " << setw(10) << system_cpu_time_used << " microseconds\n";
 
     long rss = usage2.ru_maxrss - usage.ru_maxrss;
-    cout << "Memory used: " << rss << " KB\n";
+    cout << setw(25) << "Memory used: " << setw(10) << rss << " KB\n";
+
+    long voluntary_ctxt_switches = usage2.ru_nvcsw - usage.ru_nvcsw;
+    cout << setw(25) << "Voluntary ctxt switches: " << setw(10) << voluntary_ctxt_switches << "\n";
+
+    long involuntary_ctxt_switches = usage2.ru_nivcsw - usage.ru_nivcsw;
+    cout << setw(25) << "Involuntary ctxt switches: " << setw(10) << involuntary_ctxt_switches << "\n";
+
+    long major_page_faults = usage2.ru_majflt - usage.ru_majflt;
+    cout << setw(25) << "Major page faults: " << setw(10) << major_page_faults << "\n";
+
+    long minor_page_faults = usage2.ru_minflt - usage.ru_minflt;
+    cout << setw(25) << "Minor page faults: " << setw(10) << minor_page_faults << "\n";
+
+    long max_rss = usage2.ru_maxrss;
+    cout << setw(25) << "Max resident set size: " << setw(10) << max_rss << " KB\n";
+
+    cout << "\n";
 }
 
 void write_to_file(const string &filename, const vector<int> &numbers)
@@ -178,7 +204,9 @@ int main()
              << "3. ASM Bubble sort\n"
              << "4. ASM Insertion sort\n"
              << "5. Load a different file\n"
-             << "6. Quit\n";
+             << "[Experimental Sorting] \n"
+             << "6. ASM Insertion sort"
+             << "7. Quit\n";
         cout << "------------------------------ \n";
         int option;
         cin >> option;
@@ -207,6 +235,10 @@ int main()
             numbers = read_file(input);
             break;
         case 6:
+            sort_and_measure(asmis_exp, numbers);
+            write_sorted_file(input, numbers);
+            break;
+        case 7:
             return 0;
         default:
             cout << "Invalid option\n";

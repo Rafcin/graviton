@@ -1,29 +1,42 @@
 .global asmbs
 
 asmbs:
-    sub x2, x1, #1                // x2 = length - 1 (last index)
+    cmp x1, #1               // Check if length < 2
+    blt done                // If length < 2, we're done (array already sorted)
+
+    sub x2, x1, #1          // x2 = endIndex = length - 1
 
 outer_loop:
-    cbz x1, done                 // If length == 0, we're done
-    mov x3, #0                   // x3 = Swap counter for inner loop
+    mov x3, x2              // x3 = i = endIndex
+    mov w4, wzr             // w4 = swapFlag = 0
 
 inner_loop:
-    add x4, x0, x3, sxtw #2       // x4 = a + (i * sizeof(int))
-    ldr w5, [x4]                 // w5 = a[i]
-    ldr w6, [x4, #4]             // w6 = a[i+1]
-    cmp w5, w6                   // Compare a[i] and a[i+1]
-    bls skip_swap                // If a[i] <= a[i+1], skip swap
-    str w6, [x4]                 // Swap a[i] and a[i+1]
-    str w5, [x4, #4]
+    cbz x3, check_swap      // If i == 0, check if any swap was made
 
-skip_swap:
-    add x3, x3, #4               // Increment x3
-    cmp x3, x2, lsl #2           // Compare x3 with (length-1)*4
-    b.lt inner_loop
+    // Load elements a[i - 1] and a[i] into w5 and w6
+    sub x5, x3, #1          // x5 = i - 1
+    add x6, x0, x5, lsl #2
+    ldr w5, [x6]
+    ldr w6, [x6, #4]
 
-    sub x2, x2, #1               // Decrement last index
-    sub x1, x1, #1               // Decrement length
-    b outer_loop
+    cmp w5, w6              // Compare a[i - 1] and a[i]
+    bls next_i              // If a[i - 1] <= a[i], move to next_i
+
+    // Swap elements a[i - 1] and a[i]
+    str w5, [x6, #4]
+    str w6, [x6]
+    mov w4, #1              // w4 = swapFlag = 1
+
+next_i:
+    sub x3, x3, #1          // i = i - 1
+    b inner_loop
+
+check_swap:
+    cmp w4, #0              // Check if swapFlag == 0
+    beq done                // If swapFlag == 0, array is sorted (done)
+
+    sub x2, x2, #1          // endIndex = endIndex - 1
+    b outer_loop            // Repeat the outer_loop
 
 done:
     ret

@@ -11,6 +11,7 @@ add_executable(sort
   src/insertion/cpp/cppis.cpp
   src/bubble/asm/asmbs.s
   src/insertion/asm/asmis.s
+  src/insertion/asm_exp/asmis_exp.s
 )
 
 target_include_directories(sort 

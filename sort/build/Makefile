@@ -169,6 +169,14 @@ src/insertion/asm/asmis.s.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sort.dir/build.make CMakeFiles/sort.dir/src/insertion/asm/asmis.s.o
 .PHONY : src/insertion/asm/asmis.s.o
 
+src/insertion/asm_exp/asmis_exp.o: src/insertion/asm_exp/asmis_exp.s.o
+.PHONY : src/insertion/asm_exp/asmis_exp.o
+
+# target to build an object file
+src/insertion/asm_exp/asmis_exp.s.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sort.dir/build.make CMakeFiles/sort.dir/src/insertion/asm_exp/asmis_exp.s.o
+.PHONY : src/insertion/asm_exp/asmis_exp.s.o
+
 src/insertion/cpp/cppis.o: src/insertion/cpp/cppis.cpp.o
 .PHONY : src/insertion/cpp/cppis.o
 
@@ -231,6 +239,7 @@ help:
 	@echo "... src/bubble/cpp/cppbs.i"
 	@echo "... src/bubble/cpp/cppbs.s"
 	@echo "... src/insertion/asm/asmis.o"
+	@echo "... src/insertion/asm_exp/asmis_exp.o"
 	@echo "... src/insertion/cpp/cppis.o"
 	@echo "... src/insertion/cpp/cppis.i"
 	@echo "... src/insertion/cpp/cppis.s"

@@ -5,3 +5,5 @@ CMakeFiles/sort.dir/src/bubble/asm/asmbs.s.o
  /home/ubuntu/graviton/sort/src/bubble/asm/asmbs.s
 CMakeFiles/sort.dir/src/insertion/asm/asmis.s.o
  /home/ubuntu/graviton/sort/src/insertion/asm/asmis.s
+CMakeFiles/sort.dir/src/insertion/asm_exp/asmis_exp.s.o
+ /home/ubuntu/graviton/sort/src/insertion/asm_exp/asmis_exp.s
