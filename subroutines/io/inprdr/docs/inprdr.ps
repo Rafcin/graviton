@@ -2,7 +2,7 @@
 %%Title: inprdr.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Apr 25 07:39:53 2023
+%%CreationDate: Tue Apr 25 22:47:45 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
@@ -781,7 +781,7 @@ x0 y0 moveto
 (        // Read from stdin into a buffer) N
 (        mov x0, ) S
 (#0) c n
-(        ldr w8, =1024                    // Declare the buffer size 1024) p n
+(        ldr w8, =20                      // Declare the buffer size 20) p n
 (        bl malloc                        // Allocate memory and get the pointer ) S
 () K n
 (in) S
@@ -790,7 +790,7 @@ x0 y0 moveto
 (#-16]!              // Store the pointer on the stack) c n
 (        ) p n
 (        mov x2, ) S
-(#1024                    // Set size of buffer) c n
+(#20                      // Set size of buffer) c n
 (        mov x8, ) p
 (#63                      // Linux syscall number for read STDIN_) c n
 (FD) N
@@ -810,7 +810,7 @@ x0 y0 moveto
 (        ldr x30, [sp], ) p
 (#16          ) c n
 (        ret) p
-(inprdr.s) (Page 1/1) (Apr 25, 23 7:39) title
+(inprdr.s) (Page 1/1) (Apr 25, 23 22:47) title
 border
 grestore
 (Printed by Ubuntu) rhead

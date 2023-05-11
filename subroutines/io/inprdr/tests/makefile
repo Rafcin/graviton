@@ -11,7 +11,7 @@ SRC = $(NAME).s
 OBJ = output/$(SRC:.s=.o)
 
 # Define the external object directories as a list
-EXTERNAL_DIRS = ../output ../../../string/length/output ../../putstr/output
+EXTERNAL_DIRS = ../output ../../../string/length/output
 
 # Define the flags for debugging
 DEBUG_FLAGS = -g

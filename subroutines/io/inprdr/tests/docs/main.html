@@ -7,45 +7,150 @@
 </head>
 <body class="hl">
 <pre class="hl"><span class="hl ppc">.data</span>
-    prompt<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;Enter a string or value - &quot;</span><span class="hl ppc"></span>
-    entered<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;You entered - &quot;</span><span class="hl ppc"></span>
+    prompt_str_one<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;Enter String #1 - &quot;</span><span class="hl ppc"></span>
+    prompt_str_two<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;Enter String #2 - &quot;</span><span class="hl ppc"></span>
+    disp_str_one<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;Displaying string #1 - &quot;</span><span class="hl ppc"></span>
+    disp_str_two<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;Displaying string #2 - &quot;</span><span class="hl ppc"></span>
+    convert_str<span class="hl opt">:</span> <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;Converting to Upper Case ...&quot;</span><span class="hl ppc"></span>
     nl<span class="hl opt">:</span>  <span class="hl ppc">.asciz</span> <span class="hl pps">&quot;</span><span class="hl esc">\n</span><span class="hl pps">&quot;</span><span class="hl ppc"></span>
-    
+
 <span class="hl ppc">.text</span>
 <span class="hl ppc">.global main</span>
     main<span class="hl opt">:</span>
-        <span class="hl opt">//</span> Print the prompt
-        ldr x0<span class="hl opt">, =</span>prompt
-        <span class="hl kwa">bl</span>  putstr
-        
-        <span class="hl opt">//</span> Call the `inprdr` subroutine
-        <span class="hl kwa">bl</span>  inprdr
-        
-        <span class="hl opt">//</span> Save the pointer to the input buffer
-        str x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
-        
-        <span class="hl opt">//</span> Print the entered text
-        ldr x0<span class="hl opt">, =</span>entered
-        <span class="hl kwa">bl</span>  putstr
+        <span class="hl opt">//</span> Save space on the stack for storing original strings
+        <span class="hl kwa">sub</span> sp<span class="hl opt">,</span> sp<span class="hl opt">,</span> <span class="hl num">32</span>
 
-        <span class="hl opt">//</span> Print the user<span class="hl str">&apos;s input</span>
-<span class="hl str">        ldr x0, [sp]   // Load the pointer without modifying the stack pointer</span>
-<span class="hl str">        bl  putstr</span>
-<span class="hl str"></span>
-<span class="hl str">        // Load the pointer and readjust the stack pointer</span>
-<span class="hl str">        ldr x0, [sp], #16</span>
-<span class="hl str">        </span>
-<span class="hl str">        // Call `free` subroutine to free the allocated memory</span>
-<span class="hl str">        bl free</span>
-<span class="hl str">        </span>
-<span class="hl str">        // Print newline</span>
-<span class="hl str">        ldr x0, =nl</span>
-<span class="hl str">        bl  putstr</span>
-<span class="hl str">        </span>
-<span class="hl str">        // Setup the parameters to exit the program and then call Linux to do it.</span>
-<span class="hl str">        mov x0, #0  // Sets return code to 0</span>
-<span class="hl str">        mov x8, #93 // Service command code 93 terminates</span>
-<span class="hl str">        svc 0       // Call linux to terminate the program</span>
+        <span class="hl opt">//</span> First input
+        ldr x0<span class="hl opt">, =</span>prompt_str_one
+        <span class="hl kwa">bl</span> putstr
+        <span class="hl kwa">bl</span> inprdr
+        str x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#16]</span>
+
+        <span class="hl opt">//</span> Second input
+        ldr x0<span class="hl opt">, =</span>prompt_str_two
+        <span class="hl kwa">bl</span> putstr
+        <span class="hl kwa">bl</span> inprdr
+        str x0<span class="hl opt">, [</span>sp<span class="hl opt">]</span>
+
+        <span class="hl opt">//</span> Print original strings
+        ldr x0<span class="hl opt">, =</span>disp_str_one
+        <span class="hl kwa">bl</span> putstr
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#16]</span>
+        <span class="hl kwa">bl</span> putstr
+        ldr x0<span class="hl opt">, =</span>disp_str_two
+        <span class="hl kwa">bl</span> putstr
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">]</span>
+        <span class="hl kwa">bl</span> putstr
+        ldr x0<span class="hl opt">, =</span>nl
+        <span class="hl kwa">bl</span> putstr
+
+        <span class="hl opt">//</span>Print converting
+        ldr x0<span class="hl opt">, =</span>convert_str
+        <span class="hl kwa">bl</span> putstr
+        <span class="hl opt">//</span> Print newline
+        ldr x0<span class="hl opt">, =</span>nl
+        <span class="hl kwa">bl</span> putstr
+
+        <span class="hl opt">//</span> Convert first input to uppercase <span class="hl kwa">and</span> print
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#16]</span>
+        <span class="hl kwa">bl</span> str_toupper
+        ldr x0<span class="hl opt">, =</span>disp_str_one
+        <span class="hl kwa">bl</span> putstr
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#16]</span>
+        <span class="hl kwa">bl</span> putstr
+
+
+        <span class="hl opt">//</span> Free the first input
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#16]</span>
+        <span class="hl kwa">bl</span> free
+
+        <span class="hl opt">//</span> Convert second input to uppercase <span class="hl kwa">and</span> print
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">]</span>
+        <span class="hl kwa">bl</span> str_toupper
+        ldr x0<span class="hl opt">, =</span>disp_str_two
+        <span class="hl kwa">bl</span> putstr
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">]</span>
+        <span class="hl kwa">bl</span> putstr
+        
+        <span class="hl opt">//</span> Clean up the second input
+        ldr x0<span class="hl opt">, [</span>sp<span class="hl opt">]</span>
+        <span class="hl kwa">bl</span> free
+
+        <span class="hl opt">//</span> Print newline
+        ldr x0<span class="hl opt">, =</span>nl
+        <span class="hl kwa">bl</span> putstr
+
+        <span class="hl opt">//</span> Restore the stack pointer <span class="hl kwa">and</span> setup the parameters to exit the program
+        <span class="hl kwa">add</span> sp<span class="hl opt">,</span> sp<span class="hl opt">,</span> <span class="hl num">32</span>
+        mov x0<span class="hl opt">,</span> <span class="hl slc">#0  // Sets return code to 0</span>
+        mov x8<span class="hl opt">,</span> <span class="hl slc">#93 // Service command code 93 terminates</span>
+        <span class="hl kwa">svc</span> <span class="hl num">0</span>       <span class="hl opt">//</span> Call Linux to terminate the program
+
+<span class="hl com">/**</span>
+<span class="hl com"> * str_toupper - Converts a null-terminated string to upper case</span>
+<span class="hl com"> * </span>
+<span class="hl com"> * &#64;param x0: Pointer to the null-terminated string</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, w8</span>
+<span class="hl com"> */</span>
+
+<span class="hl ppc">.text</span>
+<span class="hl ppc">.global str_toupper</span>
+    str_toupper<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Loop through each character in the string
+    str_toupper_loop<span class="hl opt">:</span>
+        ldrb w8<span class="hl opt">, [</span>x0<span class="hl opt">]                 //</span> Load <span class="hl kwa">a</span> byte from the string
+        <span class="hl kwa">cmp</span> w8<span class="hl opt">,</span> <span class="hl slc">#&apos;a&apos; - 1              // Compare if character is greater than &apos;a&apos;-1</span>
+        bls not_lower                 <span class="hl opt">//</span> If <span class="hl kwa">not</span> greater<span class="hl opt">,</span> skip conversion <span class="hl opt">(</span><span class="hl kwa">not a</span> lowercase letter<span class="hl opt">)</span>
+        <span class="hl kwa">cmp</span> w8<span class="hl opt">,</span> <span class="hl slc">#&apos;z&apos;                  // Compare if character is less than &apos;z&apos;</span>
+        bhi not_lower                 <span class="hl opt">//</span> If <span class="hl kwa">not</span> less<span class="hl opt">,</span> skip conversion <span class="hl opt">(</span><span class="hl kwa">not a</span> lowercase letter<span class="hl opt">)</span>
+
+        <span class="hl opt">//</span> Convert to uppercase
+        <span class="hl kwa">sub</span> w8<span class="hl opt">,</span> w8<span class="hl opt">,</span> <span class="hl slc">#(&apos;a&apos; - &apos;A&apos;)</span>
+        strb w8<span class="hl opt">, [</span>x0<span class="hl opt">]                 //</span> Store the uppercase character back into the string
+
+    not_lower<span class="hl opt">:</span>
+        cbz w8<span class="hl opt">,</span> exit                  <span class="hl opt">//</span> Exit the loop if the null-terminator is reached
+        <span class="hl kwa">add</span> x0<span class="hl opt">,</span> x0<span class="hl opt">,</span> <span class="hl slc">#1                // Move to the next character</span>
+        <span class="hl kwa">b</span> str_toupper_loop
+
+    exit<span class="hl opt">:</span>
+        ret
+
+
+<span class="hl com">/**</span>
+<span class="hl com"> * putstr - Prints a null-terminated string using write syscall</span>
+<span class="hl com"> * </span>
+<span class="hl com"> * &#64;param x0: Pointer to the null-terminated string</span>
+<span class="hl com"> *</span>
+<span class="hl com"> * Registers used: x0, x2, x30, lr</span>
+<span class="hl com"> * Registers saved: lr</span>
+<span class="hl com"> */</span>
+
+<span class="hl ppc">.text</span>
+<span class="hl ppc">.global putstr</span>
+    putstr<span class="hl opt">:</span>
+        <span class="hl opt">//</span> Save the link register
+        str <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">,</span> <span class="hl slc">#-16]!</span>
+
+        <span class="hl opt">//</span> Prepare parameters for the `write` syscall
+        mov x2<span class="hl opt">,</span> <span class="hl slc">#0</span>
+        <span class="hl opt">//</span> Get the string length
+    putstr_loop<span class="hl opt">:</span>
+        ldrb w1<span class="hl opt">, [</span>x0<span class="hl opt">,</span> x2<span class="hl opt">]</span>
+        cbz w1<span class="hl opt">,</span> out
+        <span class="hl kwa">add</span> x2<span class="hl opt">,</span> x2<span class="hl opt">,</span> <span class="hl slc">#1</span>
+        <span class="hl kwa">b</span> putstr_loop
+    out<span class="hl opt">:</span>
+        mov x8<span class="hl opt">,</span> <span class="hl slc">#64</span>
+        mov x1<span class="hl opt">,</span> x0
+        mov w0<span class="hl opt">,</span> <span class="hl slc">#1</span>
+        <span class="hl kwa">svc</span> <span class="hl num">0</span>
+        
+        <span class="hl opt">//</span> Restore the link register
+        ldr <span class="hl kwb">lr</span><span class="hl opt">, [</span>sp<span class="hl opt">],</span> <span class="hl slc">#16</span>
+        
+        ret
 </pre>
 </body>
 </html>

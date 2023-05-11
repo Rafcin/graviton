@@ -2,11 +2,11 @@
 %%Title: main.s
 %%For: Ubuntu
 %%Creator: a2ps version 4.14
-%%CreationDate: Tue Apr 25 07:39:55 2023
+%%CreationDate: Tue Apr 25 22:55:16 2023
 %%BoundingBox: 24 24 571 818
 %%DocumentData: Clean7Bit
 %%Orientation: Landscape
-%%Pages: 1
+%%Pages: 2
 %%PageOrder: Ascend
 %%DocumentMedia: A4 595 842 0 () ()
 %%DocumentNeededResources: font Courier
@@ -745,7 +745,7 @@ def
 /y0 0 def
 %%EndSetup
 
-%%Page: (1) 1
+%%Page: (1-2) 1
 %%BeginPageSetup
 /pagesave save def
 sh 0 translate 90 rotate
@@ -758,61 +758,224 @@ llx lly 12 add translate
 /y0 y v get bfs th add sub store
 x0 y0 moveto
 (.data) p n
-(    prompt: .asciz ") S
-(Enter a string or value - ) str
+(    prompt_str_one: .asciz ") S
+(Enter String #1 - ) str
 (") p n
-(    entered: .asciz ") S
-(You entered - ) str
+(    prompt_str_two: .asciz ") S
+(Enter String #2 - ) str
+(") p n
+(    disp_str_one: .asciz ") S
+(Displaying string #1 - ) str
+(") p n
+(    disp_str_two: .asciz ") S
+(Displaying string #2 - ) str
+(") p n
+(    convert_str: .asciz ") S
+(Converting to Upper Case ...) str
 (") p n
 (    nl:  .asciz ") S
 (\\n) str
 (") p n
-(    ) N
+() N
 (.text) N
 (.global main) N
 (    main:) N
-(        // Print the prompt) N
-(        ldr x0, =prompt) N
-(        bl  putstr) N
-(        ) N
-(        // Call the `inprdr` subroutine) N
-(        bl  inprdr) N
-(        ) N
-(        // Save the pointer to the input buffer) N
+(        // Save space on the stack ) S
+(for) K
+( storing original strings) p n
+(        sub sp, sp, 32) N
+() N
+(        // First input) N
+(        ldr x0, =prompt_str_one) N
+(        bl putstr) N
+(        bl inprdr) N
 (        str x0, [sp, ) S
-(#-16]!) c n
-(        ) p n
-(        // Print the entered text) N
-(        ldr x0, =entered) N
-(        bl  putstr) N
+(#16]) c n
+() p n
+(        // Second input) N
+(        ldr x0, =prompt_str_two) N
+(        bl putstr) N
+(        bl inprdr) N
+(        str x0, [sp]) N
 () N
-(        // Print the user's input) N
-(        ldr x0, [sp]   // Load the pointer without modifying the stack pointer) N
-(        bl  putstr) N
+(        // Print original strings) N
+(        ldr x0, =disp_str_one) N
+(        bl putstr) N
+(        ldr x0, [sp, ) S
+(#16]) c n
+(        bl putstr) p n
+(        ldr x0, =disp_str_two) N
+(        bl putstr) N
+(        ldr x0, [sp]) N
+(        bl putstr) N
+(        ldr x0, =nl) N
+(        bl putstr) N
 () N
-(        // Load the pointer and readjust the stack pointer) N
-(        ldr x0, [sp], ) S
-(#16) c n
-(        ) p n
-(        // Call `free` subroutine to free the allocated memory) N
-(        bl free) N
-(        ) N
+(        //Print converting) N
+(        ldr x0, =convert_str) N
+(        bl putstr) N
 (        // Print newline) N
 (        ldr x0, =nl) N
-(        bl  putstr) N
+(        bl putstr) N
+() N
+(        // Convert first input to uppercase and print) N
+(        ldr x0, [sp, ) S
+(#16]) c n
+(        bl str_toupper) p n
+(        ldr x0, =disp_str_one) N
+(        bl putstr) N
+(        ldr x0, [sp, ) S
+(#16]) c n
+(        bl putstr) p n
+() N
+() N
+(        // Free the first input) N
+(        ldr x0, [sp, ) S
+(#16]) c n
+(        bl free) p n
+() N
+(        // Convert second input to uppercase and print) N
+(        ldr x0, [sp]) N
+(        bl str_toupper) N
+(        ldr x0, =disp_str_two) N
+(main.s) (Page 1/3) (Apr 25, 23 22:55) title
+border
+/v 1 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        bl putstr) p n
+(        ldr x0, [sp]) N
+(        bl putstr) N
 (        ) N
-(        // Setup the parameters to exit the program and then call Linux to do it) N
-(.) N
+(        // Clean up the second input) N
+(        ldr x0, [sp]) N
+(        bl free) N
+() N
+(        // Print newline) N
+(        ldr x0, =nl) N
+(        bl putstr) N
+() N
+(        // Restore the stack pointer and setup the parameters to exit the progra) N
+(m) N
+(        add sp, sp, 32) N
 (        mov x0, ) S
 (#0  // Sets return code to 0) c n
 (        mov x8, ) p
 (#93 // Service command code 93 terminates) c n
-(        svc 0       // Call linux to terminate the program) p n
-(main.s) (Page 1/1) (Apr 25, 23 7:39) title
+(        svc 0       // Call Linux to terminate the program) p n
+() N
+(/**) N
+( * str_toupper - Converts a null-terminated string to upper case) N
+( * ) N
+( * @param x0: Pointer to the null-terminated string) N
+( *) N
+( * Registers used: x0, w8) N
+( */) N
+() N
+(.text) N
+(.global str_toupper) N
+(    str_toupper:) N
+(        // Loop through each character ) S
+(in) K
+( the string) p n
+(    str_toupper_loop:) N
+(        ldrb w8, [x0]                 // Load a byte from the string) N
+(        cmp w8, ) S
+(#'a' - 1              // Compare if character is greater than 'a) c n
+('-1) N
+(        bls not_lower                 // If not greater, skip conversion \(not a ) p n
+(lowercase letter\)) N
+(        cmp w8, ) S
+(#'z'                  // Compare if character is less than 'z') c n
+(        bhi not_lower                 // If not less, skip conversion \(not a low) p n
+(ercase letter\)) N
+() N
+(        // Convert to uppercase) N
+(        sub w8, w8, ) S
+(#\('a' - 'A'\)) c n
+(        strb w8, [x0]                 // Store the uppercase character back into) p n
+( the string) N
+() N
+(    not_lower:) N
+(        cbz w8, exit                  // Exit the loop ) S
+(if) K
+( the null-terminator is) p n
+( reached) N
+(        add x0, x0, ) S
+(#1                // Move to the next character) c n
+(        b str_toupper_loop) p n
+() N
+(    exit:) N
+(        ret) N
+() N
+() N
+(/**) N
+( * putstr - Prints a null-terminated string using write syscall) N
+( * ) N
+( * @param x0: Pointer to the null-terminated string) N
+( *) N
+( * Registers used: x0, x2, x30, lr) N
+(main.s) (Page 2/3) (Apr 25, 23 22:55) title
 border
 grestore
 (Printed by Ubuntu) rhead
-(main.s) (1/1) (Tuesday April 25, 2023) footer
+(main.s) (1/2) (Tuesday April 25, 2023) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.362408 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+( * Registers saved: lr) p n
+( */) N
+() N
+(.text) N
+(.global putstr) N
+(    putstr:) N
+(        // Save the link register) N
+(        str lr, [sp, ) S
+(#-16]!) c n
+() p n
+(        // Prepare parameters ) S
+(for) K
+( the `write` syscall) p n
+(        mov x2, ) S
+(#0) c n
+(        // Get the string length) p n
+(    putstr_loop:) N
+(        ldrb w1, [x0, x2]) N
+(        cbz w1, out) N
+(        add x2, x2, ) S
+(#1) c n
+(        b putstr_loop) p n
+(    out:) N
+(        mov x8, ) S
+(#64) c n
+(        mov x1, x0) p n
+(        mov w0, ) S
+(#1) c n
+(        svc 0) p n
+(        ) N
+(        // Restore the link register) N
+(        ldr lr, [sp], ) S
+(#16) c n
+(        ) p n
+(        ret) N
+(main.s) (Page 3/3) (Apr 25, 23 22:55) title
+border
+grestore
+(Printed by Ubuntu) rhead
+(main.s) (2/2) (Tuesday April 25, 2023) footer
 end % of iso1dict
 pagesave restore
 showpage

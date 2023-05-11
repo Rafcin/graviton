@@ -1,0 +1,3 @@
+/home/ubuntu/graviton/sort/build/CMakeFiles/sort.dir
+/home/ubuntu/graviton/sort/build/CMakeFiles/edit_cache.dir
+/home/ubuntu/graviton/sort/build/CMakeFiles/rebuild_cache.dir

@@ -15,11 +15,11 @@
 
         // Read from stdin into a buffer
         mov x0, #0
-        ldr w8, =1024                    // Declare the buffer size 1024
+        ldr w8, =20                      // Declare the buffer size 20
         bl malloc                        // Allocate memory and get the pointer in x0
         str x0, [sp, #-16]!              // Store the pointer on the stack
         
-        mov x2, #1024                    // Set size of buffer
+        mov x2, #20                      // Set size of buffer
         mov x8, #63                      // Linux syscall number for read STDIN_FD
         mov w1, w0                       // Move the malloc pointer into w1
         mov w0, #0                       // STDIN_FD is file descriptor 0
