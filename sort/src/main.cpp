@@ -283,11 +283,11 @@ int main()
             break;
         case 3:
             numbers = load_numbers(input);
-            sort_and_measure(asmis, "ASM Bubble Sort", numbers, input);
+            sort_and_measure(asmis, "ASM Insertion Sort", numbers, input);
             break;
         case 4:
             numbers = load_numbers(input);
-            sort_and_measure(asmbs, "ASM Insertion Sort", numbers, input);
+            sort_and_measure(asmbs, "ASM Bubble Sort", numbers, input);
             break;
         case 5:
             cout << "Enter the name of the file to load: ";

@@ -11,7 +11,7 @@ outer_loop:
     mov x6, xzr                  // x6 = j = 0
 
 inner_loop:
-    cmp x6, x5, lsl #2           // Check if j < length - i - 1 (considering each element is 4 bytes in the array)
+    cmp x6, x5          // Check if j < length - i - 1 (considering each element is 4 bytes in the array)
     b.ge next_i                  // If j >= length - i - 1, move to next i
 
     // Load elements a[j] and a[j + 1] into w7 and w8
